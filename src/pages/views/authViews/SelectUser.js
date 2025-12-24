@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, Animated, View, Text } from 'react-native';
 import { Button } from '@components/button';
 import { BackArrow } from '@components/backArrow';
 import { colors } from '@styles/colors';
