@@ -73,7 +73,12 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
         : ['report'];
 
   return (
-    <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
+    <Animated.View style={[styles.overlay,
+      theme.name === 'light'
+        ? { backgroundColor: 'rgba(0, 0, 0, 0.6)' }
+        : { backgroundColor: 'rgba(255, 255, 255, 0.4)' },
+      { opacity: overlayOpacity }
+    ]}>
       <TouchableOpacity style={StyleSheet.absoluteFill} onPress={handleClose}/>
       <Animated.View style={[styles.kebabMenu, {
           transform: [{ translateY }],
@@ -87,7 +92,12 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
           {menuItems.map((key) => {
             const item = allMenuItems[key];
             return (
-              <TouchableOpacity key={key} style={styles.menuItem} onPress={() => { data.isOwner && onDelete?.(data.id); handleClose();}}>
+              <TouchableOpacity key={key} style={styles.menuItem}
+                onPress={() => {
+                  data.isOwner && onDelete?.(data.id);
+                  handleClose();
+                }}
+              >
                 <View style={styles.menuItemContent}>
                   {item.icon}
                   <Text style={[fontStyles.title_4, { color: theme.primaryText }]}>{item.title}</Text>
@@ -106,7 +116,6 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end'
   },
   kebabMenu: {

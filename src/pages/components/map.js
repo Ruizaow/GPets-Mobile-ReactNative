@@ -1,18 +1,37 @@
 import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { mockedMarkers } from '@constants/mockDataMarker';
 
-export function Map({useMarkers = true, onPressLocation}) {
+export function Map({ useMarkers=true, onPressLocation, isReadOnly=false, coordinateLat, coordinateLng }) {
   const mapRef = useRef(null);
   const [marker, setMarker] = useState(null);
 
   const [region, setRegion] = useState({
-    latitude: -4.9708,
-    longitude: -39.0150,
+    latitude: coordinateLat || -4.9708,
+    longitude: coordinateLng || -39.0150,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
+
+  useEffect(() => {
+    if (typeof coordinateLat === 'number' && typeof coordinateLng === 'number') {
+      const newMarker = {
+        latitude: coordinateLat,
+        longitude: coordinateLng
+      };
+      setMarker(newMarker);
+
+      const newRegion = {
+        ...region,
+        latitude: coordinateLat,
+        longitude: coordinateLng,
+      };
+      setRegion(newRegion);
+
+      mapRef.current?.animateToRegion(newRegion, 1);
+    }
+  }, [coordinateLat, coordinateLng]);
 
   function handleMapPress(event) {
     if (useMarkers) return;
@@ -28,8 +47,8 @@ export function Map({useMarkers = true, onPressLocation}) {
       longitude,
     };
     setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 300);
 
+    mapRef.current?.animateToRegion(newRegion, 300);
     onPressLocation?.(newMarker);
   }
 
@@ -58,7 +77,6 @@ export function Map({useMarkers = true, onPressLocation}) {
     setRegion(newRegion);
     mapRef.current?.animateToRegion(newRegion, 300);
   }
-
   function zoomOut() {
     const center = getZoomCenter();
 
@@ -82,25 +100,40 @@ export function Map({useMarkers = true, onPressLocation}) {
         ref={mapRef}
         style={styles.mapView}
         initialRegion={region}
-        onPress={handleMapPress}
+        scrollEnabled={!isReadOnly}
+        zoomEnabled={!isReadOnly}
+        rotateEnabled={!isReadOnly}
+        pitchEnabled={!isReadOnly}
+        onPress={isReadOnly ? undefined : handleMapPress}
       >
-        {useMarkers ?
-          mockedMarkers.map((marker, index) => (
-            <Marker key={index} coordinate={marker} onPress={() => onMarkerSelected(marker)}/>
+        {/* Modo readonly — marker fixo */}
+        {isReadOnly &&
+          coordinateLat && coordinateLng && (
+            <Marker coordinate={{ latitude: coordinateLat, longitude: coordinateLng }}/>
           )
-        ) : marker && (
-          <Marker coordinate={marker} />
-        )}
+        }
+        {/* Modo interativo padrão */}
+        {!isReadOnly &&
+          useMarkers ?
+            mockedMarkers.map((_marker, index) => (
+              <Marker key={index} coordinate={_marker} onPress={() => onMarkerSelected(_marker)}/>
+            )
+          ) : marker && (
+            <Marker coordinate={marker} />
+          )
+        }
       </MapView>
 
-      <View style={styles.zoomControls}>
-        <TouchableOpacity style={styles.zoomButton} onPress={zoomIn}>
-          <Text style={styles.zoomText}>+</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.zoomButton} onPress={zoomOut}>
-          <Text style={styles.zoomText}>−</Text>
-        </TouchableOpacity>
-      </View>
+      {!isReadOnly && (
+        <View style={styles.zoomControls}>
+          <TouchableOpacity style={styles.zoomButton} onPress={zoomIn}>
+            <Text style={styles.zoomText}>+</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.zoomButton} onPress={zoomOut}>
+            <Text style={styles.zoomText}>−</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }

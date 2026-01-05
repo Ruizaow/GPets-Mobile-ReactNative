@@ -5,7 +5,7 @@ import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export function GoBackHeader({ headerTitle, onPress, showLineDivision = true, icon: Icon = null, iconColor }) {
+export function GoBackHeader({ headerTitle, onPress, showLineDivision = true, icon: Icon = null, iconColor, onPressIcon }) {
   const { theme } = useTheme();
 
   const fontsLoaded = useFontsCustom();
@@ -16,9 +16,14 @@ export function GoBackHeader({ headerTitle, onPress, showLineDivision = true, ic
       <View style={styles.header}>
         <TouchableOpacity style={[styles.goBackSection, Icon ? { justifyContent: 'space-between' } : { gap: 16 }]}  onPress={onPress}>
           <ArrowLeft size={24} color={theme.primaryText} />
-          <Text style={[fontStyles.title_1, { color: theme.primaryText }]}>{headerTitle}</Text>
+          <Text style={[
+            headerTitle !== 'Evento/publicidade'
+              ? { ...fontStyles.title_1, marginTop: 0 }
+              : { ...fontStyles.title_5, marginTop: -4 },
+            { color: theme.primaryText }]}
+          >{headerTitle}</Text>
           {Icon &&
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onPressIcon}>
               <Icon size={28} color={iconColor ?? theme.primaryText}/>
             </TouchableOpacity>
           }

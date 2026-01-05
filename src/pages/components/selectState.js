@@ -3,9 +3,12 @@ import { useTheme } from '@context/ThemeContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function SelectState({ selectedState }) {
+export function SelectState({ selectedState, postType }) {
   const { theme } = useTheme();
-  const states = ['Situação', 'Local', 'Foto', 'Sobre', 'Prévia']
+  const states =
+    postType !== 'Evento/publicidade'
+      ? ['Situação', 'Local', 'Foto', 'Sobre', 'Prévia']
+      : ['Foto', 'Sobre', 'Prévia'];
   
   const selectedIndex = states.indexOf(selectedState);
 
@@ -16,19 +19,24 @@ export function SelectState({ selectedState }) {
         const isSelected = index === selectedIndex;
         
         return (
-          <View key={index} style={[styles.stateChip, 
-            isPrevious && { backgroundColor: theme.completedStep },
-            isSelected && { backgroundColor: colors.yellow },
-            !isPrevious && !isSelected && {
-              borderWidth: 1,
-              borderColor: colors.disabled
-            }
-          ]}>
+          <View key={index}
+            style={[
+              styles.stateChip, 
+              isPrevious && { backgroundColor: theme.completedStep },
+              isSelected && { backgroundColor: colors.yellow },
+              !isPrevious && !isSelected && {
+                borderWidth: 1,
+                borderColor: colors.disabled
+              }
+            ]}
+          >
             <Text style={[fontStyles.commentTimestamp,
               isPrevious && { color: theme.iconBackground },
               isSelected && { color: theme.chip },
               !isPrevious && !isSelected && { color: colors.disabled },
-            ]}>{state}</Text>
+            ]}>
+              {state}
+            </Text>
           </View>
         );
       })}
@@ -40,10 +48,12 @@ const styles = StyleSheet.create({
   selectContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 4
+    width: '100%',
+    gap: 4,
+    paddingHorizontal: 20
   },
   stateChip: {
-    width: 72,
+    flex: 1,
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',

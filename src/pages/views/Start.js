@@ -15,21 +15,20 @@ export default function Start({ navigation }) {
       <Image style={styles.background} source={require('@assets/images/dog-background.jpg')}/>
       <BlurView intensity={0} tint='dark' style={styles.blurBackground}>
         <LinearGradient
-          colors={[
-            'rgba(0,0,0,0)',
-            'rgba(0,0,0,0.6)'
-          ]}
+          colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)']}
           style={styles.gradient}
         />
       </BlurView>
       <View style={styles.content}>
         <Image source={require('@assets/images/gpets-icon-dark.png')}/>
-        <View style={styles.textArea}>
+        <View style={styles.textButton}>
           <View>
             <Text style={fontStyles.title_1}>Ajuda mútua</Text>
             <Text style={fontStyles.title_1}>Encontros felizes</Text>
           </View>
-          <Button text='Continuar' variant='green' onPress={() => navigation.navigate('Auth')}/>
+          <View style={styles.buttonSection}>
+            <Button text='Continuar' variant='green' size='customStart' onPress={() => navigation.navigate('Auth')}/>
+          </View>
         </View>
       </View>
       <StatusBar style='auto'/>
@@ -42,30 +41,37 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%'
   },
   background: {
     position: 'absolute',
     width: 1000,
     height: 1000,
+    marginRight: 0
   },
   blurBackground: {
     position: 'absolute',
     width: '100%',
-    height: '30%',
-    bottom: 0,
+    height: '40%',
+    bottom: 0
   },
   gradient: {
     flex: 1,
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 80
+    paddingVertical: 80,
+    paddingHorizontal: 28
   },
-  textArea: {
+  textButton: {
     gap: 20
   },
+  buttonSection: {
+    flexDirection: 'row',
+    width: '100%'
+  }
 });

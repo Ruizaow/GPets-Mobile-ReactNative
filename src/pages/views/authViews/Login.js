@@ -22,12 +22,12 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
   return (
     <ScrollView
       contentContainerStyle={[ styles.scrollContent, keyboardHeight > 0 && { paddingBottom: keyboardHeight } ]}
-      keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="interactive"
+      keyboardShouldPersistTaps='handled'
+      keyboardDismissMode='interactive'
     >
       <Animated.View style={[styles.container, { transform: [{ translateY: animatedOffset }] }]}>
         <View style={styles.backSection}>
-          <BackArrow text={"Voltar"} onPress={onBack} />
+          <BackArrow text={'Voltar'} onPress={onBack} />
         </View>
         
         <View style={styles.content}>
@@ -41,9 +41,9 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
           </View>
           <View style={styles.buttonArea}>
             <Button
-              text="Continuar com Google"
-              imageSrc={require("@assets/images/google-2015-seeklogo.png")}
-              variant="disabled"
+              text='Continuar com Google'
+              imageSrc={require('@assets/images/google-2015-seeklogo.png')}
+              variant='disabled'
             />
           </View>
           <View style={styles.lineDivision}>
@@ -57,12 +57,12 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
           <View style={styles.inputArea}>
             <Controller
               control={control}
-              name="email"
+              name='email'
               render={({ field, fieldState }) => (
                 <InputField
-                  label="Login"
-                  placeholder="Digite seu e-mail aqui..."
-                  type="email"
+                  label='Login'
+                  placeholder='Digite seu e-mail aqui...'
+                  type='email'
                   value={field.value}
                   onChangeText={field.onChange}
                   errorMessage={fieldState.error?.message}
@@ -71,12 +71,12 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
             />
             <Controller
               control={control}
-              name="password"
+              name='password'
               render={({ field, fieldState }) => (
                 <InputField
-                  label="Senha"
-                  placeholder="Digite sua senha aqui..."
-                  type="password"
+                  label='Senha'
+                  placeholder='Digite sua senha aqui...'
+                  type='password'
                   value={field.value}
                   onChangeText={field.onChange}
                   errorMessage={fieldState.error?.message}
@@ -90,18 +90,18 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
 
           <View style={styles.submitArea}>
             <Button
-              text="Entrar"
-              variant="beige"
+              text='Entrar'
+              variant='beige'
               onPress={() => {
-                trigger(["email", "password"]).then((valid) => {
-                  if (valid) navigation.navigate("Home");
+                trigger(['email', 'password']).then((valid) => {
+                  if (valid) navigation.navigate('Home');
                 });
               }}
             />
-            <Button text="Cadastrar-se" variant="signUp" onPress={onGoToSignUp} />
+            <Button text='Cadastrar-se' variant='signUp' onPress={onGoToSignUp} />
           </View>
         </View>
-        <StatusBar style="auto" />
+        <StatusBar style='auto' />
       </Animated.View>
     </ScrollView>
   );
@@ -122,12 +122,12 @@ const styles = StyleSheet.create({
     marginTop: 80,
   },
   content: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textArea: {
-    alignItems: "center",
+    alignItems: 'center',
     gap: 8,
     marginBottom: 32,
   },
@@ -136,8 +136,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   lineDivision: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
     marginBottom: 16,
   },
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.beige,
   },
   inputArea: {
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
     marginBottom: 24,
   },
   forgotPassword: {

@@ -3,7 +3,7 @@ import { useTheme } from '@context/ThemeContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function Button({ text, imageSrc = null, variant, size = 'big', onPress }) {
+export function Button({ text, imageSrc = null, variant, size = 'big', onPress, isDisabled = false }) {
   const { theme } = useTheme();
 
   const goToMapDynamicStyle =
@@ -11,25 +11,40 @@ export function Button({ text, imageSrc = null, variant, size = 'big', onPress }
       backgroundColor: 'transparent',
       borderWidth: 1,
       borderColor: colors.blue,
-    } : size === 'small' ? {
+    } : size === 'small' || size === 'custom' ? {
       backgroundColor: colors.blue,
     } : {
       backgroundColor: colors.green,
     };
 
   const variantStyles = {
+    dark: styles.buttonDark,
     blue: styles.buttonBlue,
     blueBeige: styles.buttonBlue,
     green: styles.buttonGreen,
     beige: styles.buttonBeige,
+    delete: styles.buttonDelete,
     signUp: styles.buttonSignUp,
     goToMap: goToMapDynamicStyle,
     disabled: styles.buttonDisabled,
   };
 
   function getTextColor(variant) {
-    if (variant === 'signUp' || variant === 'disabled' || variant === 'blueBeige' || variant === 'blue' && size !== 'big') {
-      return colors.beige;
+    if (variant === 'dark') {
+      return colors.white;
+    }
+    if (variant === 'delete' ||
+        variant === 'signUp' ||
+        variant === 'disabled' ||
+        variant === 'blueBeige' ||
+        variant === 'blue' && size !== 'big' ||
+        variant === 'goToMap' && size === 'custom' && theme.name === 'dark' ||
+        variant === 'green' && size === 'custom' && theme.name === 'light')
+    {
+      if (theme.name === 'light') {
+        return colors.beige;
+      }
+      return colors.white;
     }
     if (variant === 'goToMap') {
       if (size === 'small') {
@@ -42,11 +57,13 @@ export function Button({ text, imageSrc = null, variant, size = 'big', onPress }
 
   return (
     <TouchableOpacity
+      disabled={isDisabled}
       onPress={onPress}
       style={[styles.button, variantStyles[variant],
         size === 'small' && styles.buttonSmall,
         size === 'medium' && styles.buttonMedium,
         size === 'custom' && styles.buttonCustom,
+        size === 'customStart' && styles.buttonCustomStart,
         (size === 'small' || size === 'medium' || size === 'custom') && { height: 48 },
       ]}
     >
@@ -84,6 +101,12 @@ const styles = StyleSheet.create({
   buttonCustom: {
     flex: 1
   },
+  buttonCustomStart: {
+    flex: 1
+  },
+  buttonDark: {
+    backgroundColor: colors.dark
+  },
   buttonBlue: {
     backgroundColor: colors.blue
   },
@@ -92,6 +115,9 @@ const styles = StyleSheet.create({
   },
   buttonBeige: {
     backgroundColor: colors.beige
+  },
+  buttonDelete: {
+    backgroundColor: colors.red
   },
   buttonSignUp: {
     backgroundColor: 'transparent',

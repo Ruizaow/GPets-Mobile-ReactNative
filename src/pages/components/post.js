@@ -5,7 +5,7 @@ import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function Post({ post, navigation, onOpenMenu }) {
+export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm=false, footer=null }) {
   const { theme } = useTheme();
 
   function getTagColor(tag) {
@@ -24,7 +24,7 @@ export function Post({ post, navigation, onOpenMenu }) {
   }
 
   return (
-    <Pressable style={styles.pressable} onPress={() => navigation.navigate('PostView', { post })}>
+    <Pressable style={styles.pressable} onPress={() => navigation.navigate('PostView', { post })} disabled={isOnPostForm || Boolean(footer)}>
       {({ pressed }) => (
         <View
           style={[
@@ -32,6 +32,10 @@ export function Post({ post, navigation, onOpenMenu }) {
               backgroundColor: theme.post,
               borderWidth: theme.name === 'dark' ? 1 : 0,
               borderColor: theme.name === 'dark' ? colors.white : 'transparent',
+            },
+            footer && {
+              borderBottomWidth: 2,
+              borderBottomColor: colors.darkGreyAlt
             }
           ]}
         >
@@ -49,37 +53,95 @@ export function Post({ post, navigation, onOpenMenu }) {
                 <Text style={[fontStyles.postSubtitle, { color: theme.primaryText }]}>{post.timestamp}</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={onOpenMenu}>
-              <EllipsisVertical size={28} color={theme.primaryText}/>
-            </TouchableOpacity>
+            {isOnPostForm ? (
+              <View>
+                <EllipsisVertical size={28} color={colors.disabled}/>
+              </View>
+            ) : (
+              <TouchableOpacity onPress={onOpenMenu}>
+                <EllipsisVertical size={28} color={theme.primaryText}/>
+              </TouchableOpacity>
+            )}
           </View>
+          
           <View>
             <Image source={post.imageUrl} style={styles.petImage}/>
-            <View style={styles.nameTag}>
-              <Text style={[fontStyles.title_2, { color: theme.primaryText }]}>{post.name}</Text>
-              <View style={styles.tag}>
-                <Text style={[fontStyles.postTag, { color: getTagColor(post.tag) }]}>
-                  {post.tag}
+            {post.type === 'Pet' ? (
+              <View style={styles.mainContent}>
+                <View style={styles.nameTag}>
+                  <Text style={[styles.name, { color: theme.primaryText }]}>{post.name}</Text>
+                  <View style={styles.tag}>
+                    <Text style={[fontStyles.postTag, { color: getTagColor(post.tag) }]}>
+                      {post.tag}
+                    </Text>
+                    <Star size={24} color={colors.disabled}/>
+                  </View>
+                </View>
+                <Text style={[styles.date, { color: theme.primaryText }]}>Última vez visto(a): {post.date}</Text>
+                <View style={styles.infoChips}>
+                  <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.sex || 'Sexo desconhecido'}</Text></View>
+                  <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.breed}</Text></View>
+                  {post.temper &&
+                    <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.temper}</Text></View>
+                  }
+                  <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.owner !== 'Não possui' ? 'Tutor: ' + post.owner : 'Sem tutor'}</Text></View>
+                  {post.phoneContact !== 'Não possui' &&
+                    <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.phoneContact}</Text></View>
+                  }
+                </View>
+                <Text numberOfLines={footer ? undefined : 3}
+                  style={[
+                    styles.description,
+                    { color: theme.primaryText },
+                    footer
+                      ? {marginBottom: theme.name === 'dark' ? -2 : 18}
+                      : {marginBottom: 20}
+                  ]}
+                >
+                  {post.description}
                 </Text>
-                <Star size={24} color={colors.disabled}/>
+                <View style={styles.buttonSection}>
+                  {isOnPostForm ? (
+                    <>
+                      <Button text='Localização informada' variant='goToMap' size={'custom'} onPress={onPressButton}/>
+                    </>
+                  ) : (
+                    <>
+                      <Button text='Ir para mapa' variant='goToMap' size={'small'}/>
+                      <Button text='Resgatado' variant='blue' size={'small'}/>
+                    </>
+                  )}
+                </View>
               </View>
-            </View>
-            <Text style={[styles.lastSeen, { color: theme.primaryText }]}>Última vez visto(a): {post.lastSeen}</Text>
-            <View style={styles.infoChips}>
-              <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.sex}</Text></View>
-              <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.breed}</Text></View>
-              <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.temper}</Text></View>
-              <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>Tutor: {post.owner}</Text></View>
-              <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.phoneContact}</Text></View>
-            </View>
-            <Text style={[styles.description, { color: theme.primaryText }]} numberOfLines={3}>
-              {post.description}
-            </Text>
-            <View style={styles.buttonSection}>
-              <Button text='Ir para mapa' variant='goToMap' size={'small'}/>
-              <Button text='Resgatado' variant='blue' size={'small'}/>
-            </View>
+            ) : (
+              <View style={styles.mainContent}>
+                <View style={styles.nameTag}>
+                  <Text style={[styles.name, { color: theme.primaryText, marginBottom: 8 }]}>{post.name}</Text>
+                </View>
+                <View style={styles.infoChips}>
+                  <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{'Data do evento: ' + post.date}</Text></View>
+                  <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{'Endereço: ' + post.address}</Text></View>
+                  {post.phoneContact !== 'Não possui' &&
+                    <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{'Contato: ' + post.phoneContact}</Text></View>
+                  }
+                </View>
+                <Text numberOfLines={footer ? undefined : 3}
+                  style={[
+                    styles.description,
+                    { color: theme.primaryText },
+                    footer
+                      ? {marginBottom: theme.name === 'dark' ? 2 : 22}
+                      : {marginBottom: 24}
+                  ]}
+                >
+                  {post.description}
+                </Text>
+              </View>
+            )}
           </View>
+
+          {footer}
+
           {pressed && (<View pointerEvents="none" style={styles.overlay}/>)}
         </View>
       )}
@@ -91,16 +153,15 @@ const styles = StyleSheet.create({
   pressable: {
     marginBottom: 16
   },
-  postContainer: {
-    width: 343,
-    height: 656,
-    borderRadius: 16,
-    overflow: 'hidden'
-  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.15)',
     borderRadius: 16
+  },
+  postContainer: {
+    width: 343,
+    borderRadius: 16,
+    overflow: 'hidden'
   },
   header: {
     flexDirection: 'row',
@@ -123,28 +184,34 @@ const styles = StyleSheet.create({
     width: 343,
     height: 250
   },
+  mainContent: {
+    paddingHorizontal: 16
+  },
   nameTag: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
     marginTop: 8,
     marginBottom: 2,
+  },
+  name: {
+    flex: 1,
+    flexWrap: 'wrap',
+    ...fontStyles.title_2
   },
   tag: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 0,
     marginTop: 3,
     gap: 8
   },
-  lastSeen: {
-    paddingHorizontal: 16,
+  date: {
     marginBottom: 8,
     ...fontStyles.postSubtitle
   },
   infoChips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 16,
     marginBottom: 16,
     gap: 6
   },
@@ -155,13 +222,11 @@ const styles = StyleSheet.create({
     borderRadius: 16
   },
   description: {
-    paddingHorizontal: 16,
-    marginBottom: 20,
     ...fontStyles.postDescription
   },
   buttonSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    marginBottom: 24
   }
 });

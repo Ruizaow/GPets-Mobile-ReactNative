@@ -24,7 +24,7 @@ export default function SelectUser({ navigation, onSelectOng }) {
             </Text>
           </View>
           <View style={styles.buttonArea}>
-            <Button text='Pessoa Física' variant='disabled'/>
+            <Button text='Pessoa Física' variant='disabled' isDisabled={true}/>
             <Button text='ONG’s' variant='blue' onPress={onSelectOng}/>
           </View>
           <StatusBar style='auto'/>

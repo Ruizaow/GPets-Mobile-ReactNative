@@ -23,6 +23,11 @@ export const fontStyles = StyleSheet.create({
     fontSize: 20,
     color: colors.dark
   },
+  title_5: {
+    fontFamily: 'Geologica-Bold',
+    fontSize: 28,
+    color: colors.dark
+  },
   subtitle_1: {
     fontFamily: 'Geologica-Medium',
     fontSize: 16,

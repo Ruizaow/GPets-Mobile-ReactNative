@@ -1,6 +1,5 @@
 import { StyleSheet, View, Text } from 'react-native';
 import { Trash } from 'lucide-react-native';
-import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
 import { SelectState } from '@components/selectState';
@@ -10,13 +9,10 @@ import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export default function LocationStep({ onBack, onGoToImageStep }) {
+export default function LocationStep({ location, onChange, onGoBack, onGoNext, onDiscard }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
-
-  const [addressText, setAddressText] = useState('Toque no mapa para selecionar o local');
-  const [hasLocation, setHasLocation] = useState(false);
 
   async function handleLocationPress({ latitude, longitude }) {
     try {
@@ -49,27 +45,28 @@ export default function LocationStep({ onBack, onGoToImageStep }) {
 
         const formattedAddress = `${street}${number}${cityName}${state}${cep}`;
 
-        setAddressText(formattedAddress);
+        onChange({ address: formattedAddress, latitude, longitude });
       } else {
-        setAddressText('Endereço não encontrado');
+        onChange({ address: 'Endereço não encontrado', latitude, longitude });
       }
-      setHasLocation(true);
     }
     catch (error) {
-      setAddressText('Erro ao obter endereço');
+      onChange({ address: 'Erro ao obter endereço' });
     }
   }
 
   return (
-    <View style={[styles.situationStep, { backgroundColor: theme.background }]}>
+    <View style={[styles.stepContainer, { backgroundColor: theme.background }]}>
       <GoBackHeader
         headerTitle={'Reportar animal'}
-        onPress={onBack}
+        onPress={onGoBack}
         showLineDivision={false}
         icon={Trash}
         iconColor={colors.red}
+        onPressIcon={onDiscard}
       />
       <SelectState selectedState={'Local'}/>
+
       <View style={styles.content}>
         <Text style={[fontStyles.title_3, {color: theme.primaryText}]}>
           Onde ele foi visto pela última vez?
@@ -78,23 +75,34 @@ export default function LocationStep({ onBack, onGoToImageStep }) {
           Informe clicando no mapa abaixo:
         </Text>
         <View style={[styles.mapView, { borderColor: theme.primaryText }]}>
-          <Map useMarkers={false} onPressLocation={handleLocationPress}/>
+          <Map
+            useMarkers={false}
+            onPressLocation={handleLocationPress}
+            coordinateLat={location.latitude}
+            coordinateLng={location.longitude}
+          />
         </View>
         <Text style={[styles.adressText, {color: theme.primaryText}]}>
-          {addressText}
+          {location.address || 'Toque no mapa para selecionar o local'}
         </Text>
-        {hasLocation && (
-          <View style={styles.continueButton}>
-            <Button text='Continuar' variant='blueBeige' size={'custom'} onPress={onGoToImageStep}/>
-          </View>
-        )}
+
+        <View style={styles.continueButton}>
+          <Button
+            text='Continuar'
+            variant={Boolean(location.latitude) ? 'blueBeige' : 'disabled'}
+            size={'custom'}
+            onPress={onGoNext}
+            isDisabled={!Boolean(location.latitude)}
+          />
+        </View>
       </View>
+      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  situationStep: {
+  stepContainer: {
     flex: 1
   },
   content: {
@@ -103,8 +111,7 @@ const styles = StyleSheet.create({
     gap: 12
   },
   mapView: {
-    marginTop: 12,
-    marginBottom: 12,
+    marginVertical: 12,
     width: 343,
     height: 310,
     borderWidth: 1,
@@ -113,7 +120,7 @@ const styles = StyleSheet.create({
   },
   adressText: {
     ...fontStyles.subtitle_2,
-    marginBottom: 16
+    marginBottom: 20
   },
   continueButton: {
     flexDirection: 'row',

@@ -17,8 +17,12 @@ export default function SelectPost({ navigation }) {
         Que tipo de postagem {'\n'}você deseja fazer hoje?
       </Text>
       <View style={styles.buttons}>
-        <Button text='Evento/publicidade' variant='blue' size={'medium'} onPress={() => navigation.navigate('PostForm')}/>
-        <Button text='Reportar animal' variant='goToMap' size={'medium'} onPress={() => navigation.navigate('PostForm')}/>
+        <Button text='Evento/publicidade' variant='blue' size={'medium'}
+          onPress={() => navigation.navigate('PostForm', { postType: 'Evento/publicidade' })}
+        />
+        <Button text='Reportar animal' variant='goToMap' size={'medium'}
+          onPress={() => navigation.navigate('PostForm', { postType: 'Reportar animal' })}
+        />
       </View>
     </View>
   );
