@@ -98,4 +98,19 @@ export const fontStyles = StyleSheet.create({
     fontSize: 16,
     color: colors.darkGrey
   },
+  smallTitle_1: {
+    fontFamily: 'Geologica-Bold',
+    fontSize: 12.6,
+    color: colors.dark
+  },
+  smallTitle_2: {
+    fontFamily: 'Geologica-Medium',
+    fontSize: 9.45,
+    color: colors.dark
+  },
+  smallSubtitle: {
+    fontFamily: 'Geologica-Medium',
+    fontSize: 7.35,
+    color: colors.darkGrey
+  }
 });

@@ -40,7 +40,7 @@ export function Sidebar({ navigation, onGoTo, onCloseSidebar, isBackArrowDisable
       title: 'Mensagens'
     },
     Bookmarks: {
-      icon: <Star size={24} color={colors.disabled}/>,
+      icon: <Star size={24} color={theme.primaryText}/>,
       title: 'Salvos'
     },
     Settings: {
@@ -60,13 +60,17 @@ export function Sidebar({ navigation, onGoTo, onCloseSidebar, isBackArrowDisable
           <BackArrow text='Fechar menu' onPress={onCloseSidebar} isDisabled={isBackArrowDisabled}/>
         </View>
 
-        <TouchableOpacity style={[styles.profileCard, { borderColor: theme.border }]}>
+        <TouchableOpacity
+          style={[styles.profileCard, { borderColor: theme.border }]}
+          onPress={() => navigation.navigate('Profile')}
+        >
           <Image
+            source={require('@assets/images/gpets-profile-picture.png')}
             style={[styles.profilePicture, {
               borderWidth: theme.name === 'dark' ? 1 : 0,
               borderColor: theme.name === 'dark' ? colors.white : 'transparent'
             }]}
-            source={require('@assets/images/gpets-profile-picture.png')}/>
+          />
           <View>
             <Text style={[fontStyles.subtitle_1, { color: theme.primaryText }, { lineHeight: 16 }]}>Meu perfil</Text>
             <Text style={[fontStyles.postSubtitle, { color: theme.primaryText }]}>Clique para visualizar perfil</Text>
@@ -75,11 +79,11 @@ export function Sidebar({ navigation, onGoTo, onCloseSidebar, isBackArrowDisable
 
         <View style={styles.menuList}>
           {Object.entries(menuItems).map(([key, item]) => (
-            <TouchableOpacity key={key} onPress={() => {handleSelectItem(key)}}>
+            <TouchableOpacity key={key} onPress={() => {handleSelectItem(key)}} disabled={item.title === 'Configurações'}>
               <View style={styles.menuItem}>
                 <View style={styles.itemNameIcon}>
                   {item.icon}
-                  <Text style={item.title === 'Salvos' || item.title === 'Configurações'
+                  <Text style={item.title === 'Configurações'
                     ? [fontStyles.subtitle_1, { color: colors.disabled }]
                     : [fontStyles.subtitle_1, { color: theme.primaryText }]}
                   >{item.title}</Text>
@@ -87,7 +91,7 @@ export function Sidebar({ navigation, onGoTo, onCloseSidebar, isBackArrowDisable
                 { item.title === 'Alto contraste' ? (
                   <Switch isActive={theme.name === 'dark'} onToggle={toggleTheme}/>
                 ) : (
-                  <ChevronRight size={24} color={item.title === 'Salvos' || item.title === 'Configurações'
+                  <ChevronRight size={24} color={item.title === 'Configurações'
                     ? colors.disabled
                     : theme.primaryText}/>
                 )}

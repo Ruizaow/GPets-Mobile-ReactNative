@@ -8,8 +8,8 @@ import ChangePassword from './authViews/ChangePassword';
 import { useKeyboardAnimation } from '@hooks/useKeyboardAnimation';
 
 export default function Auth({ navigation }) {
-  const [view, setView] = useState('SelectUser');
-  const goTo = (viewName) => setView(viewName);
+  const [currentView, setCurrentView] = useState('SelectUser');
+  const goTo = (viewName) => setCurrentView(viewName);
   
   const keyboardConfigByView = {
     Login: { enabled: true, offset: 245 },
@@ -17,20 +17,20 @@ export default function Auth({ navigation }) {
     ForgotPassword: { enabled: true, offset: 300 },
     ChangePassword: { enabled: true, offset: 265 },
   };
-  const keyboardConfig = keyboardConfigByView[view] ?? { enabled: false };
+  const keyboardConfig = keyboardConfigByView[currentView] ?? { enabled: false };
   const { animatedOffset, keyboardHeight } = useKeyboardAnimation(keyboardConfig);
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>
-          {view === 'SelectUser' && (
+          {currentView === 'SelectUser' && (
             <SelectUser
               navigation={navigation}
               onSelectOng={() => goTo('Login')}
             />
           )}
-          {view === 'Login' && (
+          {currentView === 'Login' && (
             <Login
               navigation={navigation}
               animatedOffset={animatedOffset}
@@ -40,20 +40,20 @@ export default function Auth({ navigation }) {
               onGoToForgotPassword={() => goTo('ForgotPassword')}
             />
           )}
-          {view === 'SignUp' && (
+          {currentView === 'SignUp' && (
             <SignUp
               animatedOffset={animatedOffset}
               onBackToLogin={() => goTo('Login')}
             />
           )}
-          {view === 'ForgotPassword' && (
+          {currentView === 'ForgotPassword' && (
             <ForgotPassword
               animatedOffset={animatedOffset}
               onBackToLogin={() => goTo('Login')}
               onGoToChangePassword={() => goTo('ChangePassword')}
             />
           )}
-          {view === 'ChangePassword' && (
+          {currentView === 'ChangePassword' && (
             <ChangePassword 
               animatedOffset={animatedOffset}
               onBackToLogin={() => goTo('Login')}

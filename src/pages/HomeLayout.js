@@ -90,7 +90,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* PAGINA + NAVBAR */}
       <Animated.View style={[styles.pageColumn, { transform: [{ translateX: translateXBackground }] }]}>
-        <TopNavbar onOpenSidebar={openSidebar} isMenuDisabled={isMenuLocked}/>
+        <TopNavbar navigation={navigation} onOpenSidebar={openSidebar} isMenuDisabled={isMenuLocked}/>
         <ScrollView style={styles.pageContent}>
           {children && React.cloneElement(children, {openKebabMenu})}
         </ScrollView>

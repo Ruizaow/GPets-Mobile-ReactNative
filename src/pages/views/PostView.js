@@ -11,7 +11,7 @@ import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export default function PostView({ route, navigation }) {
-  const { post } = route.params;
+  const { post, originRoute } = route.params;
   const { theme } = useTheme();
 
   const fontsLoaded = useFontsCustom();
@@ -59,9 +59,17 @@ export default function PostView({ route, navigation }) {
     setModal(commentId);
   }
 
+  function handleGoBack() {
+    if (originRoute) {
+      navigation.navigate(originRoute);
+    } else {
+      navigation.navigate('Home');
+    }
+  }
+
   return (
     <View style={[styles.postView, { backgroundColor: theme.background }]}>
-      <GoBackHeader headerTitle={'Publicação'} onPress={() => navigation.navigate('Home')}/>
+      <GoBackHeader headerTitle={'Publicação'} onPress={handleGoBack}/>
       
       <ScrollView>
         <View style={styles.postWrapper}>

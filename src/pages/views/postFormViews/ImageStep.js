@@ -1,4 +1,3 @@
-import * as ImagePicker from 'expo-image-picker';
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import { Trash, ImagePlus } from 'lucide-react-native';
 import { useState } from 'react';
@@ -9,6 +8,7 @@ import { Modal } from '@components/modal';
 import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { handlePickImage } from '@handlers/handlePickImage';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export default function ImageStep({ postType, imageUri, onChangeImage, onGoBack, onGoNext, onDiscard, hasUnsavedChanges, navigation }) {
@@ -25,24 +25,6 @@ export default function ImageStep({ postType, imageUri, onChangeImage, onGoBack,
       setShowModal(true);
     } else {
       navigation.navigate('Home');
-    }
-  }
-
-  async function handlePickImage() {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (status !== 'granted') {
-      alert('Precisamos de permissão para acessar sua galeria.');
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.8,
-    });
-    if (!result.canceled) {
-      onChangeImage(result.assets[0].uri);
     }
   }
 
@@ -83,7 +65,7 @@ export default function ImageStep({ postType, imageUri, onChangeImage, onGoBack,
           {imageUri ? (
             <Image style={styles.imagePreview} source={{ uri: imageUri }} resizeMode='cover'/>
           ) : (
-            <TouchableOpacity style={styles.addButton} onPress={handlePickImage}>
+            <TouchableOpacity style={styles.addButton} onPress={() => handlePickImage(onChangeImage)}>
               <ImagePlus size={24} color={colors.white}/>
               <View style={styles.buttonText}>
                 <Text style={styles.label}>Adicionar imagem</Text>

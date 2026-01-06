@@ -1,13 +1,12 @@
-export const mockedMessages = {
-  message1: {
+export const mockedMessages = [
+  {
     userProfilePicture: require('@assets/images/ProfilePicture1.png'),
     userUsername: 'Joana Dark',
     messages: [
       { content: 'Bom dia!!', timestamp: '09:10' },
     ],
   },
-
-  message2: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture2.png'),
     userUsername: 'Vitória Vasconcelos',
     messages: [
@@ -16,8 +15,7 @@ export const mockedMessages = {
       { content: 'Qualquer coisa me avisa.', timestamp: '10:12' },
     ],
   },
-
-  message3: {
+  {
     userProfilePicture: require('@assets/images/gpets-profile-picture.png'),
     userUsername: 'GPets',
     messages: [
@@ -26,16 +24,14 @@ export const mockedMessages = {
       { content: 'Obrigado por avisar.', timestamp: '14:39' },
     ],
   },
-
-  message4: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture4.png'),
     userUsername: 'Rafael Ferreira',
     messages: [
       { content: 'Boa tarde!', timestamp: '15:02' },
     ],
   },
-
-  message5: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture5.png'),
     userUsername: 'Lucas Almeida',
     messages: [
@@ -44,8 +40,7 @@ export const mockedMessages = {
       { content: 'Me avisa, qualquer coisa :)', timestamp: '16:45' },
     ],
   },
-
-  message6: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture6.png'),
     userUsername: 'Marina Costa',
     messages: [
@@ -55,8 +50,7 @@ export const mockedMessages = {
       { content: 'Estava perto do mercado.', timestamp: '18:20' },
     ],
   },
-
-  message7: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture7.png'),
     userUsername: 'Rafael Nogueira',
     messages: [
@@ -64,8 +58,7 @@ export const mockedMessages = {
       { content: 'Consegue me passar mais detalhes?', timestamp: '19:10' },
     ],
   },
-
-  message8: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture8.png'),
     userUsername: 'Camila Ribeiro',
     messages: [
@@ -74,8 +67,7 @@ export const mockedMessages = {
       { content: 'Vamos achar esse pet!', timestamp: '20:05' },
     ],
   },
-
-  message9: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture9.png'),
     userUsername: 'Pedro Martins',
     messages: [
@@ -84,16 +76,14 @@ export const mockedMessages = {
       { content: 'Acho que encontrei o cachorro.', timestamp: '21:30' },
     ],
   },
-
-  message10: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture1.png'),
     userUsername: 'Ana Paula Souza',
     messages: [
       { content: 'Olá!', timestamp: '08:15' },
     ],
   },
-
-  message11: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture4.png'),
     userUsername: 'Bruno Henrique',
     messages: [
@@ -102,8 +92,7 @@ export const mockedMessages = {
       { content: 'Queria ajudar no resgate.', timestamp: '09:40' },
     ],
   },
-
-  message12: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture2.png'),
     userUsername: 'Carolina Mendes',
     messages: [
@@ -111,8 +100,7 @@ export const mockedMessages = {
       { content: 'Vi sua publicação.', timestamp: '10:55' },
     ],
   },
-
-  message13: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture9.png'),
     userUsername: 'Diego Azevedo',
     messages: [
@@ -121,8 +109,7 @@ export const mockedMessages = {
       { content: 'Pode me ligar?', timestamp: '13:18' },
     ],
   },
-
-  message14: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture8.png'),
     userUsername: 'Eduarda Lima',
     messages: [
@@ -130,8 +117,7 @@ export const mockedMessages = {
       { content: 'Espero que consigam encontrar logo.', timestamp: '14:02' },
     ],
   },
-
-  message15: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture5.png'),
     userUsername: 'Felipe Rocha',
     messages: [
@@ -140,8 +126,7 @@ export const mockedMessages = {
       { content: 'Conte comigo.', timestamp: '18:47' },
     ],
   },
-
-  message16: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture6.png'),
     userUsername: 'Gabriela Torres',
     messages: [
@@ -149,8 +134,7 @@ export const mockedMessages = {
       { content: 'Você precisa de ajuda com algo?', timestamp: '19:55' },
     ],
   },
-
-  message17: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture7.png'),
     userUsername: 'Henrique Pires',
     messages: [
@@ -159,8 +143,7 @@ export const mockedMessages = {
       { content: 'Talvez valha conferir.', timestamp: '20:40' },
     ],
   },
-
-  message18: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture1.png'),
     userUsername: 'Isabela Fontes',
     messages: [
@@ -168,8 +151,7 @@ export const mockedMessages = {
       { content: 'Compartilhei no grupo do bairro.', timestamp: '21:05' },
     ],
   },
-
-  message19: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture9.png'),
     userUsername: 'João Victor',
     messages: [
@@ -177,8 +159,7 @@ export const mockedMessages = {
       { content: 'Alguma novidade?', timestamp: '22:10' },
     ],
   },
-
-  message20: {
+  {
     userProfilePicture: require('@assets/images/ProfilePicture2.png'),
     userUsername: 'Larissa Monteiro',
     messages: [
@@ -188,4 +169,4 @@ export const mockedMessages = {
       { content: 'Parecia bem cuidado.', timestamp: '07:25' },
     ],
   },
-};
+];

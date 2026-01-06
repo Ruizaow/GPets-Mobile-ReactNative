@@ -17,8 +17,8 @@ export default function MessagesList({ navigation, onGoToPrivateChat }) {
       <GoBackHeader headerTitle={'Mensagens'} onPress={() => navigation.navigate('Home')}/>
       <ScrollView>
         <View style={styles.messages}>
-          {Object.entries(mockedMessages).map(([key, message]) => (
-            <View style={styles.messageSection} key={key}>
+          {mockedMessages.map((message, index) => (
+            <View style={styles.messageSection} key={index}>
               <TouchableOpacity onPress={() => onGoToPrivateChat(message)}>
                 <View style={styles.userInfo}>
                   <Image

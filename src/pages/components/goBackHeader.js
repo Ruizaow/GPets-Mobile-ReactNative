@@ -5,7 +5,7 @@ import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export function GoBackHeader({ headerTitle, onPress, showLineDivision = true, icon: Icon = null, iconColor, onPressIcon }) {
+export function GoBackHeader({ headerTitle, onPress, showLineDivision=true, icon: Icon=null, iconColor, onPressIcon }) {
   const { theme } = useTheme();
 
   const fontsLoaded = useFontsCustom();

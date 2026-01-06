@@ -65,36 +65,49 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
       title: 'Compartilhar'
     }
   };
-  const menuItems =
-    type === 'post'
-      ? ['delete', 'bookmark', 'report', 'share']
-      : data?.isOwner
-        ? ['delete']
-        : ['report'];
+
+  const menuHeightByType = {
+    post: 320,
+    comment: 192,
+    notification: 192,
+  };
+  
+  const menuItems = (() => {
+    switch (type) {
+      case 'post':
+        return ['delete', 'bookmark', 'report', 'share'];
+      case 'comment':
+        return data?.isOwner ? ['delete'] : ['report'];
+      case 'notification':
+        return ['delete'];
+      default:
+        return [];
+    }
+  })();
 
   return (
-    <Animated.View style={[styles.overlay,
-      theme.name === 'light'
-        ? { backgroundColor: 'rgba(0, 0, 0, 0.6)' }
-        : { backgroundColor: 'rgba(255, 255, 255, 0.4)' },
-      { opacity: overlayOpacity }
-    ]}>
+    <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
       <TouchableOpacity style={StyleSheet.absoluteFill} onPress={handleClose}/>
-      <Animated.View style={[styles.kebabMenu, {
+      <Animated.View style={[
+        styles.kebabMenu, {
           transform: [{ translateY }],
-          backgroundColor: theme.background
-        }, type === 'post' ? { height: 320 } : { height: 192 }
+          backgroundColor: theme.background,
+          height: menuHeightByType[type]
+        }
       ]}>
-
         <View style={[styles.greyBar, { backgroundColor: theme.lineDivision }]}/>
 
         <View style={styles.menuItems}>
           {menuItems.map((key) => {
             const item = allMenuItems[key];
+            if (!item) return null;
+
             return (
               <TouchableOpacity key={key} style={styles.menuItem}
                 onPress={() => {
-                  data.isOwner && onDelete?.(data.id);
+                  if (key === 'delete') {
+                    onDelete?.(data.id);
+                  }
                   handleClose();
                 }}
               >
@@ -116,14 +129,14 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end'
   },
   kebabMenu: {
     position: 'absolute',
     width: '100%',
-    height: 320,
     borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopRightRadius: 32
   },
   greyBar: {
     alignSelf: 'center',

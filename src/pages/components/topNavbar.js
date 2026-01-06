@@ -4,7 +4,7 @@ import { useTheme } from '@context/ThemeContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function TopNavbar({ onOpenSidebar, isMenuDisabled }) {
+export function TopNavbar({ navigation, onOpenSidebar, isMenuDisabled }) {
   const { theme } = useTheme();
 
   return (
@@ -17,16 +17,16 @@ export function TopNavbar({ onOpenSidebar, isMenuDisabled }) {
           <Search size={24} color={theme.navBackground}/>
           <Text style={[fontStyles.subtitle_1, { color: theme.navBackground }]}>Buscar</Text>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
           <Bell size={24} color={theme.primaryText}/>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image
+            source={require('@assets/images/gpets-profile-picture.png')}
             style={[styles.profilePicture, {
               borderWidth: theme.name === 'dark' ? 1 : 0,
               borderColor: theme.name === 'dark' ? colors.white : 'transparent'
             }]}
-            source={require('@assets/images/gpets-profile-picture.png')}
           />
         </TouchableOpacity>
       </View>

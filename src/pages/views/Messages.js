@@ -3,10 +3,10 @@ import MessagesList from './messagesViews/MessagesList';
 import PrivateChat from './messagesViews/PrivateChat';
 
 export default function Messages({ navigation }) {
-  const [view, setView] = useState('MessagesList');
+  const [currentView, setCurrentView] = useState('MessagesList');
   const [selectedMessage, setSelectedMessage] = useState(null);
 
-  const goTo = (viewName) => setView(viewName);
+  const goTo = (viewName) => setCurrentView(viewName);
 
   function goToPrivateChat(messageData) {
     setSelectedMessage(messageData);
@@ -15,13 +15,13 @@ export default function Messages({ navigation }) {
 
   return (
     <>
-      {view === 'MessagesList' && (
+      {currentView === 'MessagesList' && (
         <MessagesList
           navigation={navigation}
           onGoToPrivateChat={goToPrivateChat}
         />
       )}
-      {view === 'PrivateChat' && selectedMessage && (
+      {currentView === 'PrivateChat' && selectedMessage && (
         <PrivateChat
           onBack={() => goTo('MessagesList')}
           messageData={selectedMessage}

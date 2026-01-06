@@ -13,10 +13,11 @@ export default function PostForm({ navigation, route }) {
   const { postType } = route.params;
 
   const flow = FLOWS[postType];
-  const [stepIndex, setStepIndex] = useState(0);
-  const currentStep = flow[stepIndex];
-  const goNext = () => setStepIndex(i => i + 1);
-  const goBack = () => setStepIndex(i => i - 1);
+  const [viewIndex, setViewIndex] = useState(0);
+  
+  const goNext = () => setViewIndex(i => i + 1);
+  const goBack = () => setViewIndex(i => i - 1);
+  const currentView = flow[viewIndex];
 
   const [showModal, setShowModal] = useState(false);
   const [postData, setPostData] = useState({
@@ -41,7 +42,7 @@ export default function PostForm({ navigation, route }) {
 
   return (
     <>
-      {currentStep === 'SituationStep' && (
+      {currentView === 'SituationStep' && (
         <SituationStep
           value={postData.situation}
           onChange={(situation) =>
@@ -53,7 +54,7 @@ export default function PostForm({ navigation, route }) {
           navigation={navigation}
         />
       )}
-      {currentStep === 'LocationStep' && (
+      {currentView === 'LocationStep' && (
         <LocationStep
           location={postData.location}
           onChange={(location) => updatePostData('location', location)}
@@ -62,7 +63,7 @@ export default function PostForm({ navigation, route }) {
           onDiscard={() => setShowModal(true)}
         />
       )}
-      {currentStep === 'ImageStep' && (
+      {currentView === 'ImageStep' && (
         <ImageStep
           postType={postType}
           imageUri={postData.imageUri}
@@ -76,7 +77,7 @@ export default function PostForm({ navigation, route }) {
           navigation={navigation}
         />
       )}
-      {currentStep === 'InformationStep' && (
+      {currentView === 'InformationStep' && (
         <InformationStep
           postType={postType}
           data={postData.information}
@@ -88,7 +89,7 @@ export default function PostForm({ navigation, route }) {
           onDiscard={() => setShowModal(true)}
         />
       )}
-      {currentStep === 'PreviewStep' && (
+      {currentView === 'PreviewStep' && (
         <PreviewStep
           postType={postType}
           postData={postData}
@@ -97,7 +98,7 @@ export default function PostForm({ navigation, route }) {
           onDiscard={() => setShowModal(true)}
         />
       )}
-      {currentStep === 'SucessMessage' && (
+      {currentView === 'SucessMessage' && (
         <SucessMessage
           navigation={navigation}
         />

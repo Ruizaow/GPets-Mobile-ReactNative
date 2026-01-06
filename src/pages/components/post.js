@@ -24,7 +24,7 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
   }
 
   return (
-    <Pressable style={styles.pressable} onPress={() => navigation.navigate('PostView', { post })} disabled={isOnPostForm || Boolean(footer)}>
+    <Pressable style={styles.pressable} onPress={() => navigation.navigate('PostView', { post, originRoute: 'Home' })} disabled={isOnPostForm || Boolean(footer)}>
       {({ pressed }) => (
         <View
           style={[

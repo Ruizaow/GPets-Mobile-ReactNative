@@ -9,8 +9,8 @@ export default function Feed({ navigation, openKebabMenu }) {
 
   return (
     <View style={styles.feed}>
-      {Object.entries(mockedPosts).map(([key, post]) => (
-        <Post key={key} post={post} onOpenMenu={() => openKebabMenu('post', post)} navigation={navigation}/>
+      {mockedPosts.map((post, index) => (
+        <Post key={index} post={post} onOpenMenu={() => openKebabMenu('post', post)} navigation={navigation}/>
       ))}
     </View>
   );

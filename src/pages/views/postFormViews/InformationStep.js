@@ -9,6 +9,8 @@ import { Radio } from '@components/radio';
 import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { hasAtLeastOneLetter } from '@utils/textInputValidation';
+import { formatPhone, isPhoneValid } from '@utils/phoneUtils';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export default function InformationStep({ postType, data, dataAddress, onChange, onChangeAddress, onGoBack, onGoNext, onDiscard }) {
@@ -52,11 +54,6 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
       updateData('usuarioTutor', null);
     }
   }, [data.nomeTutor]);
-
-  function hasAtLeastOneLetter(value) {
-    if (!value) return false;
-    return /[a-zA-ZÀ-ÿ]/.test(value);
-  }
   
   function isLeapYear(year) {
     if (!year) return false;
@@ -92,29 +89,6 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
     }
   }, [data.mes, data.ano]);
 
-  function formatPhone(value) {
-    const numbers = value.replace(/\D/g, '').slice(0, 11);
-
-    if (numbers.length <= 2) {
-      return numbers ? `(+${numbers}` : '';
-    }
-
-    if (numbers.length <= 7) {
-      return `(+${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
-    }
-
-    return `(+${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
-  }
-
-  function isValidPhone(value) {
-    if (value === 'Não possui') return true;
-    if (!value) return false;
-
-    const numbers = value.replace(/\D/g, '');
-    
-    return numbers.length === 11;
-  }
-
   const isPetFormValid =
     (hasAtLeastOneLetter(data.nome) || data.nome === 'Sem nome') &&
     (hasAtLeastOneLetter(data.raca) || data.raca === 'Sem raça' || data.raca === 'Raça desconhecida') &&
@@ -122,14 +96,14 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
     isValidDate(data.dia, data.mes, data.ano) &&
     (hasAtLeastOneLetter(data.nomeTutor) || data.nomeTutor === 'Não possui') &&
     (data.usuarioTutor || data.nomeTutor === 'Não possui') &&
-    isValidPhone(data.telefone);
+    isPhoneValid(data.telefone);
   
   const isEventFormValid =
     hasAtLeastOneLetter(data.nome) &&
     hasAtLeastOneLetter(data.descricao) &&
     hasAtLeastOneLetter(dataAddress) &&
     isValidDate(data.dia, data.mes, data.ano) &&
-    isValidPhone(data.telefone);
+    isPhoneValid(data.telefone);
 
   return (
     <View style={[styles.stepContainer, { backgroundColor: theme.background }]}>
@@ -192,32 +166,24 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
               </Text>
             </View>
 
-            <View style={styles.infoArea}>
-              <FormInputField
-                label='Nome do evento'
-                required
-                value={data.nome}
-                onChangeText={text => updateData('nome', text)}
-              />
-            </View>
-
-            <View style={styles.infoArea}>
-              <FormInputField
-                label='Descrição'
-                required
-                value={data.descricao}
-                onChangeText={text => updateData('descricao', text)}
-              />
-            </View>
-
-            <View style={styles.infoArea}>
-              <FormInputField
-                label='Local do evento'
-                required
-                value={dataAddress}
-                onChangeText={(text => updateDataAdress(text))}
-              />
-            </View>
+            <FormInputField
+              label='Nome do evento'
+              required
+              value={data.nome}
+              onChangeText={text => updateData('nome', text)}
+            />
+            <FormInputField
+              label='Descrição'
+              required
+              value={data.descricao}
+              onChangeText={text => updateData('descricao', text)}
+            />
+            <FormInputField
+              label='Local do evento'
+              required
+              value={dataAddress}
+              onChangeText={(text => updateDataAdress(text))}
+            />
 
             <View style={styles.infoArea}>
               <View style={styles.labelRow}>
@@ -406,14 +372,12 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
               </View>
             </View>
 
-            <View style={styles.infoArea}>
-              <FormInputField
-                label='Descrição'
-                required
-                value={data.descricao}
-                onChangeText={text => updateData('descricao', text)}
-              />
-            </View>
+            <FormInputField
+              label='Descrição'
+              required
+              value={data.descricao}
+              onChangeText={text => updateData('descricao', text)}
+            />
 
             <View style={styles.infoArea}>
               <View style={styles.labelRow}>
