@@ -71,7 +71,7 @@ export default function EditProfile({ initialData, onCancel, onSave }) {
               }]}
             />
           </TouchableOpacity>
-          <Text style={fontStyles.postTitle}>Editar foto</Text>
+          <Text style={[fontStyles.postTitle, { color: theme.primaryText } ]}>Editar foto</Text>
         </View>
 
         <View style={styles.textInputs}>

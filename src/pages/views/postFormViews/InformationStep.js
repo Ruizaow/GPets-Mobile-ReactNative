@@ -95,7 +95,7 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
     hasAtLeastOneLetter(data.descricao) &&
     isValidDate(data.dia, data.mes, data.ano) &&
     (hasAtLeastOneLetter(data.nomeTutor) || data.nomeTutor === 'Não possui') &&
-    (data.usuarioTutor || data.nomeTutor === 'Não possui') &&
+    (data.usuarioTutor !== null || data.nomeTutor === 'Não possui') &&
     isPhoneValid(data.telefone);
   
   const isEventFormValid =
@@ -473,14 +473,14 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
               </View>
               <View style={styles.radiosLine}>
                 <Radio
-                  selected={data.usuarioTutor === 'Sou o tutor' && data.nomeTutor !== 'Não possui'}
-                  onPress={() => toggleRadio('usuarioTutor', 'Sou o tutor')}
+                  selected={data.usuarioTutor === true && data.nomeTutor !== 'Não possui'}
+                  onPress={() => toggleRadio('usuarioTutor', true)}
                   label='Sim'
                   disabled={data.nomeTutor === 'Não possui'}
                 />
                 <Radio
-                  selected={data.usuarioTutor === 'Não sou o tutor' && data.nomeTutor !== 'Não possui'}
-                  onPress={() => toggleRadio('usuarioTutor', 'Não sou o tutor')}
+                  selected={data.usuarioTutor === false && data.nomeTutor !== 'Não possui'}
+                  onPress={() => toggleRadio('usuarioTutor', false)}
                   label='Não'
                   disabled={data.nomeTutor === 'Não possui'}
                 />

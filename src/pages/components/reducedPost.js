@@ -4,7 +4,7 @@ import { useTheme } from '@context/ThemeContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function ReducedPost({ post, navigation }) {
+export function ReducedPost({ post, navigation, originRoute, currentPagePost, currentPageBookmark }) {
   const { theme } = useTheme();
 
   function getTagColor(tag) {
@@ -23,7 +23,16 @@ export function ReducedPost({ post, navigation }) {
   }
 
   return (
-    <Pressable onPress={() => navigation.navigate('PostView', { post, originRoute: 'Profile' })}>
+    <Pressable onPress={() =>
+      navigation.navigate('PostView', {
+        post,
+        originRoute: originRoute,
+        profileState: {
+          currentPagePost,
+          currentPageBookmark,
+        },
+      }
+    )}>
       {({ pressed }) => (
         <View
           style={[
@@ -45,7 +54,7 @@ export function ReducedPost({ post, navigation }) {
               />
               <View>
                 <Text style={[fontStyles.smallTitle_2, { color: theme.primaryText }]}>{post.userUsername}</Text>
-                <Text style={[fontStyles.smallSubtitle, { color: theme.primaryText }]}>{post.timestamp}</Text>
+                <Text style={[fontStyles.smallSubtitle_1, { color: theme.primaryText }]}>{post.timestamp}</Text>
               </View>
             </View>
           </View>
@@ -67,7 +76,7 @@ export function ReducedPost({ post, navigation }) {
             ) : (
               <View style={styles.mainContent}>
                 <View style={styles.nameTag}>
-                  <Text style={[styles.name, { color: theme.primaryText, marginBottom: 8 }]}>{post.name}</Text>
+                  <Text style={[styles.name, { color: theme.primaryText }]}>{post.name}</Text>
                 </View>
               </View>
             )}

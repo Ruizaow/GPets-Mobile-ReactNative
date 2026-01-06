@@ -14,6 +14,8 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
   const [isMenuLocked, setIsMenuLocked] = useState(false);
   const [kebabMenu, setKebabMenu] = useState(null);
 
+  const scrollRef = useRef(null);
+
   const sidebarX = useRef(new Animated.Value(-400)).current;  
   const overlayOpacity = useRef(new Animated.Value(0)).current;
 
@@ -25,18 +27,10 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
     setIsSidebarOpen(true);
 
     Animated.parallel([
-      Animated.timing(sidebarX, {
-        toValue: 0,
-        duration: 450,
-        useNativeDriver: true,
-      }),
+      Animated.timing(sidebarX, { toValue: 0, duration: 450, useNativeDriver: true }),
       Animated.sequence([
         Animated.delay(1),
-        Animated.timing(overlayOpacity, {
-          toValue: 1,
-          duration: 450,
-          useNativeDriver: true,
-        })
+        Animated.timing(overlayOpacity, { toValue: 1, duration: 450, useNativeDriver: true })
       ])
     ]).start(() => {
       setTimeout(() => setIsMenuLocked(false), 0.45);
@@ -50,16 +44,8 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
     setIsMenuLocked(true);
 
     Animated.parallel([
-      Animated.timing(sidebarX, {
-        toValue: -400,
-        duration: 450,
-        useNativeDriver: true,
-      }),
-      Animated.timing(overlayOpacity, {
-        toValue: 0,
-        duration: 450,
-        useNativeDriver: true,
-      })
+      Animated.timing(sidebarX, { toValue: -400, duration: 450, useNativeDriver: true }),
+      Animated.timing(overlayOpacity, { toValue: 0, duration: 450, useNativeDriver: true })
     ]).start(() => {
       setIsSidebarOpen(false)
       setTimeout(() => setIsMenuLocked(false), 0.45);
@@ -80,7 +66,6 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
 
   function handleGoToFromSidebar(viewName) {
     onGoTo(viewName);
-
     requestAnimationFrame(() => {
       closeSidebar();
     });
@@ -91,8 +76,10 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
       {/* PAGINA + NAVBAR */}
       <Animated.View style={[styles.pageColumn, { transform: [{ translateX: translateXBackground }] }]}>
         <TopNavbar navigation={navigation} onOpenSidebar={openSidebar} isMenuDisabled={isMenuLocked}/>
-        <ScrollView style={styles.pageContent}>
-          {children && React.cloneElement(children, {openKebabMenu})}
+        <ScrollView ref={scrollRef} style={styles.pageContent}>
+          {children &&
+            React.cloneElement(children, { openKebabMenu, scrollRef })
+          }
         </ScrollView>
         <BottomNavbar onGoTo={onGoTo} currentView={currentView}/>
       </Animated.View>

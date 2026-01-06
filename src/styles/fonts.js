@@ -108,9 +108,19 @@ export const fontStyles = StyleSheet.create({
     fontSize: 9.45,
     color: colors.dark
   },
-  smallSubtitle: {
+  smallSubtitle_1: {
     fontFamily: 'Geologica-Medium',
     fontSize: 7.35,
     color: colors.darkGrey
+  },
+  smallSubtitle_2: {
+    fontFamily: 'Geologica-Regular',
+    fontSize: 12,
+    color: colors.black
+  },
+  pagination: {
+    fontFamily: 'Geologica-Medium',
+    fontSize: 26,
+    color: colors.darkerDark
   }
 });

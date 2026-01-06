@@ -17,6 +17,7 @@ export const lightTheme = {
   lineDivision: colors.darkGreyAlt,
   navBackground: colors.beige,
   iconBackground: colors.beige,
+  paginationText: colors.darkerDark,
   overlay: 'rgba(0, 0, 0, 0.6)',
 };
 
@@ -37,5 +38,6 @@ export const darkTheme = {
   lineDivision: colors.white,
   navBackground: colors.dark,
   iconBackground: colors.white,
+  paginationText: colors.white,
   overlay: 'rgba(255, 255, 255, 0.2)',
 };

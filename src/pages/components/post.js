@@ -8,6 +8,8 @@ import { fontStyles } from '@styles/fonts';
 export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm=false, footer=null }) {
   const { theme } = useTheme();
 
+  const hasOwnerTag = post.isOwner !== null
+
   function getTagColor(tag) {
     switch (tag) {
       case 'Perdido':
@@ -24,7 +26,10 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
   }
 
   return (
-    <Pressable style={styles.pressable} onPress={() => navigation.navigate('PostView', { post, originRoute: 'Home' })} disabled={isOnPostForm || Boolean(footer)}>
+    <Pressable
+      onPress={() => navigation.navigate('PostView', { post, originRoute: 'Home' })}
+      disabled={isOnPostForm || Boolean(footer)}
+    >
       {({ pressed }) => (
         <View
           style={[
@@ -48,9 +53,24 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
                 }]}
                 source={post.userProfilePicture}
               />
-              <View>
+              <View style={hasOwnerTag && { marginTop: -5 }}>
                 <Text style={[fontStyles.postTitle, { color: theme.primaryText }]}>{post.userUsername}</Text>
-                <Text style={[fontStyles.postSubtitle, { color: theme.primaryText }]}>{post.timestamp}</Text>
+                <Text style={[
+                  fontStyles.postSubtitle, { color: theme.primaryText },
+                  hasOwnerTag && { marginTop: -2 }
+                ]}>
+                  {post.timestamp}
+                </Text>
+                {hasOwnerTag &&
+                  <View style={[
+                    styles.ownerTag,
+                    post.isOwner ? { width: 56 } : { width: 84 }
+                  ]}>
+                    <Text style={fontStyles.smallSubtitle_2}>
+                      {post.isOwner ? 'Tutor' : 'Conhecido'}
+                    </Text>
+                  </View>
+                }
               </View>
             </View>
             {isOnPostForm ? (
@@ -94,7 +114,7 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
                     styles.description,
                     { color: theme.primaryText },
                     footer
-                      ? {marginBottom: theme.name === 'dark' ? -2 : 18}
+                      ? {marginBottom: theme.name === 'dark' ? 0 : 20}
                       : {marginBottom: 20}
                   ]}
                 >
@@ -128,10 +148,7 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
                 <Text numberOfLines={footer ? undefined : 3}
                   style={[
                     styles.description,
-                    { color: theme.primaryText },
-                    footer
-                      ? {marginBottom: theme.name === 'dark' ? 2 : 22}
-                      : {marginBottom: 24}
+                    { color: theme.primaryText, marginBottom: 24 }
                   ]}
                 >
                   {post.description}
@@ -150,14 +167,6 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
 };
 
 const styles = StyleSheet.create({
-  pressable: {
-    marginBottom: 16
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.15)',
-    borderRadius: 16
-  },
   postContainer: {
     width: 343,
     borderRadius: 16,
@@ -179,6 +188,13 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 50
+  },
+  ownerTag: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.green,
+    borderRadius: 100,
+    marginTop: 4
   },
   petImage: {
     width: 343,
@@ -228,5 +244,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 24
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.15)',
+    borderRadius: 16
   }
 });

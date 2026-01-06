@@ -60,8 +60,8 @@ export default function PostView({ route, navigation }) {
   }
 
   function handleGoBack() {
-    if (originRoute) {
-      navigation.navigate(originRoute);
+    if (originRoute === 'Profile' || originRoute === 'Bookmarks') {
+      navigation.navigate(originRoute, { profileState: route.params.profileState });
     } else {
       navigation.navigate('Home');
     }

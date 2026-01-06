@@ -13,6 +13,7 @@ import Profile from '@views/Profile';
 import Messages from '@views/Messages';
 import PostView from '@views/PostView';
 import PostForm from '@views/PostForm';
+import Bookmarks from '@views/Bookmarks';
 import Notifications from '@views/Notifications';
 
 const Stack = createNativeStackNavigator();
@@ -31,6 +32,7 @@ function App() {
               <Stack.Screen name='Messages' component={Messages}/>
               <Stack.Screen name='PostView' component={PostView}/>
               <Stack.Screen name='PostForm' component={PostForm}/>
+              <Stack.Screen name='Bookmarks' component={Bookmarks}/>
               <Stack.Screen name='Notifications' component={Notifications}/>
             </Stack.Navigator>
           </NavigationContainer>
