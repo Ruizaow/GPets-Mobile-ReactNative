@@ -6,7 +6,7 @@ import { colors } from '@styles/colors';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export default function SelectUser({ navigation, onSelectOng }) {
+export default function SelectUser({ navigation, onSelectUser, onSelectOng }) {
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
@@ -24,7 +24,7 @@ export default function SelectUser({ navigation, onSelectOng }) {
             </Text>
           </View>
           <View style={styles.buttonArea}>
-            <Button text='Pessoa Física' variant='disabled' isDisabled={true}/>
+            <Button text='Pessoa Física' variant='disabled' onPress={onSelectUser} isDisabled={true}/>
             <Button text='ONG’s' variant='blue' onPress={onSelectOng}/>
           </View>
           <StatusBar style='auto'/>

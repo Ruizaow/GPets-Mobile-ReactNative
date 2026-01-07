@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isValidCNPJ } from '@utils/cnpj';
 
 export const signUpSchema = z
   .object({
@@ -11,7 +12,8 @@ export const signUpSchema = z
       .email('Email inválido'),
     cnpj: z
       .string()
-      .nonempty('Campo obrigatório'),
+      .min(18, 'CNPJ incompleto')
+      .refine(isValidCNPJ, 'CNPJ inválido'),
     address: z
       .string()
       .nonempty('Campo obrigatório'),

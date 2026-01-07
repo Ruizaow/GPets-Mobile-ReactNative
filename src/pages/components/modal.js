@@ -16,9 +16,7 @@ export function Modal({ text, confirmButton, onClose, onConfirm, hasConfirmButto
   useEffect(() => {
     Animated.parallel([
       Animated.timing(overlayOpacity, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
+        toValue: 1, duration: 100, useNativeDriver: true
       }),
     ]).start();
   }, []);
@@ -26,9 +24,7 @@ export function Modal({ text, confirmButton, onClose, onConfirm, hasConfirmButto
   function handleClose() {
     Animated.parallel([
       Animated.timing(overlayOpacity, {
-        toValue: 0,
-        duration: 100,
-        useNativeDriver: true,
+        toValue: 0, duration: 100, useNativeDriver: true
       }),
     ]).start(() => {
       onClose();
@@ -84,7 +80,8 @@ export function Modal({ text, confirmButton, onClose, onConfirm, hasConfirmButto
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    zIndex: 10
   },
   modalContainer: {
     position: 'absolute',

@@ -125,7 +125,7 @@ export default function ProfileView({ navigation, data, onGoToEditProfile }) {
                   {data.email}
                 </Text>
               </View>
-              <View style={styles.user_phoneContact}>
+              <View style={styles.user_phone}>
                 <Phone size={24} color={theme.secondaryText}/>
                 <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
                   {data.telefone}
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12
   },
-  user_phoneContact: {
+  user_phone: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12

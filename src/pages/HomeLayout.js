@@ -1,3 +1,5 @@
+import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, ScrollView, Animated } from 'react-native';
 import React, { useRef, useState } from 'react';
@@ -6,6 +8,7 @@ import { TopNavbar } from '@components/topNavbar';
 import { Sidebar } from '@components/sidebar';
 import { BottomNavbar } from '@components/bottomNavbar';
 import { KebabMenu } from '@components/kebabMenu';
+import { Modal } from '@components/modal';
 
 export function HomeLayout({ navigation, onGoTo, currentView, children }) {
   const { theme } = useTheme();
@@ -13,6 +16,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMenuLocked, setIsMenuLocked] = useState(false);
   const [kebabMenu, setKebabMenu] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const scrollRef = useRef(null);
 
@@ -71,6 +75,16 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
     });
   }
 
+  async function handleLogout() {
+    try {
+      await SecureStore.deleteItemAsync('token');
+      await AsyncStorage.removeItem('user');
+      navigation.navigate('Start');
+    } catch (error) {
+      alert('Erro ao tentar sair da conta.');
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* PAGINA + NAVBAR */}
@@ -100,7 +114,13 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
           style={[styles.openSidebar, { transform: [{ translateX: sidebarX }] }]}
           pointerEvents={isSidebarOpen ? 'auto' : 'none'}
         >
-          <Sidebar navigation={navigation} onGoTo={handleGoToFromSidebar} onCloseSidebar={closeSidebar} isBackArrowDisabled={isMenuLocked}/>
+          <Sidebar
+            navigation={navigation}
+            onGoTo={handleGoToFromSidebar}
+            onOpenModal={() => setShowModal(true)}
+            onCloseSidebar={closeSidebar}
+            isBackArrowDisabled={isMenuLocked}
+          />
         </Animated.View>
       )}
 
@@ -110,6 +130,16 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
           type={kebabMenu.type}
           data={kebabMenu.payload}
           onClose={closeKebabMenu}
+        />
+      )}
+
+      {/* MODAL */}
+      {showModal && (
+        <Modal
+          text={`Deseja sair de sua conta?`}
+          confirmButton={`Sim, sair`}
+          onClose={() => setShowModal(false)}
+          onConfirm={handleLogout}
         />
       )}
 

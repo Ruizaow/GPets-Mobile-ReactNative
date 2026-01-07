@@ -8,7 +8,7 @@ import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { hasAtLeastOneLetter } from '@utils/textInputValidation';
-import { formatPhone, isPhoneValid } from '@utils/phoneUtils';
+import { formatPhone, isPhoneValid } from '@utils/phone';
 import { handlePickImage } from '@handlers/handlePickImage';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 

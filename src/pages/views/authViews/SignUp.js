@@ -1,3 +1,4 @@
+import { api } from '@api';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Animated, View, Text } from 'react-native';
 import { useState, useEffect } from 'react';
@@ -10,9 +11,10 @@ import { BackArrow } from '@components/backArrow';
 import { Check } from 'lucide-react-native';
 import { colors } from '@styles/colors';
 import { fontStyles } from '@styles/fonts';
+import { formatCNPJ } from '@utils/cnpj';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export default function SignUp({ animatedOffset, onBackToLogin }) {
+export default function SignUp({ animatedOffset, onBackToLogin, role }) {
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
@@ -30,6 +32,24 @@ export default function SignUp({ animatedOffset, onBackToLogin }) {
     },
   });
 
+  async function registerUser () {
+    try {
+      const { name, email, cnpj, address, password } = getValues();
+
+      const response = await api.post('/users', {
+        name, email, cnpj, address, password, role
+      });
+
+      if (response.status !== 200 && response.status !== 201) {
+        throw new Error('Erro ao cadastrar usuário');
+      }
+
+      setStep(4);
+    } catch (error) {
+      alert('Erro ao cadastrar. Tente novamente.');
+    }
+  }
+
   useEffect(() => {
     reset(getValues(), { keepValues: true });
   }, [step]);
@@ -39,9 +59,6 @@ export default function SignUp({ animatedOffset, onBackToLogin }) {
   }
   function goBack() {
     if (step > 1) setStep(step - 1);
-  }
-  function finishRegister() {
-    setStep(4);
   }
 
   function Step1() {
@@ -130,10 +147,12 @@ export default function SignUp({ animatedOffset, onBackToLogin }) {
             render={({ field, fieldState }) => (
               <InputField
                 label='CNPJ'
-                placeholder='Digite aqui...'
+                placeholder='00.000.000/0000-00'
                 type='cnpj'
                 value={field.value}
-                onChangeText={field.onChange}
+                onChangeText={(text) => {
+                  field.onChange(formatCNPJ(text));
+                }}
                 errorMessage={fieldState.error?.message}
               />
             )}
@@ -221,10 +240,9 @@ export default function SignUp({ animatedOffset, onBackToLogin }) {
           <Button
             text='Finalizar cadastro'
             variant='beige'
-            onPress={() => {
-              trigger(['password', 'confirmPassword']).then((valid) => {
-                if (valid) finishRegister();
-              });
+            onPress={async () => {
+              const valid = await trigger(['password', 'confirmPassword']);
+              if (valid) await registerUser();
             }}
           />
         </View>

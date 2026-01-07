@@ -82,7 +82,7 @@ export default function LocationStep({ location, onChange, onGoBack, onGoNext, o
             coordinateLng={location.longitude}
           />
         </View>
-        <Text style={[styles.adressText, {color: theme.primaryText}]}>
+        <Text style={[styles.addressText, {color: theme.primaryText}]}>
           {location.address || 'Toque no mapa para selecionar o local'}
         </Text>
 
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden'
   },
-  adressText: {
+  addressText: {
     ...fontStyles.subtitle_2,
     marginBottom: 20
   },

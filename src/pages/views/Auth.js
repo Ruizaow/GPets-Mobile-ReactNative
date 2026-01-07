@@ -8,6 +8,7 @@ import ChangePassword from './authViews/ChangePassword';
 import { useKeyboardAnimation } from '@hooks/useKeyboardAnimation';
 
 export default function Auth({ navigation }) {
+  const [role, setRole] = useState(null);
   const [currentView, setCurrentView] = useState('SelectUser');
   const goTo = (viewName) => setCurrentView(viewName);
   
@@ -27,7 +28,14 @@ export default function Auth({ navigation }) {
           {currentView === 'SelectUser' && (
             <SelectUser
               navigation={navigation}
-              onSelectOng={() => goTo('Login')}
+              onSelectUser={() => {
+                setRole('USER');
+                goTo('Login');
+              }}
+              onSelectOng={() => {
+                setRole('ORGANIZATION');
+                goTo('Login');
+              }}
             />
           )}
           {currentView === 'Login' && (
@@ -44,6 +52,7 @@ export default function Auth({ navigation }) {
             <SignUp
               animatedOffset={animatedOffset}
               onBackToLogin={() => goTo('Login')}
+              role={role}
             />
           )}
           {currentView === 'ForgotPassword' && (

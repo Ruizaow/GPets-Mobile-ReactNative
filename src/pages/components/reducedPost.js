@@ -66,8 +66,8 @@ export function ReducedPost({ post, navigation, originRoute, currentPagePost, cu
                 <View style={styles.nameTag}>
                   <Text style={[styles.name, { color: theme.primaryText }]}>{post.name}</Text>
                   <View style={styles.tag}>
-                    <Text style={[fontStyles.smallTitle_2, { color: getTagColor(post.tag) }]}>
-                      {post.tag}
+                    <Text style={[fontStyles.smallTitle_2, { color: getTagColor(post.status) }]}>
+                      {post.status}
                     </Text>
                     <Star size={12} color={colors.disabled}/>
                   </View>
@@ -82,7 +82,7 @@ export function ReducedPost({ post, navigation, originRoute, currentPagePost, cu
             )}
           </View>
 
-          {pressed && (<View pointerEvents="none" style={styles.overlay}/>)}
+          {pressed && (<View pointerEvents='none' style={styles.overlay}/>)}
         </View>
       )}
     </Pressable>

@@ -91,8 +91,8 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
                 <View style={styles.nameTag}>
                   <Text style={[styles.name, { color: theme.primaryText }]}>{post.name}</Text>
                   <View style={styles.tag}>
-                    <Text style={[fontStyles.postTag, { color: getTagColor(post.tag) }]}>
-                      {post.tag}
+                    <Text style={[fontStyles.postTag, { color: getTagColor(post.status) }]}>
+                      {post.status}
                     </Text>
                     <Star size={24} color={colors.disabled}/>
                   </View>
@@ -105,8 +105,8 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
                     <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.temper}</Text></View>
                   }
                   <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.owner !== 'Não possui' ? 'Tutor: ' + post.owner : 'Sem tutor'}</Text></View>
-                  {post.phoneContact !== 'Não possui' &&
-                    <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.phoneContact}</Text></View>
+                  {post.phone !== 'Não possui' &&
+                    <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{post.phone}</Text></View>
                   }
                 </View>
                 <Text numberOfLines={footer ? undefined : 3}
@@ -141,8 +141,8 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
                 <View style={styles.infoChips}>
                   <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{'Data do evento: ' + post.date}</Text></View>
                   <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{'Endereço: ' + post.address}</Text></View>
-                  {post.phoneContact !== 'Não possui' &&
-                    <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{'Contato: ' + post.phoneContact}</Text></View>
+                  {post.phone !== 'Não possui' &&
+                    <View style={[styles.chip, { backgroundColor: theme.chip }]}><Text style={fontStyles.postChipLabel}>{'Contato: ' + post.phone}</Text></View>
                   }
                 </View>
                 <Text numberOfLines={footer ? undefined : 3}
@@ -159,7 +159,7 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
 
           {footer}
 
-          {pressed && (<View pointerEvents="none" style={styles.overlay}/>)}
+          {pressed && (<View pointerEvents='none' style={styles.overlay}/>)}
         </View>
       )}
     </Pressable>

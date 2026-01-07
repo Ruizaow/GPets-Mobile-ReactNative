@@ -1,3 +1,6 @@
+import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { api } from '@api';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Animated, TouchableOpacity, ScrollView, View, Text } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
@@ -14,10 +17,28 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
   
-  const { control, trigger } = useForm({
+  const { control, trigger, getValues } = useForm({
     resolver: zodResolver(signUpSchema),
     defaultValues: {email: '', password: ''}
   });
+
+  async function loginUser() {
+    try {
+      const { email, password } = getValues();
+
+      const response = await api.post('/auth/login', {
+        email, password
+      });
+      
+      const { data } = response.data;
+      await SecureStore.setItemAsync('token', data.token)
+      await AsyncStorage.setItem('user', JSON.stringify(data.user));
+
+      navigation.navigate('Home');
+    } catch (error) {
+      alert('Erro ao fazer login. Verifique suas credenciais.');
+    }
+  }
 
   return (
     <ScrollView
@@ -92,10 +113,9 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
             <Button
               text='Entrar'
               variant='beige'
-              onPress={() => {
-                trigger(['email', 'password']).then((valid) => {
-                  if (valid) navigation.navigate('Home');
-                });
+              onPress={async () => {
+                const valid = await trigger(['email', 'password']);
+                if (valid) await loginUser();
               }}
             />
             <Button text='Cadastrar-se' variant='signUp' onPress={onGoToSignUp} />

@@ -10,7 +10,7 @@ import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { hasAtLeastOneLetter } from '@utils/textInputValidation';
-import { formatPhone, isPhoneValid } from '@utils/phoneUtils';
+import { formatPhone, isPhoneValid } from '@utils/phone';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export default function InformationStep({ postType, data, dataAddress, onChange, onChangeAddress, onGoBack, onGoNext, onDiscard }) {
@@ -42,7 +42,7 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
   function updateData(field, value) {
     onChange({ [field]: value });
   }
-  function updateDataAdress(value) {
+  function updateDataAddress(value) {
     onChangeAddress({ address: value });
   }
   function toggleRadio(field, value) {
@@ -182,7 +182,7 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
               label='Local do evento'
               required
               value={dataAddress}
-              onChangeText={(text => updateDataAdress(text))}
+              onChangeText={(text => updateDataAddress(text))}
             />
 
             <View style={styles.infoArea}>

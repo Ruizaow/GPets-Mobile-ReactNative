@@ -1,14 +1,38 @@
+import * as SecureStore from 'expo-secure-store';
 import { StatusBar } from 'expo-status-bar';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View, Text, Image } from 'react-native';
+import { useEffect, useState } from 'react';
 import { Button } from '@components/button';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export default function Start({ navigation }) {
   const fontsLoaded = useFontsCustom();
-  if (!fontsLoaded) return null;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const token = await SecureStore.getItemAsync('token');
+        setIsAuthenticated(!!token);
+      } catch (error) {
+        console.error('Erro ao verificar autenticação', error);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    }
+    checkAuth();
+  }, []);
+
+  if (!fontsLoaded || loading) return null;
+
+  function handleContinue() {
+    navigation.navigate(isAuthenticated ? 'Home' : 'Auth');
+  }
   
   return (
     <View style={styles.container}>
@@ -27,7 +51,7 @@ export default function Start({ navigation }) {
             <Text style={fontStyles.title_1}>Encontros felizes</Text>
           </View>
           <View style={styles.buttonSection}>
-            <Button text='Continuar' variant='green' size='customStart' onPress={() => navigation.navigate('Auth')}/>
+            <Button text='Continuar' variant='green' size='customStart' onPress={handleContinue}/>
           </View>
         </View>
       </View>
