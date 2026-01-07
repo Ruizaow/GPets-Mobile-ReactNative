@@ -1,0 +1,122 @@
+import prisma from '../lib/prismaClient.js';
+import bcrypt from 'bcryptjs';
+import { generateToken } from '../utils/index.js';
+
+export const userService = {
+  getAll: async () => {
+    const users = await prisma.user.findMany();
+
+    return {
+      message: 'Aqui está a lista de usuários.',
+      users
+    };
+  },
+
+  get: async (id) => {
+    const user = await prisma.user.findUnique({ 
+      where: { id: id } 
+    })
+
+    // Verifica se o usuário buscado existe
+    if (!user) throw new Error('Usuário não identificado.');
+
+    return {
+      message: `Aqui está o usuário ${id}.`,
+      user
+    };
+  },
+
+  create: async (userData) => {
+    // Pega os dados passados por requisição
+    const { name, email, cnpj, address, password, role } = userData;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Verifica se o usuário está tentando cadastrar um email que já existe
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser)
+      throw new Error('Email já cadastrado.');
+
+    // Verifica se o papel de usuário é válido
+    if (!['USER', 'ORGANIZATION'].includes(role)) {
+      throw new Error('Papel de usuário inválido.');
+    }
+
+    // Cria o usuário na tabela
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        cnpj,
+        address,
+        password: hashedPassword,
+        role,
+        bio: '',
+        phone: ''
+      },
+    });
+
+    // Gera o token do usuário
+    const token = generateToken(newUser);
+
+    // Envia os dados do cadastro (mensagem de sucesso, dados do usuário) por resposta
+    return {
+      message: 'Usuário CADASTRADO com sucesso!',
+      user: newUser,
+      token
+    };
+  },
+
+  update: async (userId, userData) => {
+    const user = await prisma.user.findUnique({ 
+      where: { id: userId } 
+    })
+    // Verifica se o usuário a ser editado existe
+    if (!user) throw new Error('Usuário não identificado.');
+    
+    const { name, bio, email, phone } = userData;
+    const updatedData = {};
+
+    if (name) updatedData.name = name;
+    if (bio) updatedData.bio = bio;
+    if (email) updatedData.email = email;
+    if (phone) updatedData.phone = phone;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updatedData,
+    });
+
+    return {
+      message: `Usuário ${userId} ATUALIZADO com sucesso!.`,
+      user: updatedUser
+    };
+  },
+
+  delete: async (userId) => {
+    const deletedUser = await prisma.user.delete({
+      where: { id: userId },
+    });
+
+    // Verifica se o usuário a ser deletado existe
+    if (!deletedUser) throw new Error('Usuário não identificado.');
+
+    return {
+      message: `Usuário ${userId} DELETADO com sucesso!.`,
+      user: deletedUser
+    };
+  },
+
+  getBookmarks: async (id) => {
+    const bookmarks = await prisma.savedPost.findMany({
+      where: { id },
+      include: { post: true }
+    });
+
+    const savedPosts = bookmarks.map(item => item.post);
+
+    return {
+      message: `Aqui está a lista de posts salvos pelo usuário ${id}.`,
+      bookmarks: savedPosts
+    };
+  }
+};
