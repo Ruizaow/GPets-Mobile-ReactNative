@@ -2,11 +2,12 @@ import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 import { House, CirclePlus, MapPin, MessagesSquare, Star, Settings, Contrast, DoorOpen, ChevronRight } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
 import { BackArrow } from '@components/backArrow';
+import { ProfilePicture } from '@components/profilePicture';
 import { Switch } from '@components/switch';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function Sidebar({ navigation, onGoTo, onOpenModal, onCloseSidebar, isBackArrowDisabled }) {
+export function Sidebar({ navigation, onGoTo, onOpenModal, onCloseSidebar, isBackArrowDisabled, loadedUser }) {
   const { theme, toggleTheme } = useTheme();
 
   function handleSelectItem(menuItem) {
@@ -68,13 +69,7 @@ export function Sidebar({ navigation, onGoTo, onOpenModal, onCloseSidebar, isBac
           style={[styles.profileCard, { borderColor: theme.border }]}
           onPress={() => navigation.navigate('Profile')}
         >
-          <Image
-            source={require('@assets/images/gpets-profile-picture.png')}
-            style={[styles.profilePicture, {
-              borderWidth: theme.name === 'dark' ? 1 : 0,
-              borderColor: theme.name === 'dark' ? colors.white : 'transparent'
-            }]}
-          />
+          <ProfilePicture loadedUser={loadedUser}/>
           <View>
             <Text style={[fontStyles.subtitle_1, { color: theme.primaryText }, { lineHeight: 16 }]}>Meu perfil</Text>
             <Text style={[fontStyles.postSubtitle, { color: theme.primaryText }]}>Clique para visualizar perfil</Text>
@@ -136,11 +131,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     gap: 10,
     marginBottom: 16
-  },
-  profilePicture: {
-    width: 52,
-    height: 52,
-    borderRadius: 50
   },
   menuList: {
     gap: 16,

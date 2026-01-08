@@ -7,6 +7,7 @@ import { mockedBookmarks } from '@constants/mockDataBookmark';
 import { useTheme } from '@context/ThemeContext';
 import { useProfileTab } from '@context/ProfileTabContext';
 import { GoBackHeader } from '@components/goBackHeader';
+import { ProfilePicture } from '@components/profilePicture';
 import { ReducedPost } from '@components/reducedPost';
 import { Pagination } from '@components/pagination';
 import { colors } from '@styles/colors.js';
@@ -15,7 +16,7 @@ import { useFontsCustom } from '@hooks/useFontsCustom';
 
 const POSTS_PER_PAGE = 20;
 
-export default function ProfileView({ navigation, data, onGoToEditProfile }) {
+export default function ProfileView({ loadedUser, navigation, onGoToEditProfile }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -101,34 +102,24 @@ export default function ProfileView({ navigation, data, onGoToEditProfile }) {
       <ScrollView ref={scrollRef}>
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            <Image
-              source={
-                typeof data.fotoPerfil === 'string'
-                  ? { uri: data.fotoPerfil }
-                  : data.fotoPerfil
-              }
-              style={[styles.profilePicture, {
-                borderWidth: theme.name === 'dark' ? 1 : 0,
-                borderColor: theme.name === 'dark' ? colors.white : 'transparent'
-              }]}
-            />
+            <ProfilePicture loadedUser={loadedUser} size={80}/>
             <View style={styles.userInfoColumn}>
               <Text style={[fontStyles.postTitle, { color: theme.secondaryText }]}>
-                {data.nome}
+                {loadedUser.name}
               </Text>
               <Text style={[fontStyles.subtitle_2, { color: theme.secondaryText }]}>
-                {data.descricao}
+                {loadedUser.bio}
               </Text>
               <View style={styles.user_email}>
                 <Mail size={24} color={theme.secondaryText}/>
                 <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                  {data.email}
+                  {loadedUser.email}
                 </Text>
               </View>
               <View style={styles.user_phone}>
                 <Phone size={24} color={theme.secondaryText}/>
                 <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                  {data.telefone}
+                  {loadedUser.phone}
                 </Text>
               </View>
             </View>
@@ -218,11 +209,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 12
-  },
-  profilePicture: {
-    width: 80,
-    height: 80,
-    borderRadius: 80
   },
   userInfoColumn: {
     flex: 1

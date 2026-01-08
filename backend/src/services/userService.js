@@ -1,6 +1,6 @@
 import prisma from '../lib/prismaClient.js';
 import bcrypt from 'bcryptjs';
-import { generateToken } from '../utils/index.js';
+import { generateToken, isPhoneValid } from '../utils/index.js';
 
 export const userService = {
   getAll: async () => {
@@ -32,14 +32,18 @@ export const userService = {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Verifica se o usuário está tentando cadastrar um email que já existe
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser)
-      throw new Error('Email já cadastrado.');
+    const existingEmail = await prisma.user.findUnique({ where: { email } });
+    if (existingEmail)
+      throw new Error('o e-mail cadastrado já existe.');
+
+    // Verifica se o usuário está tentando cadastrar um CNPJ que já existe
+    const existingCNPJ = await prisma.user.findUnique({ where: { cnpj } });
+    if (existingCNPJ)
+      throw new Error('o CNPJ cadastrado já existe.');
 
     // Verifica se o papel de usuário é válido
-    if (!['USER', 'ORGANIZATION'].includes(role)) {
+    if (!['USER', 'ORGANIZATION'].includes(role))
       throw new Error('Papel de usuário inválido.');
-    }
 
     // Cria o usuário na tabela
     const newUser = await prisma.user.create({
@@ -71,15 +75,26 @@ export const userService = {
       where: { id: userId } 
     })
     // Verifica se o usuário a ser editado existe
-    if (!user) throw new Error('Usuário não identificado.');
+    if (!user)
+      throw new Error('Usuário não identificado.');
     
-    const { name, bio, email, phone } = userData;
-    const updatedData = {};
+    const { name, bio, email, phone, imageUrl } = userData;
 
+    // Verifica se o usuário está alterando o email para um que já existe (exceto o seu próprio atual)
+    const existingEmail = await prisma.user.findUnique({ where: { email, NOT: { id: userId } } });
+    if (existingEmail)
+      throw new Error('o e-mail informado já existe.');
+
+    // Verifica se o número de telefone informado é válido
+    if (!isPhoneValid(phone))
+      throw new Error('o número de telefone informado é inválido.');
+
+    const updatedData = {};
     if (name) updatedData.name = name;
-    if (bio) updatedData.bio = bio;
+    if (bio || bio === '') updatedData.bio = bio;
     if (email) updatedData.email = email;
-    if (phone) updatedData.phone = phone;
+    if (phone || phone === '') updatedData.phone = phone;
+    if (imageUrl) updatedData.imageUrl = imageUrl;
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },

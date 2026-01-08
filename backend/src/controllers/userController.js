@@ -40,11 +40,11 @@ export const createUser = async (req, res) => {
     })
   } catch (err) {
     switch (err.message) {
-      case 'Email já cadastrado.':
+      case 'o e-mail cadastrado já existe.' || 'o CNPJ cadastrado já existe.':
         res.status(409).json({ error: getErrorResponse(409, 'Conflito.', err.message) });
         break;
       case 'Papel de usuário inválido.':
-        res.status(400).json({ error: getErrorResponse(400, 'Bad Request.', err.message) });
+        res.status(401).json({ error: getErrorResponse(401, 'Não autorizado.', err.message) });
         break;
       default:
         res.status(404).json({ error: getErrorResponse(404, 'Não encontrado.', err.message) });
@@ -62,7 +62,17 @@ export const updateUser = async (req, res) => {
       data: updatedUser.user
     })
   } catch (err) {
-    res.status(404).json({ error: getErrorResponse(404, 'Não encontrado.', err.message) });
+    switch (err.message) {
+      case 'o e-mail informado já existe.':
+        res.status(409).json({ error: getErrorResponse(409, 'Conflito.', err.message) });
+        break;
+      case 'o número de telefone informado é inválido.':
+        res.status(401).json({ error: getErrorResponse(401, 'Não autorizado.', err.message) });
+        break;
+      default:
+        res.status(404).json({ error: getErrorResponse(404, 'Não encontrado.', err.message) });
+        break;
+    }
   }
 };
 

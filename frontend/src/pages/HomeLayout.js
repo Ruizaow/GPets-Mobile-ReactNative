@@ -1,17 +1,18 @@
-import * as SecureStore from 'expo-secure-store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, ScrollView, Animated } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
+import { useAuth } from '@context/AuthContext';
 import { TopNavbar } from '@components/topNavbar';
 import { Sidebar } from '@components/sidebar';
 import { BottomNavbar } from '@components/bottomNavbar';
 import { KebabMenu } from '@components/kebabMenu';
 import { Modal } from '@components/modal';
+import { logoutUser } from '@services/logoutUser';
 
 export function HomeLayout({ navigation, onGoTo, currentView, children }) {
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMenuLocked, setIsMenuLocked] = useState(false);
@@ -75,27 +76,25 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
     });
   }
 
-  async function handleLogout() {
-    try {
-      await SecureStore.deleteItemAsync('token');
-      await AsyncStorage.removeItem('user');
-      navigation.navigate('Start');
-    } catch (error) {
-      alert('Erro ao tentar sair da conta.');
-    }
-  };
-
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* PAGINA + NAVBAR */}
       <Animated.View style={[styles.pageColumn, { transform: [{ translateX: translateXBackground }] }]}>
-        <TopNavbar navigation={navigation} onOpenSidebar={openSidebar} isMenuDisabled={isMenuLocked}/>
+        <TopNavbar
+          navigation={navigation}
+          onOpenSidebar={openSidebar}
+          isMenuDisabled={isMenuLocked}
+          loadedUser={user}
+        />
         <ScrollView ref={scrollRef} style={styles.pageContent}>
           {children &&
             React.cloneElement(children, { openKebabMenu, scrollRef })
           }
         </ScrollView>
-        <BottomNavbar onGoTo={onGoTo} currentView={currentView}/>
+        <BottomNavbar
+          onGoTo={onGoTo}
+          currentView={currentView}
+        />
       </Animated.View>
       
       {/* ESCURECIMENTO DO FUNDO */}
@@ -120,6 +119,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
             onOpenModal={() => setShowModal(true)}
             onCloseSidebar={closeSidebar}
             isBackArrowDisabled={isMenuLocked}
+            loadedUser={user}
           />
         </Animated.View>
       )}
@@ -139,7 +139,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
           text={`Deseja sair de sua conta?`}
           confirmButton={`Sim, sair`}
           onClose={() => setShowModal(false)}
-          onConfirm={handleLogout}
+          onConfirm={() => logoutUser(navigation)}
         />
       )}
 

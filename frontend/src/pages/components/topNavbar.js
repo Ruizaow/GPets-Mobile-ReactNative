@@ -1,10 +1,11 @@
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 import { Menu, Search, Bell } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
+import { ProfilePicture } from '@components/profilePicture';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function TopNavbar({ navigation, onOpenSidebar, isMenuDisabled }) {
+export function TopNavbar({ navigation, onOpenSidebar, isMenuDisabled, loadedUser }) {
   const { theme } = useTheme();
 
   return (
@@ -21,13 +22,7 @@ export function TopNavbar({ navigation, onOpenSidebar, isMenuDisabled }) {
           <Bell size={24} color={theme.primaryText}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Image
-            source={require('@assets/images/gpets-profile-picture.png')}
-            style={[styles.profilePicture, {
-              borderWidth: theme.name === 'dark' ? 1 : 0,
-              borderColor: theme.name === 'dark' ? colors.white : 'transparent'
-            }]}
-          />
+          <ProfilePicture loadedUser={loadedUser}/>
         </TouchableOpacity>
       </View>
       <View style={styles.lineDivision}></View>
@@ -57,11 +52,6 @@ const styles = StyleSheet.create({
     gap: 12,
     backgroundColor: colors.disabled,
     borderRadius: 32
-  },
-  profilePicture: {
-    width: 52,
-    height: 52,
-    borderRadius: 50
   },
   lineDivision: {
     position: 'absolute',

@@ -11,6 +11,13 @@ export function InputField({ label, placeholder, type, value, onChangeText, erro
   const isEmail = type === 'email';
   const isCNPJ = type === 'cnpj';
 
+  function getKeyboardType() {
+    if (isPassword) return 'password';
+    if (isEmail) return 'email-address';
+    if (isCNPJ) return 'numeric';
+    return 'default';
+  }
+  
   function getPlaceholderColor() {
     if (errorMessage) {
       return 'rgba(255, 107, 107, 0.4)'
@@ -32,16 +39,11 @@ export function InputField({ label, placeholder, type, value, onChangeText, erro
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}
-          placeholderTextColor={getPlaceholderColor()}
-
+          keyboardType={getKeyboardType}
+          placeholderTextColor={getPlaceholderColor}
+          
           // EMAIL
           autoCapitalize={isEmail ? 'none' : 'sentences'}
-          keyboardType={
-            isEmail
-              ? 'email-address'
-              : isCNPJ
-                ? 'numeric'
-                : 'default'}
 
           // PASSWORD
           secureTextEntry={isPassword && !showPassword}

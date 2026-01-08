@@ -1,4 +1,3 @@
-import { api } from '@api';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Animated, View, Text } from 'react-native';
 import { useState, useEffect } from 'react';
@@ -13,6 +12,7 @@ import { colors } from '@styles/colors';
 import { fontStyles } from '@styles/fonts';
 import { formatCNPJ } from '@utils/cnpj';
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { registerUser } from '@services/registerUser';
 
 export default function SignUp({ animatedOffset, onBackToLogin, role }) {
   const fontsLoaded = useFontsCustom();
@@ -31,24 +31,6 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
       confirmPassword: '',
     },
   });
-
-  async function registerUser () {
-    try {
-      const { name, email, cnpj, address, password } = getValues();
-
-      const response = await api.post('/users', {
-        name, email, cnpj, address, password, role
-      });
-
-      if (response.status !== 200 && response.status !== 201) {
-        throw new Error('Erro ao cadastrar usuário');
-      }
-
-      setStep(4);
-    } catch (error) {
-      alert('Erro ao cadastrar. Tente novamente.');
-    }
-  }
 
   useEffect(() => {
     reset(getValues(), { keepValues: true });
@@ -242,7 +224,7 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
             variant='beige'
             onPress={async () => {
               const valid = await trigger(['password', 'confirmPassword']);
-              if (valid) await registerUser();
+              if (valid) await registerUser(role, getValues, () => setStep(4));
             }}
           />
         </View>

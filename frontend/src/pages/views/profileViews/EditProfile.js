@@ -1,34 +1,35 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
+import { ProfilePicture } from '@components/profilePicture';
 import { FormInputField } from '@components/formInputField';
 import { Modal } from '@components/modal';
 import { Button } from '@components/button';
-import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
-import { hasAtLeastOneLetter } from '@utils/textInputValidation';
-import { formatPhone, isPhoneValid } from '@utils/phone';
+import { hasAtLeastOneLetter, isEmailValid } from '@utils/textInputValidation';
+import { formatPhone } from '@utils/phone';
 import { handlePickImage } from '@handlers/handlePickImage';
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { updateUser } from '@services/updateUser';
 
-export default function EditProfile({ initialData, onCancel, onSave }) {
+export default function EditProfile({ loadedUser, updateLoadedUser, onCancel, onSave }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
-  const [form, setForm] = useState(initialData);
+  const [form, setForm] = useState(loadedUser);
   const [showModal, setShowModal] = useState(false);
 
   function updateField(field, value) {
     setForm(prev => ({ ...prev, [field]: value }));
   }
   function updateImage(uri) {
-    setForm(prev => ({ ...prev, fotoPerfil: uri }))
+    setForm(prev => ({ ...prev, imageUrl: uri }))
   }
 
   const hasUnsavedChanges =
-    JSON.stringify(form) !== JSON.stringify(initialData);
+    JSON.stringify(form) !== JSON.stringify(loadedUser);
   
   function handleGoBack() {
     if (hasUnsavedChanges) {
@@ -38,16 +39,9 @@ export default function EditProfile({ initialData, onCancel, onSave }) {
     }
   }
   
-  function isEmailValid(value) {
-    if (!value) return false;
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  }
   const isFormValid =
-    form.fotoPerfil &&
-    hasAtLeastOneLetter(form.nome) &&
-    hasAtLeastOneLetter(form.descricao) &&
-    isEmailValid(form.email) &&
-    isPhoneValid(form.telefone);
+    hasAtLeastOneLetter(form.name) &&
+    isEmailValid(form.email)
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
@@ -59,17 +53,7 @@ export default function EditProfile({ initialData, onCancel, onSave }) {
       <View style={styles.content}>
         <View style={styles.editPicture}>
           <TouchableOpacity onPress={() => handlePickImage(updateImage)}>
-            <Image
-              source={
-                typeof form.fotoPerfil === 'string'
-                  ? { uri: form.fotoPerfil }
-                  : form.fotoPerfil
-              }
-              style={[styles.profilePicture, {
-                borderWidth: theme.name === 'dark' ? 1 : 0,
-                borderColor: theme.name === 'dark' ? colors.white : 'transparent'
-              }]}
-            />
+            <ProfilePicture loadedUser={form} size={120}/>
           </TouchableOpacity>
           <Text style={[fontStyles.postTitle, { color: theme.primaryText } ]}>Editar foto</Text>
         </View>
@@ -78,14 +62,13 @@ export default function EditProfile({ initialData, onCancel, onSave }) {
           <FormInputField
             label='Nome'
             required
-            value={form.nome}
-            onChangeText={text => updateField('nome', text)}
+            value={form.name}
+            onChangeText={text => updateField('name', text)}
           />
           <FormInputField
             label='Descrição'
-            required
-            value={form.descricao}
-            onChangeText={text => updateField('descricao', text)}
+            value={form.bio}
+            onChangeText={text => updateField('bio', text)}
           />
           <FormInputField
             label='E-mail'
@@ -95,9 +78,9 @@ export default function EditProfile({ initialData, onCancel, onSave }) {
           />
           <FormInputField
             label='Telefone de contato'
-            value={form.telefone}
+            value={form.phone}
             onChangeText={text =>
-              updateField('telefone', formatPhone(text))
+              updateField('phone', formatPhone(text))
             }
             keyboardType='number-pad'
             placeholder='(+DD) 99999-9999'
@@ -110,7 +93,7 @@ export default function EditProfile({ initialData, onCancel, onSave }) {
             variant={isFormValid ? 'blueBeige' : 'disabled'}
             size={'custom'}
             isDisabled={!isFormValid}
-            onPress={() => onSave(form)}
+            onPress={async () => await updateUser(loadedUser, form, updateLoadedUser, onSave)}
           />
         </View>
       </View>
@@ -137,11 +120,6 @@ const styles = StyleSheet.create({
   editPicture: {
     alignItems: 'center',
     gap: 4,
-  },
-  profilePicture: {
-    width: 120,
-    height: 120,
-    borderRadius: 100
   },
   textInputs: {
     gap: 12,

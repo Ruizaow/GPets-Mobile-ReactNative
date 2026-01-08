@@ -10,12 +10,12 @@ export const authService = {
     // Verifica se o usuário existe (por email)
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user)
-      throw new Error('Usuário não encontrado: o email informado está incorreto.');
+      throw new Error('O email informado está incorreto.');
 
     // Verifica se a senha é válida
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
-      throw new Error('Senha incorreta.');
+      throw new Error('A senha informada está incorreta.');
 
     // Gera o token do usuário
     const token = generateToken(user);

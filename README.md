@@ -8,12 +8,12 @@ Aplicativo em desenvolvimento para dispositivos móveis Android, utilizando Java
 
 `cd GPets-Mobile-ReactNative`<br>
 
-Frontend:
+Frontend:<br>
 `cd frontend`<br>
 `npm install`<br>
 `npx expo start --tunnel`<br>
 
-Backend:
+Backend:<br>
 `cd backend`<br>
 `npm install`<br>
 `npm run dev`<br>

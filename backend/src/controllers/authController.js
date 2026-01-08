@@ -14,7 +14,7 @@ export const loginUser = async (req, res) => {
     })
   } catch (err) {
     switch (err.message) {
-      case 'Senha incorreta.':
+      case 'A senha informada está incorreta.':
         res.status(401).json({ error: getErrorResponse(401, 'Não autorizado.', err.message) });
         break;
       default:

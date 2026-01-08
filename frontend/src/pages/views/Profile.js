@@ -1,36 +1,29 @@
 import { useState } from 'react';
+import { useAuth } from '@context/AuthContext';
 import ProfileView from './profileViews/ProfileView';
 import EditProfile from './profileViews/EditProfile';
 
 export default function Profile({ navigation }) {
+  const { user, setUser } = useAuth();
+  
   const [currentView, setCurrentView] = useState('ProfileView');
   const goTo = (viewName) => setCurrentView(viewName);
-
-  const [userData, setUserData] = useState({
-    fotoPerfil: require('@assets/images/gpets-profile-picture.png'),
-    nome: 'GPets',
-    descricao: 'Lorem ipsum dolor sit amet consectetur.',
-    email: 'ongpets@gmail.com',
-    telefone: '(+85) 99999-9999'
-  });
 
   return (
     <>
       {currentView === 'ProfileView' && (
         <ProfileView
+          loadedUser={user}
           navigation={navigation}
-          data={userData}
           onGoToEditProfile={() => goTo('EditProfile')}
         />
       )}
       {currentView === 'EditProfile' && (
         <EditProfile
-          initialData={userData}
+          loadedUser={user}
+          updateLoadedUser={setUser}
           onCancel={() => goTo('ProfileView')}
-          onSave={(newData) => {
-            setUserData(newData);
-            goTo('ProfileView');
-          }}
+          onSave={() => goTo('ProfileView')}
         />
       )}
     </>
