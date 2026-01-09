@@ -5,12 +5,14 @@ import { Map } from '@components/map';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { getPosts } from '@services/getPosts';
 
 export default function MapView() {
   const { theme } = useTheme();
-  
+  const { posts, loading } = getPosts();
+
   const fontsLoaded = useFontsCustom();
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || loading) return null;
 
   function Subtitle({ color, text }) {
     return (
@@ -24,7 +26,7 @@ export default function MapView() {
   return (
     <View style={styles.mapContainer}>
       <View style={[styles.mapView, { borderColor: theme.primaryText }]}>
-        <Map/>
+        <Map posts={posts}/>
       </View>
       <View style={styles.subtitles}>
         <View style={styles.subtitles_column}>

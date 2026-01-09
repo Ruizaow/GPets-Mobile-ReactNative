@@ -6,7 +6,7 @@ export async function createPost(postData, showSuccessMessage) {
     showSuccessMessage();
   }
   catch (error) {
-    console.log(error?.response?.data || error);
+    // console.log(error?.response?.data || error);
     alert('Erro ao criar publicação. Tente novamente.');
   }
 }

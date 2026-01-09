@@ -11,7 +11,7 @@ export async function registerUser(userRole, getUserData, showSuccessMessage) {
     showSuccessMessage();
   }
   catch (error) {
-    console.log(error?.response?.data || error);
+    // console.log(error?.response?.data || error);
     
     const backendMessage =
       'Erro: ' + error?.response?.data?.error?.message ||

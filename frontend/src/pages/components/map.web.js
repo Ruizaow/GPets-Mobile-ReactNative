@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import { mockedMarkers } from '@constants/mockDataMarker';
 import { colors } from '@styles/colors.js';
 
 const defaultIcon = new Icon({
@@ -36,7 +35,7 @@ function ZoomController({ onReady }) {
   return null;
 }
 
-export function Map({ useMarkers = true, onPressLocation, isReadOnly = false, coordinateLat, coordinateLng }) {
+export function Map({ posts, useMarkers = true, onPressLocation, isReadOnly = false, coordinateLat, coordinateLng }) {
   const mapRef = useRef(null);
   const [marker, setMarker] = useState(null);
 
@@ -117,13 +116,16 @@ export function Map({ useMarkers = true, onPressLocation, isReadOnly = false, co
         {/* Modo interativo */}
         {!isReadOnly &&
           useMarkers ?
-            mockedMarkers.map((_marker, index) => (
-              <Marker key={index} icon={defaultIcon}
-                position={[_marker.latitude, _marker.longitude]}
-              >
-                <Popup>{_marker.name}</Popup>
-              </Marker>
-            )
+            posts.map((post, index) => {
+              const _marker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
+              return (
+                <Marker key={index} icon={defaultIcon}
+                  position={[_marker.latitude, _marker.longitude]}
+                >
+                  <Popup>{post.address}</Popup>
+                </Marker>
+              )
+            }
           ) : marker && (
             <Marker icon={defaultIcon}
               position={[marker.latitude, marker.longitude]}
