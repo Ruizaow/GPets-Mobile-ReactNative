@@ -3,6 +3,7 @@ import { StyleSheet, Animated, TouchableOpacity, ScrollView, View, Text } from '
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema } from '@constants/signUpSchema';
+import { useAuth } from '@context/AuthContext';
 import { Button } from '@components/button';
 import { InputField } from '@components/inputField';
 import { BackArrow } from '@components/backArrow';
@@ -12,6 +13,7 @@ import { useFontsCustom } from '@hooks/useFontsCustom';
 import { loginUser } from '@services/loginUser';
 
 export default function Login({ navigation, animatedOffset, keyboardHeight, onBack, onGoToSignUp, onGoToForgotPassword }) {
+  const { login } = useAuth();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
   
@@ -19,6 +21,15 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
     resolver: zodResolver(signUpSchema),
     defaultValues: {email: '', password: ''}
   });
+
+  async function handleLogin() {
+    const { email, password } = getValues();
+
+    const data = await loginUser(email, password);
+
+    await login(data.token, data.user);
+    navigation.navigate('Home');
+  }
 
   return (
     <ScrollView
@@ -95,7 +106,9 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
               variant='beige'
               onPress={async () => {
                 const valid = await trigger(['email', 'password']);
-                if (valid) await loginUser(getValues, navigation);
+                if (valid) {
+                  await handleLogin();
+                }
               }}
             />
             <Button text='Cadastrar-se' variant='signUp' onPress={onGoToSignUp} />

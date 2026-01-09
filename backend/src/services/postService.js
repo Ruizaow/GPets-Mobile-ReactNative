@@ -27,7 +27,7 @@ export const postService = {
 
   create: async (postData) => {
     const {
-      userId, type, isOwner, imageUrl, name, status,
+      userId, type, timestamp, isOwner, imageUrl, name, status,
       date, sex, breed, temper, owner, phone, description,
       address, coordinateLat, coordinateLng
     } = postData;
@@ -36,13 +36,12 @@ export const postService = {
       data: {
         userId,
         type,
+        timestamp,
         isOwner: Boolean(isOwner),
         imageUrl,
         name,
         status,
-        date: date 
-          ? new Date(date)
-          : new Date(),
+        date,
         sex,
         breed,
         temper,
@@ -51,7 +50,7 @@ export const postService = {
         description,
         address,
         coordinateLat: parseFloat(coordinateLat),
-        coordinateLng: parseFloat(coordinateLng),
+        coordinateLng: parseFloat(coordinateLng)
       },
     });
 

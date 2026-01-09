@@ -4,7 +4,7 @@ import ProfileView from './profileViews/ProfileView';
 import EditProfile from './profileViews/EditProfile';
 
 export default function Profile({ navigation }) {
-  const { user, setUser } = useAuth();
+  const { user, setUser, loading } = useAuth();
   
   const [currentView, setCurrentView] = useState('ProfileView');
   const goTo = (viewName) => setCurrentView(viewName);
@@ -14,6 +14,7 @@ export default function Profile({ navigation }) {
       {currentView === 'ProfileView' && (
         <ProfileView
           loadedUser={user}
+          loading={loading}
           navigation={navigation}
           onGoToEditProfile={() => goTo('EditProfile')}
         />

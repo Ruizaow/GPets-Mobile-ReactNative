@@ -94,7 +94,7 @@ export const userService = {
     if (bio || bio === '') updatedData.bio = bio;
     if (email) updatedData.email = email;
     if (phone || phone === '') updatedData.phone = phone;
-    if (imageUrl) updatedData.imageUrl = imageUrl;
+    updatedData.imageUrl = imageUrl;
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },

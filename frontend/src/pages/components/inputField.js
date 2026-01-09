@@ -39,8 +39,8 @@ export function InputField({ label, placeholder, type, value, onChangeText, erro
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}
-          keyboardType={getKeyboardType}
-          placeholderTextColor={getPlaceholderColor}
+          keyboardType={getKeyboardType()}
+          placeholderTextColor={getPlaceholderColor()}
           
           // EMAIL
           autoCapitalize={isEmail ? 'none' : 'sentences'}

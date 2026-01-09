@@ -1,14 +1,17 @@
 import { StyleSheet, Pressable, View, Text, Image, TouchableOpacity } from 'react-native';
 import { EllipsisVertical, Star } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
+import { ProfilePicture } from '@components/profilePicture';
 import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { getUser } from '@services/getUser';
 
 export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm=false, footer=null }) {
   const { theme } = useTheme();
-
   const hasOwnerTag = post.isOwner !== null
+
+  const { user, loading } = getUser(post.userId);
 
   function getTagColor(tag) {
     switch (tag) {
@@ -24,6 +27,8 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
         return colors.dark;
     }
   }
+
+  if (loading) return null;
 
   return (
     <Pressable
@@ -46,15 +51,11 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
         >
           <View style={styles.header}>
             <View style={styles.userData}>
-              <Image
-                style={[styles.profilePicture, {
-                  borderWidth: theme.name === 'dark' ? 1 : 0,
-                  borderColor: theme.name === 'dark' ? colors.white : 'transparent'
-                }]}
-                source={post.userProfilePicture}
-              />
+              <ProfilePicture loadedUser={user}/>
               <View style={hasOwnerTag && { marginTop: -5 }}>
-                <Text style={[fontStyles.postTitle, { color: theme.primaryText }]}>{post.userUsername}</Text>
+                <Text style={[fontStyles.postTitle, { color: theme.primaryText }]}>
+                  {user.name}
+                </Text>
                 <Text style={[
                   fontStyles.postSubtitle, { color: theme.primaryText },
                   hasOwnerTag && { marginTop: -2 }
@@ -85,7 +86,7 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
           </View>
           
           <View>
-            <Image source={post.imageUrl} style={styles.petImage}/>
+            <Image source={{ uri:post.imageUrl }} style={styles.petImage}/>
             {post.type === 'Pet' ? (
               <View style={styles.mainContent}>
                 <View style={styles.nameTag}>
@@ -183,11 +184,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10
-  },
-  profilePicture: {
-    width: 52,
-    height: 52,
-    borderRadius: 50
   },
   ownerTag: {
     justifyContent: 'center',

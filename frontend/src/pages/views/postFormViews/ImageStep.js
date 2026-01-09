@@ -1,5 +1,5 @@
-import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import { Trash, ImagePlus } from 'lucide-react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Trash, ImagePlus, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
@@ -19,6 +19,7 @@ export default function ImageStep({ postType, imageUri, onChangeImage, onGoBack,
   const isEvent = postType === 'Evento/publicidade';
 
   const [showModal, setShowModal] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   function handleGoBack() {
     if (hasUnsavedChanges()) {
@@ -63,25 +64,38 @@ export default function ImageStep({ postType, imageUri, onChangeImage, onGoBack,
 
         <View style={styles.imageField}>
           {imageUri ? (
-            <Image style={styles.imagePreview} source={{ uri: imageUri }} resizeMode='cover'/>
+            <>
+              <TouchableOpacity style={styles.deleteImageIcon} onPress={() => onChangeImage(null)}>
+                <X size={24} color={colors.white}/>
+              </TouchableOpacity>
+              <Image style={styles.imagePreview} source={{ uri: imageUri }} resizeMode='cover'/>
+            </>
           ) : (
-            <TouchableOpacity style={styles.addButton} onPress={() => handlePickImage(onChangeImage)}>
-              <ImagePlus size={24} color={colors.white}/>
-              <View style={styles.buttonText}>
-                <Text style={styles.label}>Adicionar imagem</Text>
-                <Text style={styles.mandatory}>*</Text>
-              </View>
-            </TouchableOpacity>
+            uploading ? (
+              <ActivityIndicator size='large' color={theme.primaryText}/>
+             ) : (
+              <TouchableOpacity style={styles.addButton} onPress={() => handlePickImage({
+                onChangeImage,
+                onStart: () => setUploading(true),
+                onFinish: () => setUploading(false)
+              })}>
+                <ImagePlus size={24} color={colors.white}/>
+                <View style={styles.buttonText}>
+                  <Text style={styles.label}>Adicionar imagem</Text>
+                  <Text style={styles.mandatory}>*</Text>
+                </View>
+              </TouchableOpacity>
+            )
           )}
         </View>
 
         <View style={styles.continueButton}>
           <Button
             text='Continuar'
-            variant={imageUri ? 'blueBeige' : 'disabled'}
+            variant={imageUri && !uploading ? 'blueBeige' : 'disabled'}
             size={'custom'}
             onPress={onGoNext}
-            isDisabled={!imageUri}
+            isDisabled={!imageUri || uploading}
           />
         </View>
       </View>
@@ -119,6 +133,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     marginBottom: 24,
+  },
+  deleteImageIcon: {
+    backgroundColor: colors.black,
+    borderRadius: 100,
+    opacity: 0.75,
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    zIndex: 1,
+    right: 0,
+    top: 0,
+    margin: 10
   },
   imagePreview: {
     width: '100%',

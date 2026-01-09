@@ -14,12 +14,13 @@ export async function updateUser(loadedUser, newUserData, setUser, exitUpdateFor
     setUser(updatedUser);
     
     exitUpdateForm();
-  } catch (error) {
+  }
+  catch (error) {
     console.log(error?.response?.data || error);
 
     const backendMessage =
       'Erro: ' + error?.response?.data?.error?.message ||
-      'Erro ao editar usuário. Tente novamente.';
+      'Erro ao atualizar usuário. Tente novamente.';
     
     alert(backendMessage);
   }

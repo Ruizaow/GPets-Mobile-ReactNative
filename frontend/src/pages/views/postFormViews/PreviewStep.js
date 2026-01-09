@@ -1,6 +1,7 @@
 import { StyleSheet, ScrollView, View, Text } from 'react-native';
 import { Trash } from 'lucide-react-native';
 import { useState } from 'react';
+import { useAuth } from '@context/AuthContext';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
 import { SelectState } from '@components/selectState';
@@ -9,9 +10,12 @@ import { Modal } from '@components/modal';
 import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { formattedTimestampOnlyDate } from '@utils/timestampFormatting'
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { createPost } from '@services/createPost';
 
 export default function PreviewStep({ postType, postData, onGoBack, onGoNext, onDiscard }) {
+  const { user } = useAuth();
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -23,20 +27,12 @@ export default function PreviewStep({ postType, postData, onGoBack, onGoNext, on
   const date = new Date();
   date.setHours(date.getHours() - 3);
 
-  const formattedTimestamp = `${date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })}`;
-
   const post = {
-    id: Date.now(),
+    userId: user.id,
     type: !isEvent ? 'Pet' : 'Evento',
-    userProfilePicture: require('@assets/images/ProfilePicture1.png'),
-    userUsername: 'Usuário Logado',
-    timestamp: formattedTimestamp,
-    imageUrl: { uri: postData.imageUri },
+    timestamp: formattedTimestampOnlyDate,
     isOwner: postData.information.usuarioTutor,
+    imageUrl: postData.imageUri,
     name: postData.information.nome,
     status: postData.situation,
     date: `${postData.information.dia} de ${postData.information.mes} de ${postData.information.ano}`,
@@ -48,8 +44,7 @@ export default function PreviewStep({ postType, postData, onGoBack, onGoNext, on
     description: postData.information.descricao,
     address: postData.location.address,
     coordinateLat: postData.location.latitude,
-    coordinateLng: postData.location.longitude,
-    comments: []
+    coordinateLng: postData.location.longitude
   };
 
   return (
@@ -72,8 +67,8 @@ export default function PreviewStep({ postType, postData, onGoBack, onGoNext, on
             </Text>
             <Text style={[fontStyles.subtitle_2, {color: theme.primaryText}]}>
               {isEvent
-                ? 'Revise os detalhes. Se estiver tudo claro, a sua postagem está a um clique.'
-                : 'Revise os detalhes. Se estiver tudo claro, a sua postagem está a um clique de ajudá-lo.'
+                ? 'Revise os detalhes. Se estiver tudo claro, a sua publicação está a um clique.'
+                : 'Revise os detalhes. Se estiver tudo claro, a sua publicação está a um clique de ajudá-lo.'
               }
             </Text>
           </View>
@@ -85,7 +80,7 @@ export default function PreviewStep({ postType, postData, onGoBack, onGoNext, on
               text='Publicar'
               variant='green'
               size={'custom'}
-              onPress={onGoNext}
+              onPress={async () => {await createPost(post, onGoNext)}}
             />
           </View>
         </View>

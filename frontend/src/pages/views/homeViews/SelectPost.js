@@ -14,7 +14,7 @@ export default function SelectPost({ navigation }) {
     <View style={styles.selectPost}>
       <Image style={styles.logo} source={require('@assets/images/gpets-icon-blue.png')}/>
       <Text style={[styles.text, { color: theme.primaryText }]}>
-        Que tipo de postagem {'\n'}você deseja fazer hoje?
+        Que tipo de publicação {'\n'}você deseja fazer hoje?
       </Text>
       <View style={styles.buttons}>
         <Button text='Evento/publicidade' variant='blue' size={'medium'}

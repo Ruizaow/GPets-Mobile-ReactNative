@@ -16,7 +16,7 @@ import { useFontsCustom } from '@hooks/useFontsCustom';
 
 const POSTS_PER_PAGE = 20;
 
-export default function ProfileView({ loadedUser, navigation, onGoToEditProfile }) {
+export default function ProfileView({ loadedUser, loading, navigation, onGoToEditProfile }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -91,6 +91,8 @@ export default function ProfileView({ loadedUser, navigation, onGoToEditProfile 
       );
     });
   }
+
+  if (loading) return null;
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>

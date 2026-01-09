@@ -8,16 +8,32 @@ import { Sidebar } from '@components/sidebar';
 import { BottomNavbar } from '@components/bottomNavbar';
 import { KebabMenu } from '@components/kebabMenu';
 import { Modal } from '@components/modal';
-import { logoutUser } from '@services/logoutUser';
+import { deletePost } from '@services/deletePost';
 
-export function HomeLayout({ navigation, onGoTo, currentView, children }) {
+export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, children }) {
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
+  async function handleLogout() {
+    await logout();
+    navigation.reset({ index: 0, routes: [{ name: 'Start' }] });
+  }
+
+  async function handleDeletPost(postId) {
+    if (!postId) {
+      return;
+    }
+    await deletePost(postId, () => {
+      onPostDeleted(postId);
+      setDeleteModal(null);
+    });
+  }
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMenuLocked, setIsMenuLocked] = useState(false);
   const [kebabMenu, setKebabMenu] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(null);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   const scrollRef = useRef(null);
 
@@ -57,8 +73,8 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
     });
   }
 
-  function openKebabMenu(type, payload) {
-    setKebabMenu({ type, payload });
+  function openKebabMenu(type, data) {
+    setKebabMenu({ type, data });
   }
   function closeKebabMenu() {
     setKebabMenu(null);
@@ -116,7 +132,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
           <Sidebar
             navigation={navigation}
             onGoTo={handleGoToFromSidebar}
-            onOpenModal={() => setShowModal(true)}
+            onOpenModal={() => setShowExitModal(true)}
             onCloseSidebar={closeSidebar}
             isBackArrowDisabled={isMenuLocked}
             loadedUser={user}
@@ -128,18 +144,30 @@ export function HomeLayout({ navigation, onGoTo, currentView, children }) {
       {Boolean(kebabMenu) && (
         <KebabMenu
           type={kebabMenu.type}
-          data={kebabMenu.payload}
+          data={kebabMenu.data}
           onClose={closeKebabMenu}
+          onDelete={() => setDeleteModal(kebabMenu.data.id)}
+          canDelete={kebabMenu.data.userId === user.id}
         />
       )}
 
-      {/* MODAL */}
-      {showModal && (
+      {/* MODAL para DELETAR POST */}
+      {Boolean(deleteModal) && (
+        <Modal
+          text={`Deseja excluir esta publicação?`}
+          confirmButton={`Sim, excluir`}
+          onClose={() => setDeleteModal(null)}
+          onConfirm={() => handleDeletPost(deleteModal)}
+        />
+      )}
+
+      {/* MODAL para SAIR DA CONTA */}
+      {showExitModal && (
         <Modal
           text={`Deseja sair de sua conta?`}
           confirmButton={`Sim, sair`}
-          onClose={() => setShowModal(false)}
-          onConfirm={() => logoutUser(navigation)}
+          onClose={() => setShowExitModal(false)}
+          onConfirm={handleLogout}
         />
       )}
 

@@ -17,15 +17,11 @@ export default function Notifications({ navigation }) {
   const [notifications, setNotifications] = useState(mockedNotifications);
   const [kebabMenu, setKebabMenu] = useState(null);
 
+  function openKebabMenu(type, data) {
+    setKebabMenu({ type, data });
+  }
   function handleDeleteNotification(notifId) {
     setNotifications(prev => prev.filter(notif => notif.id !== notifId));
-  }
-  
-  function openKebabMenu(type, payload) {
-    setKebabMenu({ type, payload });
-  }
-  function closeKebabMenu() {
-    setKebabMenu(null);
   }
 
   return (
@@ -65,9 +61,9 @@ export default function Notifications({ navigation }) {
       {Boolean(kebabMenu) && (
         <KebabMenu
           type={kebabMenu.type}
-          data={kebabMenu.payload}
-          onClose={closeKebabMenu}
-          onDelete={handleDeleteNotification}
+          data={kebabMenu.data}
+          onClose={() => setKebabMenu(null)}
+          onDelete={() => handleDeleteNotification(kebabMenu.data.id)}
         />
       )}
     </View>

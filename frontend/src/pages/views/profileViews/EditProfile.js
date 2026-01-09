@@ -1,11 +1,13 @@
-import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
 import { ProfilePicture } from '@components/profilePicture';
 import { FormInputField } from '@components/formInputField';
+import { KebabMenu } from '@components/kebabMenu';
 import { Modal } from '@components/modal';
 import { Button } from '@components/button';
+import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { hasAtLeastOneLetter, isEmailValid } from '@utils/textInputValidation';
 import { formatPhone } from '@utils/phone';
@@ -20,6 +22,8 @@ export default function EditProfile({ loadedUser, updateLoadedUser, onCancel, on
 
   const [form, setForm] = useState(loadedUser);
   const [showModal, setShowModal] = useState(false);
+  const [kebabMenu, setKebabMenu] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   function updateField(field, value) {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -52,9 +56,16 @@ export default function EditProfile({ loadedUser, updateLoadedUser, onCancel, on
       />
       <View style={styles.content}>
         <View style={styles.editPicture}>
-          <TouchableOpacity onPress={() => handlePickImage(updateImage)}>
-            <ProfilePicture loadedUser={form} size={120}/>
-          </TouchableOpacity>
+          {uploading ? (
+            <View style={styles.loadingBackground}>
+              <ActivityIndicator size='large' color={theme.primaryText}/>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={() => setKebabMenu(true)}>
+              <ProfilePicture loadedUser={form} size={120}/>
+            </TouchableOpacity>
+          )}
+          
           <Text style={[fontStyles.postTitle, { color: theme.primaryText } ]}>Editar foto</Text>
         </View>
 
@@ -90,19 +101,33 @@ export default function EditProfile({ loadedUser, updateLoadedUser, onCancel, on
         <View style={styles.continueButton}>
           <Button
             text='Concluir'
-            variant={isFormValid ? 'blueBeige' : 'disabled'}
+            variant={isFormValid && !uploading ? 'blueBeige' : 'disabled'}
             size={'custom'}
-            isDisabled={!isFormValid}
+            isDisabled={!isFormValid || uploading}
             onPress={async () => await updateUser(loadedUser, form, updateLoadedUser, onSave)}
           />
         </View>
       </View>
+      
       {showModal && (
         <Modal
           text={`Deseja sair sem consolidar suas alterações?`}
           confirmButton={`Sim, voltar`}
           onClose={() => setShowModal(false)}
           onConfirm={onCancel}
+        />
+      )}
+      {kebabMenu && (
+        <KebabMenu
+          type={'profilePicture'}
+          data={form}
+          onClose={() => setKebabMenu(false)}
+          onDelete={() => updateImage(null)}
+          onChangeImage={() => handlePickImage({
+            onChangeImage: updateImage,
+            onStart: () => setUploading(true),
+            onFinish: () => setUploading(false)
+          })}
         />
       )}
     </View>
@@ -120,6 +145,14 @@ const styles = StyleSheet.create({
   editPicture: {
     alignItems: 'center',
     gap: 4,
+  },
+  loadingBackground: {
+    width: 120,
+    height: 120,
+    borderRadius: 100,
+    backgroundColor: colors.grey,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   textInputs: {
     gap: 12,

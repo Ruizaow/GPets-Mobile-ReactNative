@@ -1,11 +1,12 @@
 import { StyleSheet, TouchableOpacity, View, Text, Animated, Easing } from 'react-native';
-import { Trash, Star, TriangleAlert, Share2 } from 'lucide-react-native';
+import { Trash, Star, TriangleAlert, Share2, Image } from 'lucide-react-native';
 import { useEffect, useRef } from 'react';
 import { useTheme } from '@context/ThemeContext';
+import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export function KebabMenu({ type, data, onClose, onDelete }) {
+export function KebabMenu({ type, data, onClose, onDelete, onChangeImage, canDelete }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -16,15 +17,10 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
   useEffect(() => {
     Animated.parallel([
       Animated.timing(translateY, {
-        toValue: 0,
-        duration: 280,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
+        toValue: 0, duration: 280, easing: Easing.out(Easing.cubic), useNativeDriver: true
       }),
       Animated.timing(overlayOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
+        toValue: 1, duration: 200, useNativeDriver: true
       }),
     ]).start();
   }, []);
@@ -32,15 +28,10 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
   function handleClose() {
     Animated.parallel([
       Animated.timing(translateY, {
-        toValue: 320,
-        duration: 240,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: true,
+        toValue: 320, duration: 240, easing: Easing.in(Easing.cubic), useNativeDriver: true
       }),
       Animated.timing(overlayOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
+        toValue: 0, duration: 200, useNativeDriver: true
       }),
     ]).start(() => {
       onClose();
@@ -49,8 +40,8 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
 
   const allMenuItems = {
     delete: {
-      icon: <Trash size={24} color={theme.primaryText}/>,
-      title: 'Excluir'
+      icon: <Trash size={24} color={type !== 'profilePicture' ? theme.primaryText : colors.red}/>,
+      title: type !== 'profilePicture' ? 'Excluir' : 'Remover foto atual'
     },
     bookmark: {
       icon: <Star size={24} color={theme.primaryText}/>,
@@ -63,6 +54,10 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
     share: {
       icon: <Share2 size={24} color={theme.primaryText}/>,
       title: 'Compartilhar'
+    },
+    image: {
+      icon: <Image size={24} color={theme.primaryText}/>,
+      title: 'Escolher imagem'
     }
   };
 
@@ -70,16 +65,21 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
     post: 320,
     comment: 192,
     notification: 192,
+    profilePicture: 320,
   };
   
   const menuItems = (() => {
     switch (type) {
       case 'post':
-        return ['delete', 'bookmark', 'report', 'share'];
+        return canDelete
+          ? ['delete', 'bookmark', 'report', 'share']
+          : ['bookmark', 'report', 'share']
       case 'comment':
-        return data?.isOwner ? ['delete'] : ['report'];
+        return canDelete ? ['delete'] : ['report'];
       case 'notification':
         return ['delete'];
+      case 'profilePicture':
+        return ['image', 'delete']
       default:
         return [];
     }
@@ -105,15 +105,26 @@ export function KebabMenu({ type, data, onClose, onDelete }) {
             return (
               <TouchableOpacity key={key} style={styles.menuItem}
                 onPress={() => {
-                  if (key === 'delete') {
-                    onDelete?.(data.id);
+                  if (onDelete && key === 'delete') {
+                    onDelete();
+                  }
+                  if (onChangeImage && key === 'image') {
+                    onChangeImage();
                   }
                   handleClose();
                 }}
               >
                 <View style={styles.menuItemContent}>
                   {item.icon}
-                  <Text style={[fontStyles.title_4, { color: theme.primaryText }]}>{item.title}</Text>
+                  <Text style={[
+                    fontStyles.title_4,
+                    { color: key === 'delete' && type === 'profilePicture'
+                        ? colors.red
+                        : theme.primaryText
+                    }
+                  ]}>
+                    {item.title}
+                  </Text>
                 </View>
                 <View style={[styles.lineDivision, { backgroundColor: theme.lineDivision }]}/>
               </TouchableOpacity>

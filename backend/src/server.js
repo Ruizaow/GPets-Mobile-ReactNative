@@ -16,7 +16,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { authRouter, userRouter, postRouter } from './routes/index.js';
+import { authRouter, userRouter, postRouter, commentRouter } from './routes/index.js';
 
 async function startServer() {
   try {
@@ -38,5 +38,6 @@ app.use(express.json());
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/posts', postRouter);
+app.use('/comments', commentRouter);
 
 startServer();

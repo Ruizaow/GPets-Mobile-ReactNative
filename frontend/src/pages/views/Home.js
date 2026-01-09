@@ -1,15 +1,42 @@
+import { useState } from 'react';
 import { useHomeView } from '@context/HomeViewContext';
 import Feed from './homeViews/Feed';
 import SelectPost from './homeViews/SelectPost';
 import MapView from './homeViews/MapView';
 import { HomeLayout } from '@pages/HomeLayout';
+import { getPosts } from '@services/getPosts';
 
 export default function Home({ navigation }) {
   const { currentView, setCurrentView } = useHomeView();
+  const { posts, setPosts, loading } = getPosts();
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  function handleRemovePost(postId) {
+    setPosts(prev => prev.filter(
+      post => post.id !== postId
+    ));
+  
+    setCurrentPage(prev => {
+      const remainingPosts = posts.length - 1;
+      const maxPage = Math.max(1, Math.ceil(remainingPosts / 10));
+      return prev > maxPage
+        ? maxPage
+        : prev;
+    });
+  }
 
   const views = {
-    Feed: <Feed navigation={navigation}/>,
-    SelectPost: <SelectPost navigation={navigation}/>,
+    Feed: <Feed
+      navigation={navigation}
+      posts={posts}
+      loading={loading}
+      currentPage={currentPage}
+      setCurrentPage={setCurrentPage}
+    />,
+    SelectPost: <SelectPost
+      navigation={navigation}
+    />,
     MapView: <MapView/>,
   };
 
@@ -18,6 +45,7 @@ export default function Home({ navigation }) {
       navigation={navigation}
       onGoTo={setCurrentView}
       currentView={currentView}
+      onPostDeleted={handleRemovePost}
     >
       {views[currentView]}
     </HomeLayout>

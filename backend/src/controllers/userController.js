@@ -16,7 +16,7 @@ export const getUsers = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const userData = await userService.get(req.params.id);
+    const userData = await userService.get(parseInt(req.params.id));
 
     res.status(200).json({
       message: userData.message,

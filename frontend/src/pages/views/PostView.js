@@ -1,62 +1,59 @@
 import { StyleSheet, View, ScrollView, Text, TextInput, TouchableOpacity } from 'react-native';
-import { EllipsisVertical, SendHorizontal, MessageCircle } from 'lucide-react-native';
+import { EllipsisVertical, SendHorizontal } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
+import { useAuth } from '@context/AuthContext';
 import { GoBackHeader } from '@components/goBackHeader';
+import { ProfilePicture } from '@components/profilePicture';
 import { KebabMenu } from '@components/kebabMenu';
 import { Modal } from '@components/modal';
 import { Post } from '@components/post';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { formattedTimestamp } from '@utils/timestampFormatting'
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { getComments } from '@services/getComments';
+import { createComment } from '@services/createComment';
+import { deleteComment } from '@services/deleteComment';
 
 export default function PostView({ route, navigation }) {
   const { post, originRoute } = route.params;
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
+
+  const { comments, setComments, loading } = getComments(post.id);
   
   const [inputValue, setInputValue] = useState('');
-  const [comments, setComments] = useState(post.comments);
   const [kebabMenu, setKebabMenu] = useState(null);
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState(null);
 
-  const date = new Date();
-  date.setHours(date.getHours() - 3);
+  async function handleCreateComment() {
+    if (!inputValue.trim()) return;
 
-  const formattedTimestamp = `${date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })} - ${date.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })}`;
-
-  function handleCreateComment() {
-    if (!inputValue.trim())
-      return;
-
-    const newComment = {
-      id: Date.now().toString(), // substituir futuramente por valor real de id do backend
-      userUsername: 'Usuário Logado',
+    const newComment = await createComment({
+      content: inputValue,
       timestamp: formattedTimestamp,
-      comment: inputValue,
-      isOwner: true
-    };
-    setComments(prev => [...prev, newComment]);
-    setInputValue('');
-  }
-  function handleDeleteComment(commentId) {
-    setComments(prev => prev.filter(comment => comment.id !== commentId));
+      postId: post.id,
+      userId: user.id
+    });
+
+    if (newComment) {
+      setComments(prev => [...prev, newComment]);
+      setInputValue('');
+    }
   }
 
-  function openKebabMenu(type, payload) {
-    setKebabMenu({ type, payload });
+  async function handleDeleteComment(commentId) {
+    await deleteComment(commentId);
+    setComments(prev => prev.filter(c => c.id !== commentId));
+    setModal(null);
   }
-  function openModal(commentId) {
-    setModal(commentId);
+
+  function openKebabMenu(type, data) {
+    setKebabMenu({ type, data });
   }
 
   function handleGoBack() {
@@ -66,6 +63,8 @@ export default function PostView({ route, navigation }) {
       navigation.navigate('Home');
     }
   }
+
+  if (loading) return null;
 
   return (
     <View style={[styles.postView, { backgroundColor: theme.background }]}>
@@ -93,28 +92,34 @@ export default function PostView({ route, navigation }) {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.commentsSection}>
-                  {Object.entries(comments).map(([key, comment], index, array) => (
-                    <View key={key}>
-                      <View style={styles.comment}>
-                        <View style={styles.messageCircleBackground}>
-                          <MessageCircle size={24} color={colors.white}/>
-                        </View>
-                        <View style={styles.commentData}>
-                          <View style={styles.commentTextArea}>
-                            <Text style={[fontStyles.commentUsername, { color: theme.primaryText }]}>{comment.userUsername}</Text>
-                            <Text style={[fontStyles.commentTimestamp, { color: theme.primaryText }]}>{comment.timestamp}</Text>
-                            <Text style={[fontStyles.commentContent, { color: theme.primaryText }]}>{comment.comment}</Text>
+                  {comments.map((comment, index) => {
+                    return (
+                      <View key={index}>
+                        <View style={styles.comment}>
+                          <ProfilePicture loadedUser={comment.user} size={44}/>
+                          <View style={styles.commentData}>
+                            <View style={styles.commentTextArea}>
+                              <Text style={[fontStyles.commentUsername, { color: theme.primaryText }]}>
+                                {comment.user?.name}
+                              </Text>
+                              <Text style={[fontStyles.commentTimestamp, { color: theme.primaryText }]}>
+                                {comment.timestamp}
+                              </Text>
+                              <Text style={[fontStyles.commentContent, { color: theme.primaryText }]}>
+                                {comment.content}
+                              </Text>
+                            </View>
+                            <TouchableOpacity style={styles.commentMenuKebab} onPress={() => openKebabMenu('comment', comment)}>
+                              <EllipsisVertical size={28} color={theme.primaryText}/>
+                            </TouchableOpacity>
                           </View>
-                          <TouchableOpacity style={styles.commentMenuKebab} onPress={() => openKebabMenu('comment', comment)}>
-                            <EllipsisVertical size={28} color={theme.primaryText}/>
-                          </TouchableOpacity>
                         </View>
+                        {index !== comments.length - 1 && (
+                          <View style={styles.lineDivision}/>
+                        )}
                       </View>
-                      {index !== array.length - 1 && (
-                        <View style={styles.lineDivision}/>
-                      )}
-                    </View>
-                  ))}
+                    )
+                  })}
                 </View>
               </View>
             }
@@ -125,9 +130,10 @@ export default function PostView({ route, navigation }) {
       {Boolean(kebabMenu) && (
         <KebabMenu
           type={kebabMenu.type}
-          data={kebabMenu.payload}
+          data={kebabMenu.data}
           onClose={() => setKebabMenu(null)}
-          onDelete={openModal}
+          onDelete={() => setModal(kebabMenu.data.id)}
+          canDelete={kebabMenu.data.user?.id === user.id}
         />
       )}
       {Boolean(modal) && (

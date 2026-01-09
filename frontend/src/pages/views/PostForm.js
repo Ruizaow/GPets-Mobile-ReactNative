@@ -105,7 +105,7 @@ export default function PostForm({ navigation, route }) {
       )}
       {showModal && (
         <Modal
-          text={`Deseja descartar a postagem? Suas alterações serão perdidas`}
+          text={`Deseja descartar a publicação? Suas alterações serão perdidas`}
           confirmButton={`Sim, descartar`}
           onClose={() => setShowModal(false)}
           onConfirm={() => navigation.navigate('Home')}

@@ -43,7 +43,7 @@ export const mockedNotifications = [
   },
   {
     id: 7,
-    title: 'Postagem Curtida',
+    title: 'Publicação Curtida',
     description: 'Rafael Mendes curtiu sua publicação.',
     timestamp: '12:10',
     viewed: true,

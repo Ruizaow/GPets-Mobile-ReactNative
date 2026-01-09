@@ -4,34 +4,19 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@context/AuthContext';
 import { Button } from '@components/button';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export default function Start({ navigation }) {
   const fontsLoaded = useFontsCustom();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const token = await SecureStore.getItemAsync('token');
-        setIsAuthenticated(!!token);
-      } catch (error) {
-        console.error('Erro ao verificar autenticação', error);
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    }
-    checkAuth();
-  }, []);
+  const { user, loading } = useAuth();
 
   if (!fontsLoaded || loading) return null;
 
   function handleContinue() {
-    navigation.navigate(isAuthenticated ? 'Home' : 'Auth');
+    navigation.navigate(user ? 'Home' : 'Auth');
   }
   
   return (
