@@ -1,11 +1,10 @@
 import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useEffect, useRef, useState } from 'react';
-import { mockedMarkers } from '@constants/mockDataMarker';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function Map({ useMarkers=true, onPressLocation, isReadOnly=false, coordinateLat, coordinateLng }) {
+export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false, coordinateLat, coordinateLng }) {
   const mapRef = useRef(null);
   const [marker, setMarker] = useState(null);
 
@@ -92,10 +91,6 @@ export function Map({ useMarkers=true, onPressLocation, isReadOnly=false, coordi
     mapRef.current?.animateToRegion(newRegion, 300);
   }
 
-  function onMarkerSelected(marker) {
-    Alert.alert(marker.name);
-  }
-
   return (
     <View style={styles.mapContainer}>
       <MapView
@@ -117,9 +112,12 @@ export function Map({ useMarkers=true, onPressLocation, isReadOnly=false, coordi
         {/* Modo interativo padrão */}
         {!isReadOnly &&
           useMarkers ?
-            mockedMarkers.map((_marker, index) => (
-              <Marker key={index} coordinate={_marker} onPress={() => onMarkerSelected(_marker)}/>
-            )
+            posts.map((post, index) => {
+              const _marker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
+              return (
+                <Marker key={index} coordinate={_marker} onPress={Alert.alert(post.address)}/>
+              )
+            }
           ) : marker && (
             <Marker coordinate={marker} />
           )
