@@ -26,7 +26,9 @@ export function BottomNavbar({ onGoTo, currentView }) {
               {isSelected &&
                 <View style={[styles.iconBackground, { backgroundColor: theme.iconBackground }]}/>
               }
-              <Item size={24} color={isSelected ? colors.dark : theme.iconBackground}/>
+              <View style={styles.icon}>
+                <Item size={24} color={isSelected ? colors.dark : theme.iconBackground}/>
+              </View>
             </TouchableOpacity>
           );
         })}
@@ -42,7 +44,8 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingBottom: 52
+    paddingBottom: 52,
+    pointerEvents: 'box-none'
   },
   bottomNavbar: {
     flexDirection: 'row',
@@ -53,7 +56,8 @@ const styles = StyleSheet.create({
     borderRadius: 64,
     width: 252,
     height: 72,
-    gap: 16
+    gap: 16,
+    pointerEvents: 'auto'
   },
   navItem: {
     justifyContent: 'center',
@@ -65,4 +69,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
   },
+  icon: {
+    zIndex: 1
+  }
 });

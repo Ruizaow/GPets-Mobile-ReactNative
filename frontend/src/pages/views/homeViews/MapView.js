@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Platform } from 'react-native';
 import { MapPin } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
 import { Map } from '@components/map';
@@ -48,10 +48,14 @@ const styles = StyleSheet.create({
   mapView: {
     width: 343,
     height: 532,
-    borderWidth: 1,
     borderRadius: 16,
     marginBottom: 16,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    ...(Platform.OS !== 'web' ? {
+      borderWidth: 1,
+    } : {
+      borderWidth: 2,
+    }),
   },
   subtitles: {
     flexDirection: 'row',

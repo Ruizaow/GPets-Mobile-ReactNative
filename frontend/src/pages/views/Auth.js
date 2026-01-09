@@ -1,4 +1,4 @@
-import { Keyboard, Platform, View, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
+import { View } from 'react-native';
 import { useState } from 'react';
 import SelectUser from './authViews/SelectUser';
 import Login from './authViews/Login';
@@ -22,54 +22,66 @@ export default function Auth({ navigation }) {
   const { animatedOffset, keyboardHeight } = useKeyboardAnimation(keyboardConfig);
 
   return (
+    <View style={{ flex: 1 }}>
+      {currentView === 'SelectUser' && (
+        <SelectUser
+          navigation={navigation}
+          onSelectUser={() => {
+            setRole('USER');
+            goTo('Login');
+          }}
+          onSelectOng={() => {
+            setRole('ORGANIZATION');
+            goTo('Login');
+          }}
+        />
+      )}
+      {currentView === 'Login' && (
+        <Login
+          navigation={navigation}
+          animatedOffset={animatedOffset}
+          keyboardHeight={keyboardHeight}
+          onBack={() => goTo('SelectUser')}
+          onGoToSignUp={() => goTo('SignUp')}
+          onGoToForgotPassword={() => goTo('ForgotPassword')}
+        />
+      )}
+      {currentView === 'SignUp' && (
+        <SignUp
+          animatedOffset={animatedOffset}
+          onBackToLogin={() => goTo('Login')}
+          role={role}
+        />
+      )}
+      {currentView === 'ForgotPassword' && (
+        <ForgotPassword
+          animatedOffset={animatedOffset}
+          onBackToLogin={() => goTo('Login')}
+          onGoToChangePassword={() => goTo('ChangePassword')}
+        />
+      )}
+      {currentView === 'ChangePassword' && (
+        <ChangePassword 
+          animatedOffset={animatedOffset}
+          onBackToLogin={() => goTo('Login')}
+        />
+      )}
+    </View>
+  );
+}
+
+/*
+import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, View } from 'react-native';
+
+export default function Auth({ navigation }) {
+  return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>
-          {currentView === 'SelectUser' && (
-            <SelectUser
-              navigation={navigation}
-              onSelectUser={() => {
-                setRole('USER');
-                goTo('Login');
-              }}
-              onSelectOng={() => {
-                setRole('ORGANIZATION');
-                goTo('Login');
-              }}
-            />
-          )}
-          {currentView === 'Login' && (
-            <Login
-              navigation={navigation}
-              animatedOffset={animatedOffset}
-              keyboardHeight={keyboardHeight}
-              onBack={() => goTo('SelectUser')}
-              onGoToSignUp={() => goTo('SignUp')}
-              onGoToForgotPassword={() => goTo('ForgotPassword')}
-            />
-          )}
-          {currentView === 'SignUp' && (
-            <SignUp
-              animatedOffset={animatedOffset}
-              onBackToLogin={() => goTo('Login')}
-              role={role}
-            />
-          )}
-          {currentView === 'ForgotPassword' && (
-            <ForgotPassword
-              animatedOffset={animatedOffset}
-              onBackToLogin={() => goTo('Login')}
-              onGoToChangePassword={() => goTo('ChangePassword')}
-            />
-          )}
-          {currentView === 'ChangePassword' && (
-            <ChangePassword 
-              animatedOffset={animatedOffset}
-              onBackToLogin={() => goTo('Login')}
-            />
-          )}
+          ...
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
+*/

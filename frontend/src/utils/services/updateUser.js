@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from '@api';
+import { storage } from '@services/storage';
 
 export async function updateUser(loadedUser, newUserData, setUser, exitUpdateForm) {
   try {
@@ -10,7 +10,7 @@ export async function updateUser(loadedUser, newUserData, setUser, exitUpdateFor
     });
 
     const updatedUser = response.data.data;
-    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+    await storage.setItem('user', JSON.stringify(updatedUser));
     setUser(updatedUser);
     
     exitUpdateForm();

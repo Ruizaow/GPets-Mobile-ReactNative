@@ -23,7 +23,9 @@ export default function LocationStep({ navigation }) {
       <View style={styles.content}>
         <View style={styles.checkSection}>
           <View style={[styles.checkBackground, { backgroundColor: theme.background } ]}/>
-          <Check size={88} color={colors.green} />
+          <View style={styles.checkIcon}>
+            <Check size={88} color={colors.green} />
+          </View>
         </View>
 
         <View style={styles.textArea}>
@@ -64,8 +66,12 @@ const styles = StyleSheet.create({
   checkBackground: {
     width: 100,
     height: 100,
+    marginTop: -10,
     borderRadius: 50,
     position: 'absolute',
+  },
+  checkIcon: {
+    zIndex: 1
   },
   textArea: {
     gap: 8,

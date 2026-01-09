@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   buttonCustomStart: {
-    flex: 1
+    flex: 1,
+    minWidth: 0
   },
   buttonDark: {
     backgroundColor: colors.dark

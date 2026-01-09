@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView, Text, TextInput, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TextInput, Image, TouchableOpacity, Platform } from 'react-native';
 import { ArrowLeft, Image as ImageIcon, Camera, SendHorizontal } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
@@ -174,8 +174,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     position: 'absolute',
     width: '100%',
-    height: '100%',
-    justifyContent: 'flex-end',
+    bottom: 0,
     paddingBottom: 52
   },
   inputView: {
@@ -184,17 +183,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: colors.white,
     borderRadius: 100,
-    paddingHorizontal: 12,
-    paddingVertical: 6
+    paddingHorizontal: 16,
+    paddingVertical: 16
   },
   textInput: {
     width: 283,
     ...fontStyles.subtitle_1,
+    ...(Platform.OS === 'web' && {
+      outlineStyle: 'none',
+      boxShadow: 'none',
+    }),
   },
   inputIcons: {
     flexDirection: 'row',
     position: 'absolute',
-    right: 12,
+    right: 16,
     gap: 12
   },
   sendBackground: {

@@ -103,7 +103,8 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: 'row',
-    gap: 12
+    gap: 12,
+    width: '100%'
   },
   mapView: {
     width: '96%',

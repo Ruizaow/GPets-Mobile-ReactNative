@@ -1,9 +1,7 @@
-import * as SecureStore from 'expo-secure-store';
 import { StatusBar } from 'expo-status-bar';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View, Text, Image } from 'react-native';
-import { useEffect, useState } from 'react';
 import { useAuth } from '@context/AuthContext';
 import { Button } from '@components/button';
 import { fontStyles } from '@styles/fonts';

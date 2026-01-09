@@ -2,6 +2,8 @@ import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useEffect, useRef, useState } from 'react';
 import { mockedMarkers } from '@constants/mockDataMarker';
+import { colors } from '@styles/colors.js';
+import { fontStyles } from '@styles/fonts';
 
 export function Map({ useMarkers=true, onPressLocation, isReadOnly=false, coordinateLat, coordinateLng }) {
   const mapRef = useRef(null);
@@ -155,14 +157,13 @@ const styles = StyleSheet.create({
   zoomButton: {
     width: 44,
     height: 44,
-    borderRadius: '50%',
-    backgroundColor: '#FFFFFF',
+    borderRadius: 100,
+    backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
   },
   zoomText: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    ...fontStyles.title_2
   },
 });

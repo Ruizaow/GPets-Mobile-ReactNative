@@ -237,7 +237,9 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
       <View key='final' style={styles.contentFinal}>
         <View style={styles.checkSection}>
           <View style={styles.checkBackground} />
-          <Check size={88} color={colors.green} />
+          <View style={styles.checkIcon}>
+            <Check size={88} color={colors.green} />
+          </View>
         </View>
 
         <View style={styles.textArea}>
@@ -308,8 +310,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.beige,
     width: 100,
     height: 100,
+    marginTop: -10,
     borderRadius: 50,
     position: 'absolute',
+  },
+  checkIcon: {
+    zIndex: 1
   },
   inputArea: {
     alignItems: 'flex-end',

@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     paddingHorizontal: 12,
+    padding: 12,
     ...fontStyles.inputText
   },
   inputDisabled: {

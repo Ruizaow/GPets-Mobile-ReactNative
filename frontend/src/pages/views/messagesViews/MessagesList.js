@@ -58,11 +58,11 @@ const styles = StyleSheet.create({
   messages: {
     marginTop: 28,
     gap: 12,
-    marginBottom: 76
+    marginBottom: 76,
+    paddingHorizontal: 20
   },
   messageSection: {
     gap: 22,
-    paddingHorizontal: 20
   },
   userInfo: {
     flexDirection: 'row',
@@ -96,6 +96,6 @@ const styles = StyleSheet.create({
   },
   lineDivision: {
     width: '100%',
-    height: 0.6
+    height: 1
   }
 });

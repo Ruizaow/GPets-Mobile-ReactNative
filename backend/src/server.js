@@ -20,7 +20,7 @@ import { authRouter, userRouter, postRouter, commentRouter } from './routes/inde
 
 async function startServer() {
   try {
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`Servidor rodando em http://localhost:${PORT}`);
     })
   } catch (err) {

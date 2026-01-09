@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Platform } from 'react-native';
 import { Trash } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
@@ -114,9 +114,13 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     width: 343,
     height: 310,
-    borderWidth: 1,
     borderRadius: 16,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    ...(Platform.OS !== 'web' ? {
+      borderWidth: 1,
+    } : {
+      borderWidth: 2,
+    }),
   },
   addressText: {
     ...fontStyles.subtitle_2,

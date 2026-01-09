@@ -164,14 +164,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 20,
   },
-  commentInput: {
-    width: 311,
-    height: 58,
-    borderRadius: 16,
-    paddingLeft: 16,
-    paddingRight: 76,
-    ...fontStyles.inputText
-  },
   inputBackground: {
     position: 'absolute',
     width: 311,
@@ -180,6 +172,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginTop: 4.6,
   },
+  commentInput: {
+    width: 311,
+    height: 58,
+    borderRadius: 16,
+    paddingLeft: 16,
+    paddingRight: 76,
+    zIndex: 1,
+    ...fontStyles.inputText
+  },
+  sendIcon: {
+    position: 'absolute',
+    right: 16,
+    zIndex: 2
+  },
   sendBackground: {
     backgroundColor: colors.blue,
     justifyContent: 'center',
@@ -187,10 +193,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 34,
     borderRadius: 100,
-  },
-  sendIcon: {
-    position: 'absolute',
-    right: 16
   },
   commentsSection: {
     width: 343,
