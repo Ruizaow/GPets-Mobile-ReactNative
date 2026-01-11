@@ -1,9 +1,7 @@
 import { StyleSheet, View, Text, Platform } from 'react-native';
 import { MapPin } from 'lucide-react-native';
-import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { Map } from '@components/map';
-import { Modal } from '@components/modal';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';

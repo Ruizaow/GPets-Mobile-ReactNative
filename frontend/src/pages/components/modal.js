@@ -73,7 +73,7 @@ export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=fa
                 text='Fechar'
                 textColor={colors.white}
                 bgColor={colors.red}
-                height={48}
+                height={46}
                 onPress={handleClose}
               />
             ) : (
@@ -83,8 +83,8 @@ export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=fa
                   textColor={colors.blue}
                   bgColor={'transparent'}
                   borderColor={colors.blue}
-                  width={149}
-                  height={48}
+                  width={144}
+                  height={46}
                   onPress={handleClose}
                 />
                 {post ? (
@@ -92,8 +92,8 @@ export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=fa
                     text={confirmButton}
                     textColor={colors.white}
                     bgColor={colors.blue}
-                    width={149}
-                    height={48}
+                    width={144}
+                    height={46}
                     onPress={handleConfirm}
                   />
                 ) : (
@@ -101,8 +101,8 @@ export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=fa
                     text={confirmButton}
                     textColor={colors.white}
                     bgColor={colors.red}
-                    width={149}
-                    height={48}
+                    width={144}
+                    height={46}
                     onPress={handleConfirm}
                   />
                 )}

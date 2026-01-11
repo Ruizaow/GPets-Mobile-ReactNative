@@ -92,10 +92,10 @@ export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=f
 
         <View style={{ paddingHorizontal: sizes.mainContentPH * s }}>
           <View style={[styles.nameTag,
-            { marginTop: sizes.nameTagMT * s },
+            { marginTop: sizes.nameTagMT_1 * s },
             !isReduced
               ? { marginBottom: sizes.nameTagMB_1 * s }
-              : { marginBottom: sizes.nameTagMB_2 * s }
+              : { marginBottom: sizes.nameTagMB_2 * s, marginTop: sizes.nameTagMT_2 * s }
           ]}>
             <Text style={[styles.name, {
               color: theme.primaryText,
@@ -111,7 +111,7 @@ export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=f
                   { color: getTagColor(post.status) },
                   !isReduced
                     ? { fontSize: sizes.postTag * s }
-                    : { fontSize: sizes.title2 * s }
+                    : { fontSize: sizes.title3 * s }
                 ]}>
                   {post.status}
                 </Text>

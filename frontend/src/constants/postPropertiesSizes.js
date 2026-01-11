@@ -22,9 +22,10 @@ export const sizes = {
 
   mainContentPH: 16,
 
-  nameTagMT: 8,
+  nameTagMT_1: 8,
+  nameTagMT_2: 16,
   nameTagMB_1: 2,
-  nameTagMB_2: 10,
+  nameTagMB_2: 12,
   
   tagGap: 8,
 
