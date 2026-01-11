@@ -1,7 +1,7 @@
-import { StyleSheet, View, ScrollView, Text, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { useRef, useState, useMemo, useCallback } from 'react';
-import { Pencil, Mail, Phone, BookImage, Star } from 'lucide-react-native';
+import { useRef, useState, useCallback } from 'react';
+import { Pencil, Mail, Phone, Image, Star } from 'lucide-react-native';
 import { mockedPosts } from '@constants/mockDataPost';
 import { mockedBookmarks } from '@constants/mockDataBookmark';
 import { useTheme } from '@context/ThemeContext';
@@ -13,44 +13,35 @@ import { Pagination } from '@components/pagination';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { usePagination } from '@hooks/usePagination';
+import { handleChangePage } from '@handlers/handleChangePage';
 
-const POSTS_PER_PAGE = 20;
-
-export default function ProfileView({ loadedUser, loading, navigation, onGoToEditProfile }) {
+export default function ProfileView({ userProfile, loadedUser, loading, navigation, onGoToEditProfile }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
-  const { activeTab, setActiveTab } = useProfileTab();
-  
-  function switchTab(tab) {
-    if (tab === activeTab)
-      return;
+  const isUserProfile = loadedUser.id === userProfile.id
+  const user = isUserProfile ? loadedUser : userProfile
 
+  const scrollRef = useRef(null);
+  const [currentPagePost, setCurrentPagePost] = useState(1);
+  const [currentPageBookmark, setCurrentPageBookmark] = useState(1);
+
+  const {
+    totalPages: totalPagesPosts,
+    paginatedData: paginatedPosts
+  } = usePagination(mockedPosts, currentPagePost);
+  const {
+    totalPages: totalPagesBookmarks,
+    paginatedData: paginatedBookmarks
+  } = usePagination(mockedBookmarks, currentPageBookmark);
+
+  const { activeTab, setActiveTab } = useProfileTab();
+  function switchTab(tab) {
+    if (tab === activeTab) return;
     setActiveTab(tab);
   }
-
-  const [currentPagePost, setCurrentPagePost] = useState(1);
-
-  const orderedPosts = useMemo(() => [...mockedPosts].reverse(), []);
-  const totalPagesPosts = Math.ceil(orderedPosts.length / POSTS_PER_PAGE);
-
-  const paginatedPosts = useMemo(() => {
-    const start = (currentPagePost - 1) * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
-    return orderedPosts.slice(start, end);
-  }, [currentPagePost, orderedPosts]);
-
-  const [currentPageBookmark, setCurrentPageBookmark] = useState(1);
-  
-  const orderedBookmarks = useMemo(() => [...mockedBookmarks].reverse(), []);
-  const totalPagesBookmarks = Math.ceil(orderedBookmarks.length / POSTS_PER_PAGE);
-
-  const paginatedBookmarks = useMemo(() => {
-    const start = (currentPageBookmark - 1) * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
-    return orderedBookmarks.slice(start, end);
-  }, [currentPageBookmark, orderedBookmarks]);
 
   useFocusEffect(
     useCallback(() => {
@@ -66,32 +57,6 @@ export default function ProfileView({ loadedUser, loading, navigation, onGoToEdi
     }, [])
   );
 
-  const scrollRef = useRef(null);
-  const paginationRef = useRef(null);
-
-  function handleChangePage(page, activeTab) {
-    if (activeTab === 'post') {
-      setCurrentPagePost(page);
-    }
-    else {
-      setCurrentPageBookmark(page);
-    }
-
-    requestAnimationFrame(() => {
-      paginationRef.current?.measureLayout(
-        scrollRef.current,
-        (x, y) => {
-          scrollRef.current.scrollTo({
-            x,
-            y: y - 16,
-            animated: true,
-          });
-        },
-        () => {}
-      );
-    });
-  }
-
   if (loading) return null;
 
   return (
@@ -104,53 +69,61 @@ export default function ProfileView({ loadedUser, loading, navigation, onGoToEdi
       <ScrollView ref={scrollRef}>
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            <ProfilePicture loadedUser={loadedUser} size={80}/>
+            <ProfilePicture loadedUser={user} size={80}/>
             <View style={styles.userInfoColumn}>
               <Text style={[fontStyles.postTitle, { color: theme.secondaryText }]}>
-                {loadedUser.name}
+                {user.name}
               </Text>
-              <Text style={[fontStyles.subtitle_2, { color: theme.secondaryText }]}>
-                {loadedUser.bio}
-              </Text>
+              {user.bio &&
+                <Text style={[fontStyles.subtitle_2, { color: theme.secondaryText }]}>
+                  {user.bio}
+                </Text>
+              }
               <View style={styles.user_email}>
                 <Mail size={24} color={theme.secondaryText}/>
                 <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                  {loadedUser.email}
+                  {user.email}
                 </Text>
               </View>
-              <View style={styles.user_phone}>
-                <Phone size={24} color={theme.secondaryText}/>
-                <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                  {loadedUser.phone}
-                </Text>
-              </View>
+              {user.phone &&
+                <View style={styles.user_phone}>
+                  <Phone size={24} color={theme.secondaryText}/>
+                  <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
+                    {user.phone}
+                  </Text>
+                </View>
+              }
             </View>
-            <TouchableOpacity onPress={onGoToEditProfile}>
-              <Pencil size={24} color={theme.secondaryText}/>
-            </TouchableOpacity>
+            {isUserProfile &&
+              <TouchableOpacity onPress={onGoToEditProfile}>
+                <Pencil size={24} color={theme.secondaryText}/>
+              </TouchableOpacity>
+            }
           </View>
         </View>
 
         <View style={styles.selectSection}>
           <TouchableOpacity style={styles.iconText} onPress={() => switchTab('posts')}>
-            <BookImage
+            <Image
               size={24}
               color={activeTab === 'posts' ? theme.primaryText : colors.grey}
             />
             <Text style={[fontStyles.subtitle_1, { color: activeTab === 'posts' ? theme.primaryText : colors.grey } ]}>
-              Minhas publicações
+              {isUserProfile ? 'Minhas publicações' : 'Publicações'}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.iconText} onPress={() => switchTab('bookmarks')}>
-            <Star
-              size={24}
-              color={activeTab === 'bookmarks' ? theme.primaryText : colors.grey}
-            />
-            <Text style={[fontStyles.subtitle_1, { color: activeTab === 'bookmarks' ? theme.primaryText : colors.grey } ]}>
-              Salvos
-            </Text>
-          </TouchableOpacity>
+          {isUserProfile &&
+            <TouchableOpacity style={styles.iconText} onPress={() => switchTab('bookmarks')}>
+              <Star
+                size={24}
+                color={activeTab === 'bookmarks' ? theme.primaryText : colors.grey}
+              />
+              <Text style={[fontStyles.subtitle_1, { color: activeTab === 'bookmarks' ? theme.primaryText : colors.grey } ]}>
+                Salvos
+              </Text>
+            </TouchableOpacity>
+          }
         </View>
 
         <View style={styles.lineDivision}/>
@@ -173,19 +146,17 @@ export default function ProfileView({ loadedUser, loading, navigation, onGoToEdi
           {activeTab === 'posts' ? (
             totalPagesPosts > 1 && (
               <Pagination
-                ref={paginationRef}
                 currentPage={currentPagePost}
                 totalPages={totalPagesPosts}
-                onChangePage={(page) => {handleChangePage(page, 'post')}}
+                onChangePage={(page) => {handleChangePage(page, setCurrentPagePost, scrollRef)}}
               />
             )
           ) : (
             totalPagesBookmarks > 1 && (
               <Pagination
-                ref={paginationRef}
                 currentPage={currentPageBookmark}
                 totalPages={totalPagesBookmarks}
-                onChangePage={(page) => {handleChangePage(page, 'bookmark')}}
+                onChangePage={(page) => {handleChangePage(page, setCurrentPageBookmark, scrollRef)}}
               />
             )
           )}

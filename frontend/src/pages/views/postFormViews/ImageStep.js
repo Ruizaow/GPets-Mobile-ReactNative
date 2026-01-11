@@ -92,8 +92,9 @@ export default function ImageStep({ postType, imageUri, onChangeImage, onGoBack,
         <View style={styles.continueButton}>
           <Button
             text='Continuar'
-            variant={imageUri && !uploading ? 'blueBeige' : 'disabled'}
-            size={'custom'}
+            textColor={imageUri && !uploading ? theme.iconBackground : theme.background}
+            bgColor={imageUri && !uploading ? colors.blue : colors.disabled}
+            height={48}
             onPress={onGoNext}
             isDisabled={!imageUri || uploading}
           />

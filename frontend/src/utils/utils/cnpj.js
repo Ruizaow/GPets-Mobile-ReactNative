@@ -1,24 +1,25 @@
 export function onlyNumbers(value) {
-  return value.replace(/\D/g, "");
+  return value.replace(/\D/g, '');
 }
 
 export function formatCNPJ(value) {
   const numbers = onlyNumbers(value);
 
   return numbers
-    .replace(/^(\d{2})(\d)/, "$1.$2")
-    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-    .replace(/\.(\d{3})(\d)/, ".$1/$2")
-    .replace(/(\d{4})(\d)/, "$1-$2")
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+    .replace(/(\d{4})(\d)/, '$1-$2')
     .slice(0, 18);
 }
 
-export function isValidCNPJ(cnpj) {
+export function isValidCNPJ(cnpj, strict=true) {
   const cleaned = onlyNumbers(cnpj);
 
   if (cleaned.length !== 14) return false;
-
   if (/^(\d)\1+$/.test(cleaned)) return false;
+
+  if (!strict) return true;
 
   const calcDigit = (base, weights) => {
     let sum = 0;

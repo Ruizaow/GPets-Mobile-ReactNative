@@ -49,20 +49,18 @@ export default function SituationStep({ value, onChange, onGoNext, onDiscard, ha
         <View style={styles.buttons}>
           <Button
             text='Perdido'
-            size={'custom'}
-            variant={value === 'Perdido'
-              ? theme.name === 'light' ? 'blue' : 'green'
-              : theme.name === 'light' ? 'goToMap' : 'blue'
-            }
+            textColor={value === 'Perdido' ? theme.background : theme.stateButtonText}
+            bgColor={value === 'Perdido' ? theme.selectedStateButton : theme.stateButton}
+            borderColor={value === 'Perdido' ? 'transparent' : theme.postPetButtonBorder}
+            height={48}
             onPress={() => handleSelectSituation('Perdido')}
           />
           <Button
             text='Desabrigado'
-            size={'custom'}
-            variant={value === 'Desabrigado'
-              ? theme.name === 'light' ? 'blue' : 'green'
-              : theme.name === 'light' ? 'goToMap' : 'blue'
-            }
+            textColor={value === 'Desabrigado' ? theme.background : theme.stateButtonText}
+            bgColor={value === 'Desabrigado' ? theme.selectedStateButton : theme.stateButton}
+            borderColor={value === 'Desabrigado' ? 'transparent' : theme.postPetButtonBorder}
+            height={48}
             onPress={() => handleSelectSituation('Desabrigado')}
           />
         </View>
@@ -70,8 +68,9 @@ export default function SituationStep({ value, onChange, onGoNext, onDiscard, ha
         <View style={styles.continueButton}>
           <Button
             text='Continuar'
-            variant={value ? 'blueBeige' : 'disabled'}
-            size={'custom'}
+            textColor={value ? theme.iconBackground : theme.background}
+            bgColor={value ? colors.blue : colors.disabled}
+            height={48}
             onPress={onGoNext}
             isDisabled={value ? false : true}
           />

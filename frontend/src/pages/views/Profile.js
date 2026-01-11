@@ -3,8 +3,9 @@ import { useAuth } from '@context/AuthContext';
 import ProfileView from './profileViews/ProfileView';
 import EditProfile from './profileViews/EditProfile';
 
-export default function Profile({ navigation }) {
-  const { user, setUser, loading } = useAuth();
+export default function Profile({ navigation, route }) {
+  const { user } = route.params;
+  const { user: loadedUser, setUser, loading } = useAuth();
   
   const [currentView, setCurrentView] = useState('ProfileView');
   const goTo = (viewName) => setCurrentView(viewName);
@@ -13,7 +14,8 @@ export default function Profile({ navigation }) {
     <>
       {currentView === 'ProfileView' && (
         <ProfileView
-          loadedUser={user}
+          userProfile={user}
+          loadedUser={loadedUser}
           loading={loading}
           navigation={navigation}
           onGoToEditProfile={() => goTo('EditProfile')}
@@ -21,7 +23,7 @@ export default function Profile({ navigation }) {
       )}
       {currentView === 'EditProfile' && (
         <EditProfile
-          loadedUser={user}
+          loadedUser={loadedUser}
           updateLoadedUser={setUser}
           onCancel={() => goTo('ProfileView')}
           onSave={() => goTo('ProfileView')}

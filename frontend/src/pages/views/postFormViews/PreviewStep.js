@@ -78,8 +78,9 @@ export default function PreviewStep({ postType, postData, onGoBack, onGoNext, on
           <View style={styles.publishButton}>
             <Button
               text='Publicar'
-              variant='green'
-              size={'custom'}
+              textColor={theme.navBackground}
+              bgColor={colors.green}
+              height={48}
               onPress={async () => {await createPost(post, onGoNext)}}
             />
           </View>
@@ -90,9 +91,8 @@ export default function PreviewStep({ postType, postData, onGoBack, onGoNext, on
         <Modal
           text={post.address}
           onClose={() => setShowModal(false)}
-          hasConfirmButton={false}
-          coordinateLat={post.coordinateLat}
-          coordinateLng={post.coordinateLng}
+          post={post}
+          hasMap={true}
         />
       )}
     </View>

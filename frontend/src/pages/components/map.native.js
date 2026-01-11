@@ -1,12 +1,26 @@
-import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Image, Animated } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useEffect, useRef, useState } from 'react';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { zoomIn, zoomOut } from '@utils/mapZoom';
 
-export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false, coordinateLat, coordinateLng }) {
+const MARKER_SIZE = 28;
+
+export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadOnly=false, coordinateLat, coordinateLng }) {
   const mapRef = useRef(null);
   const [marker, setMarker] = useState(null);
+
+  const markerIcons = {
+    Perdido: require('@assets/markers/marker_red.png'),
+    Desabrigado: require('@assets/markers/marker_yellow.png'),
+    Encontrado: require('@assets/markers/marker_green.png'),
+    Resgatado: require('@assets/markers/marker_blue.png'),
+    default: require('@assets/markers/marker_grey.png'),
+  };
+  function getMarkerIcon(status) {
+    return markerIcons[status] || markerIcons.default;
+  }
 
   const [region, setRegion] = useState({
     latitude: coordinateLat || -4.9708,
@@ -14,7 +28,7 @@ export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
-
+  
   useEffect(() => {
     if (typeof coordinateLat === 'number' && typeof coordinateLng === 'number') {
       const newMarker = {
@@ -35,7 +49,7 @@ export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false,
   }, [coordinateLat, coordinateLng]);
 
   function handleMapPress(event) {
-    if (useMarkers) return;
+    if (posts) return;
 
     const { latitude, longitude } = event.nativeEvent.coordinate;
 
@@ -53,44 +67,6 @@ export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false,
     onPressLocation?.(newMarker);
   }
 
-  function getZoomCenter() {
-    if (marker) {
-      return {
-        latitude: marker.latitude,
-        longitude: marker.longitude,
-      };
-    }
-    return {
-      latitude: region.latitude,
-      longitude: region.longitude,
-    };
-  }
-
-  function zoomIn() {
-    const center = getZoomCenter();
-
-    const newRegion = {
-      ...center,
-      latitudeDelta: region.latitudeDelta / 2,
-      longitudeDelta: region.longitudeDelta / 2,
-    };
-
-    setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 300);
-  }
-  function zoomOut() {
-    const center = getZoomCenter();
-
-    const newRegion = {
-      ...center,
-      latitudeDelta: region.latitudeDelta * 2,
-      longitudeDelta: region.longitudeDelta * 2,
-    };
-    
-    setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 300);
-  }
-
   return (
     <View style={styles.mapContainer}>
       <MapView
@@ -106,30 +82,54 @@ export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false,
         {/* Modo readonly — marker fixo */}
         {isReadOnly &&
           coordinateLat && coordinateLng && (
-            <Marker coordinate={{ latitude: coordinateLat, longitude: coordinateLng }}/>
+            <Marker
+              coordinate={{ latitude: coordinateLat, longitude: coordinateLng }}
+            >
+              <Image
+                source={markerIcons.default}
+                style={{ width: MARKER_SIZE, height: MARKER_SIZE }}
+                resizeMode='contain'
+              />
+            </Marker>
           )
         }
         {/* Modo interativo padrão */}
         {!isReadOnly &&
-          useMarkers ?
-            posts.map((post, index) => {
-              const _marker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
+          posts ?
+            posts.map((post) => {
+              const postMarker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
               return (
-                <Marker key={index} coordinate={_marker} onPress={Alert.alert(post.address)}/>
-              )
+                <Marker
+                  key={post.id}
+                  coordinate={postMarker}
+                  onPress={() => onPressMarker?.(post)}
+                >
+                  <Image
+                    source={getMarkerIcon(post.status)}
+                    style={{ width: MARKER_SIZE, height: MARKER_SIZE }}
+                    resizeMode='contain'
+                  />
+                </Marker>
+              );
             }
           ) : marker && (
-            <Marker coordinate={marker} />
+            <Marker coordinate={marker}>
+              <Image
+                source={getMarkerIcon(postStatus)}
+                style={{ width: MARKER_SIZE, height: MARKER_SIZE }}
+                resizeMode='contain'
+              />
+            </Marker>
           )
         }
       </MapView>
 
       {!isReadOnly && (
         <View style={styles.zoomControls}>
-          <TouchableOpacity style={styles.zoomButton} onPress={zoomIn}>
+          <TouchableOpacity style={styles.zoomButton} onPress={() => zoomIn(marker, region, setRegion, mapRef)}>
             <Text style={styles.zoomText}>+</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.zoomButton} onPress={zoomOut}>
+          <TouchableOpacity style={styles.zoomButton} onPress={() => zoomOut(marker, region, setRegion, mapRef)}>
             <Text style={styles.zoomText}>−</Text>
           </TouchableOpacity>
         </View>

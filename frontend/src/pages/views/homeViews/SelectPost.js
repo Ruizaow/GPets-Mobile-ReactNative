@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { useTheme } from '@context/ThemeContext';
 import { Button } from '@components/button';
+import { colors } from '@styles/colors';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
@@ -17,10 +18,21 @@ export default function SelectPost({ navigation }) {
         Que tipo de publicação {'\n'}você deseja fazer hoje?
       </Text>
       <View style={styles.buttons}>
-        <Button text='Evento/publicidade' variant='blue' size={'medium'}
+        <Button
+          text='Evento/publicidade'
+          textColor={colors.beige}
+          bgColor={colors.blue}
+          width={227}
+          height={48}
           onPress={() => navigation.navigate('PostForm', { postType: 'Evento/publicidade' })}
         />
-        <Button text='Reportar animal' variant='goToMap' size={'medium'}
+        <Button
+          text='Reportar animal'
+          textColor={theme.postPetButtonText}
+          bgColor={theme.postPetButton}
+          borderColor={theme.postPetButtonBorder}
+          width={227}
+          height={48}
           onPress={() => navigation.navigate('PostForm', { postType: 'Reportar animal' })}
         />
       </View>

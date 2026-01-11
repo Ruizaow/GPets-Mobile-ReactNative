@@ -251,8 +251,9 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
             <View style={styles.continueButton}>
               <Button
                 text='Concluir'
-                variant={isEventFormValid ? 'blueBeige' : 'disabled'}
-                size={'custom'}
+                textColor={isEventFormValid ? theme.iconBackground : theme.background}
+                bgColor={isEventFormValid ? colors.blue : colors.disabled}
+                height={48}
                 onPress={onGoNext}
                 isDisabled={!isEventFormValid}
               />
@@ -488,8 +489,9 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
             <View style={styles.continueButton}>
               <Button
                 text='Concluir'
-                variant={isPetFormValid ? 'blueBeige' : 'disabled'}
-                size={'custom'}
+                textColor={isPetFormValid ? theme.iconBackground : theme.background}
+                bgColor={isPetFormValid ? colors.blue : colors.disabled}
+                height={48}
                 onPress={onGoNext}
                 isDisabled={!isPetFormValid}
               />

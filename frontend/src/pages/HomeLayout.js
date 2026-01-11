@@ -10,13 +10,13 @@ import { KebabMenu } from '@components/kebabMenu';
 import { Modal } from '@components/modal';
 import { deletePost } from '@services/deletePost';
 
-export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, children }) {
+export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, postMarker, setPostMarker, children }) {
   const { theme } = useTheme();
   const { user, logout } = useAuth();
 
   async function handleLogout() {
     await logout();
-    navigation.reset({ index: 0, routes: [{ name: 'Start' }] });
+    navigation.navigate('Start');
   }
 
   async function handleDeletPost(postId) {
@@ -148,6 +148,16 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, chi
           onClose={closeKebabMenu}
           onDelete={() => setDeleteModal(kebabMenu.data.id)}
           canDelete={kebabMenu.data.userId === user.id}
+        />
+      )}
+
+      {/* MODAL para EXIBIR POST DE MARCADOR NO MAPA */}
+      {postMarker && (
+        <Modal
+          text={postMarker.address}
+          confirmButton={`Ver publicação`}
+          onClose={() => setPostMarker(null)}
+          post={postMarker}
         />
       )}
 

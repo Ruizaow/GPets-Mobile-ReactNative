@@ -38,8 +38,8 @@ export default function LocationStep({ navigation }) {
         <View style={styles.continueButton}>
           <Button
             text='Continuar'
-            variant={theme.name === 'light' ? 'beige' : 'dark'}
-            size={'custom'}
+            textColor={theme.primaryText}
+            bgColor={theme.background}
             onPress={handleContinue}
           />
         </View>

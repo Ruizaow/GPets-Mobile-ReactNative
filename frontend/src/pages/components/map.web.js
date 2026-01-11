@@ -117,10 +117,10 @@ export function Map({ posts, useMarkers = true, onPressLocation, isReadOnly = fa
         {!isReadOnly &&
           useMarkers ?
             posts.map((post, index) => {
-              const _marker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
+              const postMarker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
               return (
                 <Marker key={index} icon={defaultIcon}
-                  position={[_marker.latitude, _marker.longitude]}
+                  position={[postMarker.latitude, postMarker.longitude]}
                 >
                   <Popup>{post.address}</Popup>
                 </Marker>

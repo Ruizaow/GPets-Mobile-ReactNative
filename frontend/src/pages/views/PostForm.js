@@ -57,6 +57,7 @@ export default function PostForm({ navigation, route }) {
       {currentView === 'LocationStep' && (
         <LocationStep
           location={postData.location}
+          postStatus={postData.situation}
           onChange={(location) => updatePostData('location', location)}
           onGoBack={goBack}
           onGoNext={goNext}

@@ -11,6 +11,7 @@ export default function Home({ navigation }) {
   const { posts, setPosts, loading } = getPosts();
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [postMarker, setPostMarker] = useState(null);
 
   function handleRemovePost(postId) {
     setPosts(prev => prev.filter(
@@ -37,7 +38,9 @@ export default function Home({ navigation }) {
     SelectPost: <SelectPost
       navigation={navigation}
     />,
-    MapView: <MapView/>,
+    MapView: <MapView
+      setPostMarker={setPostMarker}
+    />,
   };
 
   return (
@@ -46,6 +49,8 @@ export default function Home({ navigation }) {
       onGoTo={setCurrentView}
       currentView={currentView}
       onPostDeleted={handleRemovePost}
+      postMarker={postMarker}
+      setPostMarker={setPostMarker}
     >
       {views[currentView]}
     </HomeLayout>

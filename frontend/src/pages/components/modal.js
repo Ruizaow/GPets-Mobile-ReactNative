@@ -3,10 +3,12 @@ import { useEffect, useRef } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { Map } from '@components/map';
 import { Button } from '@components/button';
+import { ReducedPost } from '@components/reducedPost';
+import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export function Modal({ text, confirmButton, onClose, onConfirm, hasConfirmButton=true, coordinateLat, coordinateLng }) {
+export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=false }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -48,25 +50,62 @@ export function Modal({ text, confirmButton, onClose, onConfirm, hasConfirmButto
       <View style={styles.modalContainer}>
         <View style={[styles.content, { backgroundColor: theme.post }]}>
           <Text style={[styles.text, { color: theme.primaryText }]}>{text}</Text>
-          {!hasConfirmButton && (
+          
+          {hasMap ? (
             <View style={[styles.mapView, { borderColor: theme.primaryText }]}>
               <Map
-                useMarkers={false}
-                isReadOnly
-                coordinateLat={coordinateLat}
-                coordinateLng={coordinateLng}
+                isReadOnly={true}
+                postStatus={post.status}
+                coordinateLat={post.coordinateLat}
+                coordinateLng={post.coordinateLng}
               />
             </View>
+          ) : (
+            post && (
+              <View style={styles.reducedPost}>
+                <ReducedPost post={post} scale={0.85} isPressable={false}/>
+              </View>
+            )
           )}
           <View style={styles.buttons}>
-	          {hasConfirmButton ? (
-		          <>
-              	<Button text='Cancelar' variant='goToMap' size={'custom'} onPress={handleClose}/>
-              	<Button text={confirmButton} variant='delete' size={'custom'} onPress={handleConfirm}/>
-              </>
+	          {hasMap ? (
+              <Button
+                text='Fechar'
+                textColor={colors.white}
+                bgColor={colors.red}
+                height={48}
+                onPress={handleClose}
+              />
             ) : (
               <>
-                <Button text='Fechar' variant='delete' size={'custom'} onPress={handleClose}/>
+                <Button
+                  text='Cancelar'
+                  textColor={colors.blue}
+                  bgColor={'transparent'}
+                  borderColor={colors.blue}
+                  width={149}
+                  height={48}
+                  onPress={handleClose}
+                />
+                {post ? (
+                  <Button
+                    text={confirmButton}
+                    textColor={colors.white}
+                    bgColor={colors.blue}
+                    width={149}
+                    height={48}
+                    onPress={handleConfirm}
+                  />
+                ) : (
+                  <Button
+                    text={confirmButton}
+                    textColor={colors.white}
+                    bgColor={colors.red}
+                    width={149}
+                    height={48}
+                    onPress={handleConfirm}
+                  />
+                )}
               </>
             )}
           </View>
@@ -94,17 +133,25 @@ const styles = StyleSheet.create({
     width: 343,
     alignItems: 'center',
     borderRadius: 24,
-    padding: 15.6,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
     gap: 16
   },
   text: {
     ...fontStyles.title_3,
     textAlign: 'center'
   },
+  reducedPost: {
+    borderWidth: 1,
+    borderColor: colors.grey,
+    borderRadius: 8,
+    marginBottom: 2
+  },
   buttons: {
     flexDirection: 'row',
-    gap: 12,
-    width: '100%'
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 8
   },
   mapView: {
     width: '96%',
