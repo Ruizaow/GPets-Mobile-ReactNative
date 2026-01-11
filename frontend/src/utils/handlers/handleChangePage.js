@@ -1,10 +1,10 @@
 export function handleChangePage(page, setPage, scrollRef) {
   setPage(page);
 
-  requestAnimationFrame(() => {
+  setTimeout(() => {
     scrollRef.current?.scrollTo({
       y: 0,
       animated: false,
     });
-  });
+  }, 70);
 }

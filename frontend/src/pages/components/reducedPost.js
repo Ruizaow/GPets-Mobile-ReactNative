@@ -27,7 +27,12 @@ export function ReducedPost({ post, navigation, scale=1, isPressable=true, origi
             borderRadius: sizes.containerB_Radius*s
           }
         ]}>
-          <PostBase post={post} navigation={navigation} scale={scale} isReduced={true}/>
+          <PostBase
+            post={post}
+            navigation={navigation}
+            scale={scale}
+            isReduced={true}
+          />
           {pressed && (<View pointerEvents='none' style={[
             styles.overlay, {
               borderRadius: sizes.overlayB_Radius*s

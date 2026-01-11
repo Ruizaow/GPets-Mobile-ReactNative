@@ -43,13 +43,16 @@ export default function PrivateChat({ onBack, messageData }) {
             <ArrowLeft size={24} color={theme.primaryText}/>
           </TouchableOpacity>
           <View style={styles.userInfo}>
-            <Image
-              style={[styles.profilePicture, {
-                borderWidth: theme.name === 'dark' ? 1 : 0,
-                borderColor: theme.name === 'dark' ? colors.white : 'transparent'
-              }]}
-              source={messageData.userProfilePicture}
-            />
+            <TouchableOpacity>
+              {/* Substituir pelo componente ProfilePicture e navegar para Perfil no onPress */}
+              <Image
+                style={[styles.profilePicture, {
+                  borderWidth: theme.name === 'dark' ? 1 : 0,
+                  borderColor: theme.name === 'dark' ? colors.white : 'transparent'
+                }]}
+                source={messageData.userProfilePicture}
+              />
+            </TouchableOpacity>
             <View>
               <Text style={[styles.username, { color: theme.primaryText }]}>{messageData.userUsername}</Text>
               <Text style={[fontStyles.postSubtitle, { color: theme.primaryText }]}>Visto por último - {messageData.messages[messageData.messages.length - 1].timestamp}</Text>

@@ -1,12 +1,22 @@
-import { StyleSheet, Pressable, View, Text } from 'react-native';
+import { StyleSheet, Pressable, View, Text, Animated } from 'react-native';
+import { useEffect, useRef } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { PostBase } from '@components/postBase';
 import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
+const POST_BASE_HEIGHT = 374;
+
 export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm=false, footer=null }) {
   const { theme } = useTheme();
+
+  const opacity = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: 1, duration: 100, useNativeDriver: true,
+    }).start();
+  }, []);
 
   return (
     <Pressable
@@ -25,12 +35,14 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
             borderBottomColor: colors.darkGreyAlt
           }
         ]}>
-          <PostBase
-            post={post}
-            navigation={navigation}
-            onOpenMenu={onOpenMenu}
-            isOnPostForm={isOnPostForm}
-          />
+          <Animated.View style={{ minHeight: POST_BASE_HEIGHT, opacity }}>
+            <PostBase
+              post={post}
+              navigation={navigation}
+              onOpenMenu={onOpenMenu}
+              isOnPostForm={isOnPostForm}
+            />
+          </Animated.View>
           <View style={styles.mainContent}>
             {post.type === 'Pet' ? (
               <>

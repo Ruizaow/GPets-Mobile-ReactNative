@@ -40,7 +40,7 @@ export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=f
         <View style={[styles.userData, {
           gap: sizes.userDataGap * s
         }]}>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile', { user })}>
+          <TouchableOpacity disabled={isOnPostForm} onPress={() => navigation.navigate('Profile', { user })}>
             <ProfilePicture loadedUser={user} size={sizes.profileP_Size * s}/>
           </TouchableOpacity>
           <View style={hasOwnerTag && { marginTop: sizes.ownerTagMT_1 * s }}>

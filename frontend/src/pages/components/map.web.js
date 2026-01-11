@@ -1,9 +1,11 @@
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import { useEffect, useRef, useState } from 'react';
+import { useMapContext } from '@context/MapContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { Icon } from 'leaflet';
+
 import red from '@assets/markers/marker_red.png';
 import yellow from '@assets/markers/marker_yellow.png';
 import green from '@assets/markers/marker_green.png';
@@ -16,6 +18,26 @@ const markerIcons = {
   Encontrado: new Icon({ iconUrl: green.uri, shadowUrl: null, iconSize: [23, 28], iconAnchor: [11, 28] }),
   Resgatado: new Icon({ iconUrl: blue.uri, shadowUrl: null, iconSize: [23, 28], iconAnchor: [11, 28] }),
   default: new Icon({ iconUrl: grey.uri, shadowUrl: null, iconSize: [23, 28], iconAnchor: [11, 28] })
+};
+
+const MapEvents = () => {
+  const map = useMap();
+  const { updateMapState } = useMapContext();
+
+  useEffect(() => {
+    map.on('moveend', () => {
+      const center = map.getCenter();
+      const zoom = map.getZoom();
+
+      updateMapState({
+        latitude: center.lat,
+        longitude: center.lng,
+        zoom,
+      });
+    });
+  }, [map]);
+
+  return null;
 };
 
 const MapClickHandler = ({ enabled, onClick }) => {
@@ -42,13 +64,20 @@ const ZoomController = ({ onReady }) => {
 }
 
 export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadOnly = false, coordinateLat, coordinateLng }) {
-  const mapRef = useRef(null);
+  const { mapState } = useMapContext();
   const [marker, setMarker] = useState(null);
+  const mapRef = useRef(null);
 
-  const center = [
-    coordinateLat ?? -4.9708,
-    coordinateLng ?? -39.0150,
-  ];
+  function getCenter() {
+    if (typeof coordinateLat === 'number' && typeof coordinateLng === 'number') {
+      return { latitude: coordinateLat, longitude: coordinateLng}
+    }
+    if (posts) {
+      return { latitude: mapState.latitude, longitude: mapState.longitude }
+    }
+    return { latitude: -4.9708, longitude: -39.0150 }
+  }
+  const center = [getCenter().latitude, getCenter().longitude]
 
   function getMarkerIcon(status) {
     return markerIcons[status] || markerIcons.default;
@@ -92,28 +121,21 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
     <div style={styles.mapContainer}>
       <MapContainer
         center={center}
-        zoom={16}
+        zoom={mapState.zoom}
         zoomControl={false}
         style={styles.map}
         scrollWheelZoom={!isReadOnly}
         dragging={!isReadOnly}
         doubleClickZoom={!isReadOnly}
       >
+        {posts && <MapEvents/>}
         <ZoomController onReady={(map) => (mapRef.current = map)}/>
-
         <TileLayer
           attribution='&copy; OpenStreetMap contributors'
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         />
 
-        {!isReadOnly && (
-          <MapClickHandler
-            enabled={!isReadOnly}
-            onClick={handleMapClick}
-          />
-        )}
-
-        {/* Modo readonly */}
+        {/* Modo readonly — marker fixo */}
         {isReadOnly &&
           coordinateLat && coordinateLng && (
             <Marker
@@ -122,8 +144,13 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
             />
           )
         }
-
         {/* Modo interativo */}
+        {!isReadOnly && (
+          <MapClickHandler
+            enabled={!isReadOnly}
+            onClick={handleMapClick}
+          />
+        )}
         {!isReadOnly &&
           posts ?
             posts.map((post) => {

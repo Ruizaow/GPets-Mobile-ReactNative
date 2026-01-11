@@ -8,7 +8,7 @@ import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=false }) {
+export function Modal({ navigation, text, confirmButton, onClose, onConfirm, post, hasMap=false }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -31,11 +31,6 @@ export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=fa
     ]).start(() => {
       onClose();
     });
-  }
-
-  function handleConfirm() {
-    onClose();
-    onConfirm();
   }
 
   return (
@@ -63,7 +58,12 @@ export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=fa
           ) : (
             post && (
               <View style={styles.reducedPost}>
-                <ReducedPost post={post} scale={0.85} isPressable={false}/>
+                <ReducedPost
+                  post={post}
+                  scale={0.85}
+                  isPressable={false}
+                  navigation={navigation}
+                />
               </View>
             )
           )}
@@ -83,7 +83,7 @@ export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=fa
                   textColor={colors.blue}
                   bgColor={'transparent'}
                   borderColor={colors.blue}
-                  width={144}
+                  width={149}
                   height={46}
                   onPress={handleClose}
                 />
@@ -92,18 +92,21 @@ export function Modal({ text, confirmButton, onClose, onConfirm, post, hasMap=fa
                     text={confirmButton}
                     textColor={colors.white}
                     bgColor={colors.blue}
-                    width={144}
+                    width={149}
                     height={46}
-                    onPress={handleConfirm}
+                    onPress={onConfirm}
                   />
                 ) : (
                   <Button
                     text={confirmButton}
                     textColor={colors.white}
                     bgColor={colors.red}
-                    width={144}
+                    width={149}
                     height={46}
-                    onPress={handleConfirm}
+                    onPress={() => {
+                      onClose();
+                      onConfirm();
+                    }}
                   />
                 )}
               </>
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 24,
     paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
     gap: 16
   },
   text: {

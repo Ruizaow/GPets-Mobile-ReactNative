@@ -1,7 +1,7 @@
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRef, useState, useCallback } from 'react';
-import { Pencil, Mail, Phone, Image, Star } from 'lucide-react-native';
+import { Pencil, Mail, Phone, MapPinHouse, Image, Star } from 'lucide-react-native';
 import { mockedPosts } from '@constants/mockDataPost';
 import { mockedBookmarks } from '@constants/mockDataBookmark';
 import { useTheme } from '@context/ThemeContext';
@@ -63,7 +63,7 @@ export default function ProfileView({ userProfile, loadedUser, loading, navigati
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
       <GoBackHeader
         headerTitle={'Perfil'}
-        onPress={() => navigation.navigate('Home')}
+        onPress={() => navigation.goBack()}
         showLineDivision={false}
       />
       <ScrollView ref={scrollRef}>
@@ -79,20 +79,24 @@ export default function ProfileView({ userProfile, loadedUser, loading, navigati
                   {user.bio}
                 </Text>
               }
-              <View style={styles.user_email}>
-                <Mail size={24} color={theme.secondaryText}/>
-                <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                  {user.email}
-                </Text>
-              </View>
-              {user.phone &&
-                <View style={styles.user_phone}>
-                  <Phone size={24} color={theme.secondaryText}/>
+              <View>
+                <View style={styles.userDataRow}>
+                  <View>
+                    <Mail size={24} color={theme.secondaryText} />
+                  </View>
                   <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                    {user.phone}
+                    {user.email}
                   </Text>
                 </View>
-              }
+                {user.phone &&
+                  <View style={styles.userDataRow}>
+                    <Phone size={24} color={theme.secondaryText}/>
+                    <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
+                      {user.phone}
+                    </Text>
+                  </View>
+                }
+              </View>
             </View>
             {isUserProfile &&
               <TouchableOpacity onPress={onGoToEditProfile}>
@@ -186,12 +190,7 @@ const styles = StyleSheet.create({
   userInfoColumn: {
     flex: 1
   },
-  user_email: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12
-  },
-  user_phone: {
+  userDataRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12

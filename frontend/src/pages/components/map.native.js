@@ -1,6 +1,7 @@
 import { StyleSheet, View, TouchableOpacity, Text, Image, Animated } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useEffect, useRef, useState } from 'react';
+import { useMapContext } from '@context/MapContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { zoomIn, zoomOut } from '@utils/mapZoom';
@@ -8,8 +9,9 @@ import { zoomIn, zoomOut } from '@utils/mapZoom';
 const MARKER_SIZE = 28;
 
 export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadOnly=false, coordinateLat, coordinateLng }) {
-  const mapRef = useRef(null);
+  const { mapState, updateMapState } = useMapContext();
   const [marker, setMarker] = useState(null);
+  const mapRef = useRef(null);
 
   const markerIcons = {
     Perdido: require('@assets/markers/marker_red.png'),
@@ -23,8 +25,8 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
   }
 
   const [region, setRegion] = useState({
-    latitude: coordinateLat || -4.9708,
-    longitude: coordinateLng || -39.0150,
+    latitude: coordinateLat ?? posts ? mapState.latitude : -4.9708,
+    longitude: coordinateLng ?? posts ? mapState.longitude : -39.0150,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
@@ -67,12 +69,23 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
     onPressLocation?.(newMarker);
   }
 
+  function handleRegionChangeComplete(newRegion) {
+    setRegion(newRegion);
+
+    updateMapState({
+      latitude: newRegion.latitude,
+      longitude: newRegion.longitude,
+      zoom: Math.round(Math.log2(360 / newRegion.longitudeDelta)),
+    });
+  }
+
   return (
     <View style={styles.mapContainer}>
       <MapView
         ref={mapRef}
         style={styles.mapView}
         initialRegion={region}
+        onRegionChangeComplete={posts && handleRegionChangeComplete}
         scrollEnabled={!isReadOnly}
         zoomEnabled={!isReadOnly}
         rotateEnabled={!isReadOnly}

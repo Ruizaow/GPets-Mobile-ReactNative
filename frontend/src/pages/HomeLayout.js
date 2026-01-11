@@ -154,9 +154,11 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
       {/* MODAL para EXIBIR POST DE MARCADOR NO MAPA */}
       {postMarker && (
         <Modal
+          navigation={navigation}
           text={postMarker.address}
           confirmButton={`Ver publicação`}
           onClose={() => setPostMarker(null)}
+          onConfirm={() => navigation.navigate('PostView', { post: postMarker, originRoute: 'Home' })}
           post={postMarker}
         />
       )}
@@ -189,7 +191,8 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    overflow: 'hidden'
   },
   pageColumn: {
     width: '100%',
