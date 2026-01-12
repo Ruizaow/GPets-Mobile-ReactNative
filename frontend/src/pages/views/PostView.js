@@ -136,7 +136,11 @@ export default function PostView({ route, navigation }) {
           data={kebabMenu.data}
           onClose={() => setKebabMenu(null)}
           onDelete={() => setModal(kebabMenu.data.id)}
-          canDelete={kebabMenu.data.user?.id === user.id}
+          canDelete={
+            kebabMenu.type === 'post'
+              ? kebabMenu.data.userId === user.id
+              : kebabMenu.data.user?.id === user.id
+          }
         />
       )}
       {Boolean(modal) && (

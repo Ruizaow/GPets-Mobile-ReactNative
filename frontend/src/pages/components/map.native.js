@@ -1,32 +1,40 @@
-import { StyleSheet, View, TouchableOpacity, Text, Image, Animated } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { MapPin } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import { useMapContext } from '@context/MapContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { zoomIn, zoomOut } from '@utils/mapZoom';
 
-const MARKER_SIZE = 28;
-
 export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadOnly=false, coordinateLat, coordinateLng }) {
   const { mapState, updateMapState } = useMapContext();
   const [marker, setMarker] = useState(null);
   const mapRef = useRef(null);
 
-  const markerIcons = {
-    Perdido: require('@assets/markers/marker_red.png'),
-    Desabrigado: require('@assets/markers/marker_yellow.png'),
-    Encontrado: require('@assets/markers/marker_green.png'),
-    Resgatado: require('@assets/markers/marker_blue.png'),
-    default: require('@assets/markers/marker_grey.png'),
-  };
-  function getMarkerIcon(status) {
-    return markerIcons[status] || markerIcons.default;
+  function getMarkerColor(status) {
+    switch (status) {
+      case 'Perdido': return colors.red;
+      case 'Desabrigado': return colors.yellow;
+      case 'Encontrado': return colors.green;
+      case 'Resgatado': return colors.blue;
+      default: return colors.grey;
+    }
   }
 
+  function getRegion() {
+    if (typeof coordinateLat === 'number' && typeof coordinateLng === 'number') {
+      return { latitude: coordinateLat, longitude: coordinateLng}
+    }
+    if (posts) {
+      return { latitude: mapState.latitude, longitude: mapState.longitude }
+    }
+    return { latitude: -4.9708, longitude: -39.0150 }
+  }
+  
   const [region, setRegion] = useState({
-    latitude: coordinateLat ?? posts ? mapState.latitude : -4.9708,
-    longitude: coordinateLng ?? posts ? mapState.longitude : -39.0150,
+    latitude: getRegion().latitude,
+    longitude: getRegion().longitude,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
@@ -98,11 +106,7 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
             <Marker
               coordinate={{ latitude: coordinateLat, longitude: coordinateLng }}
             >
-              <Image
-                source={markerIcons.default}
-                style={{ width: MARKER_SIZE, height: MARKER_SIZE }}
-                resizeMode='contain'
-              />
+              <MapPin size={32} color={getMarkerColor(postStatus)} fill={colors.white}/>
             </Marker>
           )
         }
@@ -117,21 +121,13 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
                   coordinate={postMarker}
                   onPress={() => onPressMarker?.(post)}
                 >
-                  <Image
-                    source={getMarkerIcon(post.status)}
-                    style={{ width: MARKER_SIZE, height: MARKER_SIZE }}
-                    resizeMode='contain'
-                  />
+                  <MapPin size={32} color={getMarkerColor(post.status)} fill={colors.white}/>
                 </Marker>
               );
             }
           ) : marker && (
             <Marker coordinate={marker}>
-              <Image
-                source={getMarkerIcon(postStatus)}
-                style={{ width: MARKER_SIZE, height: MARKER_SIZE }}
-                resizeMode='contain'
-              />
+              <MapPin size={32} color={getMarkerColor(postStatus)} fill={colors.white}/>
             </Marker>
           )
         }

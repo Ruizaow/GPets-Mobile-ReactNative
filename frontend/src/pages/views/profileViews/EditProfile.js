@@ -45,7 +45,8 @@ export default function EditProfile({ loadedUser, updateLoadedUser, onCancel, on
   
   const isFormValid =
     hasAtLeastOneLetter(form.name) &&
-    isEmailValid(form.email)
+    isEmailValid(form.email) &&
+    hasAtLeastOneLetter(form.address)
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
@@ -95,6 +96,12 @@ export default function EditProfile({ loadedUser, updateLoadedUser, onCancel, on
             }
             keyboardType='number-pad'
             placeholder='(+DD) 99999-9999'
+          />
+          <FormInputField
+            label='Endereço'
+            required
+            value={form.address}
+            onChangeText={text => updateField('address', text)}
           />
         </View>
 

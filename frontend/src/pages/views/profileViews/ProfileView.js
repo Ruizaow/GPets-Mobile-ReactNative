@@ -1,7 +1,7 @@
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRef, useState, useCallback } from 'react';
-import { Pencil, Mail, Phone, MapPinHouse, Image, Star } from 'lucide-react-native';
+import { Pencil, Mail, Phone, MapPin, Image, Star } from 'lucide-react-native';
 import { mockedPosts } from '@constants/mockDataPost';
 import { mockedBookmarks } from '@constants/mockDataBookmark';
 import { useTheme } from '@context/ThemeContext';
@@ -66,24 +66,40 @@ export default function ProfileView({ userProfile, loadedUser, loading, navigati
         onPress={() => navigation.goBack()}
         showLineDivision={false}
       />
+
       <ScrollView ref={scrollRef}>
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            <ProfilePicture loadedUser={user} size={80}/>
-            <View style={styles.userInfoColumn}>
-              <Text style={[fontStyles.postTitle, { color: theme.secondaryText }]}>
-                {user.name}
-              </Text>
-              {user.bio &&
-                <Text style={[fontStyles.subtitle_2, { color: theme.secondaryText }]}>
-                  {user.bio}
+            <View style={[styles.headerContentSection, styles.mainHeader]}>
+              <ProfilePicture loadedUser={user} size={80}/>
+              <View style={styles.userDataColumn}>
+                <Text style={[fontStyles.postTitle, { color: theme.secondaryText }]}>
+                  {user.name}
                 </Text>
+                {user.bio ? (
+                  <Text style={[fontStyles.subtitle_2, { color: theme.secondaryText }]}>
+                    {user.bio}
+                  </Text>
+                ) : (
+                  <Text style={[fontStyles.subtitle_2, { color: colors.darkGreyAlt }]}>
+                    {isUserProfile
+                      ? 'Adicione uma descrição de perfil para facilitar a ajuda de outros usuários.'
+                      : 'Este usuário não possui uma descrição de perfil.'
+                    }
+                  </Text>
+                )}
+              </View>
+              {isUserProfile &&
+                <TouchableOpacity onPress={onGoToEditProfile}>
+                  <Pencil size={24} color={theme.secondaryText}/>
+                </TouchableOpacity>
               }
-              <View>
+            </View>
+            <View style={styles.headerLineDivision}/>
+            <View style={styles.headerContentSection}>
+              <View style={styles.userDataColumn}>
                 <View style={styles.userDataRow}>
-                  <View>
-                    <Mail size={24} color={theme.secondaryText} />
-                  </View>
+                  <Mail size={24} color={theme.secondaryText}/>
                   <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
                     {user.email}
                   </Text>
@@ -98,11 +114,17 @@ export default function ProfileView({ userProfile, loadedUser, loading, navigati
                 }
               </View>
             </View>
-            {isUserProfile &&
-              <TouchableOpacity onPress={onGoToEditProfile}>
-                <Pencil size={24} color={theme.secondaryText}/>
-              </TouchableOpacity>
-            }
+            <View style={styles.headerLineDivision}/>
+            <View style={styles.headerContentSection}>
+              <View style={styles.userDataRow}>
+                <View style={{ transform: [{ scale: 1.1 }, { translateX: -0.2 }] }}>
+                  <MapPin size={24} color={theme.secondaryText}/>
+                </View>
+                <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
+                  {user.address}
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -178,17 +200,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerContent: {
-    flexDirection: 'row',
     borderWidth: 1.6,
     borderColor: colors.grey,
     borderRadius: 12,
     marginBottom: 24,
+  },
+  headerContentSection: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 12
   },
-  userInfoColumn: {
-    flex: 1
+  mainHeader: {
+    flexDirection: 'row',
+  },
+  userDataColumn: {
+    flex: 1,
+    gap: 4
+  },
+  headerLineDivision: {
+    width: '100%',
+    height: 1,
+    backgroundColor: colors.grey
   },
   userDataRow: {
     flexDirection: 'row',
