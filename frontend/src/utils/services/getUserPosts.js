@@ -1,13 +1,14 @@
 import { api } from '@api';
 import { useEffect, useState } from 'react';
+import { usePosts } from '@context/PostsContext';
 
 export function getUserPosts(userId) {
-  const [posts, setPosts] = useState([]);
+  const { userPosts, setUserPosts } = usePosts();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!userId) {
-      setPosts([]);
+      setUserPosts([]);
       setLoading(false);
       return;
     }
@@ -15,12 +16,11 @@ export function getUserPosts(userId) {
     async function loadUserPosts() {
       try {
         const response = await api.get(`/users/${userId}/posts`);
-        setPosts(response.data.data);
-        console.log(posts)
+        setUserPosts(response.data.data);
       }
       catch (error) {
         console.error('Erro ao carregar posts do usuário', error);
-        setPosts([]);
+        setUserPosts([]);
       }
       finally {
         setLoading(false);
@@ -30,5 +30,5 @@ export function getUserPosts(userId) {
     loadUserPosts();
   }, [userId]);
 
-  return { posts, setPosts, loading };
+  return { posts: userPosts, loading };
 }

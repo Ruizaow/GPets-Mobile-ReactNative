@@ -1,19 +1,20 @@
 import { api } from '@api';
 import { useEffect, useState } from 'react';
+import { usePosts } from '@context/PostsContext';
 
 export function getPosts() {
-  const [posts, setPosts] = useState([]);
+  const { feedPosts, setFeedPosts } = usePosts();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadPosts() {
       try {
         const response = await api.get('/posts');
-        setPosts(response.data.data);
+        setFeedPosts(response.data.data);
       }
       catch (error) {
         console.error('Erro ao carregar posts', error);
-        setPosts([]);
+        setFeedPosts([]);
       }
       finally {
         setLoading(false);
@@ -23,5 +24,9 @@ export function getPosts() {
     loadPosts();
   }, []);
 
-  return { posts, setPosts, loading };
+  return {
+    posts: feedPosts,
+    setPosts: setFeedPosts,
+    loading
+  };
 }

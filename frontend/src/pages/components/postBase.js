@@ -3,6 +3,7 @@ import { EllipsisVertical, Star } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { sizes } from '@constants/postPropertiesSizes';
 import { useTheme } from '@context/ThemeContext';
+import { usePosts } from '@context/PostsContext';
 import { ProfilePicture } from '@components/profilePicture';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
@@ -13,6 +14,7 @@ import { handleToggleBookmark } from '@handlers/handleToggleBookmark';
 export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=false, isOnProfile=false, isReduced=false }) {
   const { theme } = useTheme();
   const { user, loading } = getUser(post.userId);
+  const { updatePostSaved } = usePosts();
 
   const [isSaved, setIsSaved] = useState(post.isSaved);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -125,7 +127,7 @@ export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=f
                 </Text>
                 {(!isReduced || (isReduced && isOnProfile)) && (
                   <TouchableOpacity onPress={() => 
-                    handleToggleBookmark(post, isSaved, setIsSaved, loadingSave, setLoadingSave, savePost, unsavePost)
+                    handleToggleBookmark(post, isSaved, setIsSaved, loadingSave, setLoadingSave, savePost, unsavePost, updatePostSaved)
                   }>
                     <Star
                       size={sizes.star * s}
