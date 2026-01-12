@@ -19,7 +19,9 @@ export function Sidebar({ navigation, onGoTo, onOpenModal, onCloseSidebar, isBac
     if (homeViews.includes(menuItem)) {
       onGoTo(menuItem);
     } else {
-      navigation.navigate(menuItem);
+      menuItem !== 'Bookmarks'
+        ? navigation.navigate(menuItem)
+        : navigation.navigate(menuItem, { user: loadedUser });
     }
   };
 

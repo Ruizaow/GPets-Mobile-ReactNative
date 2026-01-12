@@ -17,7 +17,7 @@ import { createComment } from '@services/createComment';
 import { deleteComment } from '@services/deleteComment';
 
 export default function PostView({ route, navigation }) {
-  const { post, originRoute } = route.params;
+  const { post } = route.params;
   const { theme } = useTheme();
   const { user } = useAuth();
 
@@ -56,19 +56,11 @@ export default function PostView({ route, navigation }) {
     setKebabMenu({ type, data });
   }
 
-  function handleGoBack() {
-    if (originRoute === 'Profile' || originRoute === 'Bookmarks') {
-      navigation.navigate(originRoute, { profileState: route.params.profileState });
-    } else {
-      navigation.navigate('Home');
-    }
-  }
-
   if (loading) return null;
 
   return (
     <View style={[styles.postView, { backgroundColor: theme.background }]}>
-      <GoBackHeader headerTitle={'Publicação'} onPress={handleGoBack}/>
+      <GoBackHeader headerTitle={'Publicação'} onPress={() => navigation.goBack()}/>
       
       <ScrollView>
         <View style={styles.postWrapper}>

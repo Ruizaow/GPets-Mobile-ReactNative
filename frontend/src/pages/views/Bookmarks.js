@@ -1,6 +1,5 @@
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { useRef, useState } from 'react';
-import { mockedBookmarks } from '@constants/mockDataBookmark';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
 import { ReducedPost } from '@components/reducedPost';
@@ -8,19 +7,20 @@ import { Pagination } from '@components/pagination';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
+import { getUserBookmarks } from '@services/getUserBookmarks';
 
-export default function Bookmarks({ navigation }) {
+export default function Bookmarks({ navigation, route }) {
+  const { user } = route.params;
+  const { posts: bookmarks, loading: loadingBookmarks } = getUserBookmarks(user.id);
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
-  if (!fontsLoaded) return null;
 
   const scrollRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const { totalPages, paginatedData: paginatedBookmarks } = usePagination(bookmarks, currentPage);
 
-  const {
-    totalPages,
-    paginatedData: paginatedBookmarks
-  } = usePagination(mockedBookmarks, currentPage);
+  const isLoading = !fontsLoaded || loadingBookmarks;
+  if (isLoading) return null;
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
@@ -36,7 +36,8 @@ export default function Bookmarks({ navigation }) {
               <ReducedPost
                 post={post}
                 navigation={navigation}
-                originRoute={'Bookmarks'}
+                scale={0.52}
+                canBookmark={true}
               />
             </View>
           ))}

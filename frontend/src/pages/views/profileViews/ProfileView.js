@@ -2,7 +2,6 @@ import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-nati
 import { useFocusEffect } from '@react-navigation/native';
 import { useRef, useState, useCallback } from 'react';
 import { Pencil, Mail, Phone, MapPin, Image, Star } from 'lucide-react-native';
-import { mockedBookmarks } from '@constants/mockDataBookmark';
 import { useTheme } from '@context/ThemeContext';
 import { useProfileTab } from '@context/ProfileTabContext';
 import { GoBackHeader } from '@components/goBackHeader';
@@ -15,7 +14,7 @@ import { useFontsCustom } from '@hooks/useFontsCustom';
 import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
 
-export default function ProfileView({ userProfile, loadedUser, userPosts, navigation, onGoToEditProfile }) {
+export default function ProfileView({ userProfile, loadedUser, userPosts, userBookmarks, navigation, onGoToEditProfile }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -34,7 +33,7 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, naviga
   const {
     totalPages: totalPagesBookmarks,
     paginatedData: paginatedBookmarks
-  } = usePagination(mockedBookmarks, currentPageBookmark);
+  } = usePagination(userBookmarks, currentPageBookmark);
 
   const { activeTab, setActiveTab } = useProfileTab();
   function switchTab(tab) {
@@ -86,11 +85,11 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, naviga
                   </Text>
                 )}
               </View>
-              {isUserProfile &&
+              {isUserProfile ? (
                 <TouchableOpacity onPress={(onGoToEditProfile)}>
                   <Pencil size={24} color={theme.secondaryText}/>
                 </TouchableOpacity>
-              }
+              ) : null}
             </View>
             <View style={styles.headerLineDivision}/>
             <View style={styles.headerContentSection}>
@@ -101,7 +100,7 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, naviga
                     {user.email}
                   </Text>
                 </View>
-                {user.phone &&
+                {user.phone !== '' &&
                   <View style={styles.userDataRow}>
                     <Phone size={24} color={theme.secondaryText}/>
                     <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
@@ -158,8 +157,7 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, naviga
                 post={post}
                 navigation={navigation}
                 scale={0.52}
-                isOnProfile={true}
-                originRoute={'Profile'}
+                canBookmark={true}
                 currentPagePost={currentPagePost}
                 currentPageBookmark={currentPageBookmark}
               />

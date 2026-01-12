@@ -158,7 +158,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
           text={postMarker.address}
           confirmButton={`Ver publicação`}
           onClose={() => setPostMarker(null)}
-          onConfirm={() => navigation.navigate('PostView', { post: postMarker, originRoute: 'Home' })}
+          onConfirm={() => navigation.navigate('PostView', { post: postMarker })}
           post={postMarker}
         />
       )}

@@ -28,7 +28,6 @@ export default function Feed({ navigation, posts, loading, currentPage, setCurre
           post={post}
           navigation={navigation}
           onOpenMenu={() => openKebabMenu('post', post)}
-          originRoute={'Home'}
         />
       ))}
       {totalPages > 1 && (

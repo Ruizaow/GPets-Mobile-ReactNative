@@ -20,7 +20,7 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
 
   return (
     <Pressable
-      onPress={() => navigation.navigate('PostView', { post, originRoute: 'Home' })}
+      onPress={() => navigation.navigate('PostView', { post })}
       disabled={isOnPostForm || Boolean(footer)}
     >
       {({ pressed }) => (
