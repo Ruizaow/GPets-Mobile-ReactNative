@@ -40,7 +40,7 @@ export function KebabMenu({ type, data, onClose, onDelete, onChangeImage, canDel
 
   const allMenuItems = {
     delete: {
-      icon: <Trash size={24} color={type !== 'profilePicture' ? theme.primaryText : colors.red}/>,
+      icon: <Trash size={24} color={colors.red}/>,
       title: type !== 'profilePicture' ? 'Excluir' : 'Remover foto atual'
     },
     bookmark: {
@@ -118,9 +118,9 @@ export function KebabMenu({ type, data, onClose, onDelete, onChangeImage, canDel
                   {item.icon}
                   <Text style={[
                     fontStyles.title_4,
-                    { color: key === 'delete' && type === 'profilePicture'
-                        ? colors.red
-                        : theme.primaryText
+                    { color: key === 'delete'
+                      ? colors.red
+                      : theme.primaryText
                     }
                   ]}>
                     {item.title}

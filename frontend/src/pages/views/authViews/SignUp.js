@@ -93,7 +93,8 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
         <View style={styles.submitArea}>
           <Button
             text='Continuar'
-            variant='beige'
+            textColor={colors.dark}
+            bgColor={colors.beige}
             onPress={() => {
               trigger(['name', 'email']).then((valid) => {
                 if (valid) goNext();
@@ -158,7 +159,8 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
         <View style={styles.submitArea}>
           <Button
             text='Continuar'
-            variant='beige'
+            textColor={colors.dark}
+            bgColor={colors.beige}
             onPress={() => {
               trigger(['cnpj', 'address']).then((valid) => {
                 if (valid) goNext();
@@ -221,7 +223,8 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
         <View style={styles.submitArea}>
           <Button
             text='Finalizar cadastro'
-            variant='beige'
+            textColor={colors.dark}
+            bgColor={colors.beige}
             onPress={async () => {
               const valid = await trigger(['password', 'confirmPassword']);
               if (valid) await registerUser(role, getValues, () => setStep(4));
@@ -253,7 +256,12 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
         </View>
 
         <View style={styles.submitArea}>
-          <Button text='Continuar' variant='beige' onPress={onBackToLogin} />
+          <Button
+            text='Continuar'
+            textColor={colors.dark}
+            bgColor={colors.beige}
+            onPress={onBackToLogin}
+          />
         </View>
       </View>,
     ];
@@ -277,13 +285,14 @@ const styles = StyleSheet.create({
     gap: 32,
   },
   backSection: {
-    marginHorizontal: 32,
+    paddingHorizontal: 32,
     marginTop: 80,
   },
   content: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 32
   },
   contentFinal: {
     flexDirection: 'column',
@@ -323,5 +332,6 @@ const styles = StyleSheet.create({
   },
   submitArea: {
     gap: 12,
+    flexDirection: 'row'
   },
 });

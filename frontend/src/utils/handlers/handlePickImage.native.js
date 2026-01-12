@@ -29,8 +29,7 @@ export async function handlePickImage({ onChangeImage, onStart, onFinish }) {
       alert('Erro ao enviar imagem.');
       return;
     }
-
-    console.log("funcionou");
+    
     onChangeImage(cloudinaryUrl);
   }
   finally {

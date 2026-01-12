@@ -17,9 +17,9 @@ export async function uploadImageToCloudinary (image) {
   
   try {
     const response = await fetch(
-      "https://api.cloudinary.com/v1_1/dzzsvcvlj/image/upload",
+      'https://api.cloudinary.com/v1_1/dzzsvcvlj/image/upload',
       {
-        method: "POST",
+        method: 'POST',
         body: data
       }
     );
@@ -28,7 +28,7 @@ export async function uploadImageToCloudinary (image) {
     return json.secure_url ?? null;
   }
   catch (error) {
-    console.log("Erro ao enviar imagem para o Cloudinary:", error);
+    console.log('Erro ao enviar imagem para o Cloudinary:', error);
     return null;
   }
 }

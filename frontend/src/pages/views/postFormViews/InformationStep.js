@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView, View, Text, FlatList, TouchableOpacity, Pressable, Animated } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, FlatList, TouchableOpacity, Pressable, Animated, Platform } from 'react-native';
 import { Trash, Venus, Mars, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useRef, useState, useEffect } from 'react';
 import { useTheme } from '@context/ThemeContext';
@@ -107,11 +107,9 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
           top: dropdownLayout?.y + dropdownLayout?.height,
           left: dropdownLayout?.x,
           opacity: dropdownAnim,
-          transform: [{ translateY: dropdownAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [-8, 0]
-          })}]
-        }]}
+          transform: [{ translateY: dropdownAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }] },
+          Platform.OS !== 'web' ? { marginTop: 60 } : { marginTop: 0 }
+        ]}
       >
         <FlatList
           data={months}
@@ -251,8 +249,9 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
             <View style={styles.continueButton}>
               <Button
                 text='Concluir'
-                variant={isEventFormValid ? 'blueBeige' : 'disabled'}
-                size={'custom'}
+                textColor={isEventFormValid ? theme.iconBackground : theme.background}
+                bgColor={isEventFormValid ? colors.blue : colors.disabled}
+                height={48}
                 onPress={onGoNext}
                 isDisabled={!isEventFormValid}
               />
@@ -488,8 +487,9 @@ export default function InformationStep({ postType, data, dataAddress, onChange,
             <View style={styles.continueButton}>
               <Button
                 text='Concluir'
-                variant={isPetFormValid ? 'blueBeige' : 'disabled'}
-                size={'custom'}
+                textColor={isPetFormValid ? theme.iconBackground : theme.background}
+                bgColor={isPetFormValid ? colors.blue : colors.disabled}
+                height={48}
                 onPress={onGoNext}
                 isDisabled={!isPetFormValid}
               />
@@ -561,8 +561,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.grey,
-    backgroundColor: colors.white,
-    marginTop: 60
+    backgroundColor: colors.white
   },
   dropdownItem: {
     paddingVertical: 10,

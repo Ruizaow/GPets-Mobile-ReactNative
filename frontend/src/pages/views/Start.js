@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { useAuth } from '@context/AuthContext';
 import { Button } from '@components/button';
+import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
@@ -34,7 +35,13 @@ export default function Start({ navigation }) {
             <Text style={fontStyles.title_1}>Encontros felizes</Text>
           </View>
           <View style={styles.buttonSection}>
-            <Button text='Continuar' variant='green' size='customStart' onPress={handleContinue}/>
+            <Button
+              text='Continuar'
+              textColor={colors.dark}
+              bgColor={colors.green}
+              minWidth={0}
+              onPress={handleContinue}
+            />
           </View>
         </View>
       </View>
@@ -48,7 +55,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%'
+    width: '100%',
+    overflow: 'hidden'
   },
   background: {
     position: 'absolute',

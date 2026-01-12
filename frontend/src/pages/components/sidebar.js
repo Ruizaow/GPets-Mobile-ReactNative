@@ -67,7 +67,7 @@ export function Sidebar({ navigation, onGoTo, onOpenModal, onCloseSidebar, isBac
 
         <TouchableOpacity
           style={[styles.profileCard, { borderColor: theme.border }]}
-          onPress={() => navigation.navigate('Profile')}
+          onPress={() => navigation.navigate('Profile', { user: loadedUser })}
         >
           <ProfilePicture loadedUser={loadedUser}/>
           <View>

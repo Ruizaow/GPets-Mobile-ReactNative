@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
@@ -45,7 +45,8 @@ export default function EditProfile({ loadedUser, updateLoadedUser, onCancel, on
   
   const isFormValid =
     hasAtLeastOneLetter(form.name) &&
-    isEmailValid(form.email)
+    isEmailValid(form.email) &&
+    hasAtLeastOneLetter(form.address)
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
@@ -96,15 +97,22 @@ export default function EditProfile({ loadedUser, updateLoadedUser, onCancel, on
             keyboardType='number-pad'
             placeholder='(+DD) 99999-9999'
           />
+          <FormInputField
+            label='Endereço'
+            required
+            value={form.address}
+            onChangeText={text => updateField('address', text)}
+          />
         </View>
 
         <View style={styles.continueButton}>
           <Button
             text='Concluir'
-            variant={isFormValid && !uploading ? 'blueBeige' : 'disabled'}
-            size={'custom'}
-            isDisabled={!isFormValid || uploading}
+            textColor={isFormValid && !uploading ? theme.iconBackground : theme.background}
+            bgColor={isFormValid && !uploading ? colors.blue : colors.disabled}
+            height={48}
             onPress={async () => await updateUser(loadedUser, form, updateLoadedUser, onSave)}
+            isDisabled={!isFormValid || uploading}
           />
         </View>
       </View>

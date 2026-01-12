@@ -7,7 +7,7 @@ const isPhysicalDevice = Constants.isDevice;
 
 const baseURL =
   Platform.OS === 'web'
-    ? 'http://172.25.212.146:4000'
+    ? 'http://localhost:4000'
     : isPhysicalDevice
       ? 'http://172.25.212.146:4000' // Expo Go
       : 'http://10.0.2.2:4000';      // Emulador Android

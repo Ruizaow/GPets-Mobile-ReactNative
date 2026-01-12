@@ -3,10 +3,10 @@ import { storage } from '@services/storage';
 
 export async function updateUser(loadedUser, newUserData, setUser, exitUpdateForm) {
   try {
-    const { name, bio, email, phone, imageUrl } = newUserData;
+    const { name, bio, email, phone, address, imageUrl } = newUserData;
 
     const response = await api.put(`/users/${loadedUser.id}`, {
-      name, bio, email, phone, imageUrl
+      name, bio, email, phone, address, imageUrl
     });
 
     const updatedUser = response.data.data;

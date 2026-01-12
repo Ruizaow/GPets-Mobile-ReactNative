@@ -74,7 +74,8 @@ export default function ForgotPassword({
         <View style={styles.submitArea}>
           <Button
             text='Continuar'
-            variant='beige'
+            textColor={colors.dark}
+            bgColor={colors.beige}
             onPress={() => {
               trigger(['email']).then((valid) => {
                 if (valid) goNext();
@@ -106,10 +107,10 @@ export default function ForgotPassword({
         <View style={styles.submitArea}>
           <Button
             text='Remover este botão depois'
-            variant='signUp'
-            onPress={() => {
-              goNext();
-            }}
+            textColor={colors.beige}
+            bgColor={'transparent'}
+            borderColor={colors.beige}
+            onPress={() => {goNext()}}
           />
         </View>
       </View>,
@@ -134,7 +135,8 @@ export default function ForgotPassword({
         <View style={styles.submitArea}>
           <Button
             text='Continuar'
-            variant='beige'
+            textColor={colors.dark}
+            bgColor={colors.beige}
             onPress={onGoToChangePassword}
           />
         </View>
@@ -163,19 +165,21 @@ const styles = StyleSheet.create({
     gap: 32,
   },
   backSection: {
-    marginHorizontal: 32,
+    paddingHorizontal: 32,
     marginTop: 80,
   },
   content: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 32
   },
   contentFinal: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 160,
+    paddingHorizontal: 32,
   },
   textArea: {
     alignItems: 'center',
@@ -205,5 +209,6 @@ const styles = StyleSheet.create({
   },
   submitArea: {
     gap: 12,
+    flexDirection: 'row'
   },
 });

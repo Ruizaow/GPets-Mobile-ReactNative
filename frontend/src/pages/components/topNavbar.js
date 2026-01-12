@@ -21,7 +21,7 @@ export function TopNavbar({ navigation, onOpenSidebar, isMenuDisabled, loadedUse
         <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
           <Bell size={24} color={theme.primaryText}/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile', { user: loadedUser })}>
           <ProfilePicture loadedUser={loadedUser}/>
         </TouchableOpacity>
       </View>

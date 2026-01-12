@@ -9,7 +9,7 @@ import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export default function LocationStep({ location, onChange, onGoBack, onGoNext, onDiscard }) {
+export default function LocationStep({ location, postStatus, onChange, onGoBack, onGoNext, onDiscard }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -76,7 +76,7 @@ export default function LocationStep({ location, onChange, onGoBack, onGoNext, o
         </Text>
         <View style={[styles.mapView, { borderColor: theme.primaryText }]}>
           <Map
-            useMarkers={false}
+            postStatus={postStatus}
             onPressLocation={handleLocationPress}
             coordinateLat={location.latitude}
             coordinateLng={location.longitude}
@@ -89,8 +89,9 @@ export default function LocationStep({ location, onChange, onGoBack, onGoNext, o
         <View style={styles.continueButton}>
           <Button
             text='Continuar'
-            variant={Boolean(location.latitude) ? 'blueBeige' : 'disabled'}
-            size={'custom'}
+            textColor={Boolean(location.latitude) ? theme.iconBackground : theme.background}
+            bgColor={Boolean(location.latitude) ? colors.blue : colors.disabled}
+            height={48}
             onPress={onGoNext}
             isDisabled={!Boolean(location.latitude)}
           />

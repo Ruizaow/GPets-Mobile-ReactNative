@@ -1,20 +1,44 @@
-import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { MapPin } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
+import { useMapContext } from '@context/MapContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { zoomIn, zoomOut } from '@utils/mapZoom';
 
-export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false, coordinateLat, coordinateLng }) {
-  const mapRef = useRef(null);
+export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadOnly=false, coordinateLat, coordinateLng }) {
+  const { mapState, updateMapState } = useMapContext();
   const [marker, setMarker] = useState(null);
+  const mapRef = useRef(null);
 
+  function getMarkerColor(status) {
+    switch (status) {
+      case 'Perdido': return colors.red;
+      case 'Desabrigado': return colors.yellow;
+      case 'Encontrado': return colors.green;
+      case 'Resgatado': return colors.blue;
+      default: return colors.grey;
+    }
+  }
+
+  function getRegion() {
+    if (typeof coordinateLat === 'number' && typeof coordinateLng === 'number') {
+      return { latitude: coordinateLat, longitude: coordinateLng}
+    }
+    if (posts) {
+      return { latitude: mapState.latitude, longitude: mapState.longitude }
+    }
+    return { latitude: -4.9708, longitude: -39.0150 }
+  }
+  
   const [region, setRegion] = useState({
-    latitude: coordinateLat || -4.9708,
-    longitude: coordinateLng || -39.0150,
+    latitude: getRegion().latitude,
+    longitude: getRegion().longitude,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
-
+  
   useEffect(() => {
     if (typeof coordinateLat === 'number' && typeof coordinateLng === 'number') {
       const newMarker = {
@@ -35,7 +59,7 @@ export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false,
   }, [coordinateLat, coordinateLng]);
 
   function handleMapPress(event) {
-    if (useMarkers) return;
+    if (posts) return;
 
     const { latitude, longitude } = event.nativeEvent.coordinate;
 
@@ -53,42 +77,14 @@ export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false,
     onPressLocation?.(newMarker);
   }
 
-  function getZoomCenter() {
-    if (marker) {
-      return {
-        latitude: marker.latitude,
-        longitude: marker.longitude,
-      };
-    }
-    return {
-      latitude: region.latitude,
-      longitude: region.longitude,
-    };
-  }
-
-  function zoomIn() {
-    const center = getZoomCenter();
-
-    const newRegion = {
-      ...center,
-      latitudeDelta: region.latitudeDelta / 2,
-      longitudeDelta: region.longitudeDelta / 2,
-    };
-
+  function handleRegionChangeComplete(newRegion) {
     setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 300);
-  }
-  function zoomOut() {
-    const center = getZoomCenter();
 
-    const newRegion = {
-      ...center,
-      latitudeDelta: region.latitudeDelta * 2,
-      longitudeDelta: region.longitudeDelta * 2,
-    };
-    
-    setRegion(newRegion);
-    mapRef.current?.animateToRegion(newRegion, 300);
+    updateMapState({
+      latitude: newRegion.latitude,
+      longitude: newRegion.longitude,
+      zoom: Math.round(Math.log2(360 / newRegion.longitudeDelta)),
+    });
   }
 
   return (
@@ -97,6 +93,7 @@ export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false,
         ref={mapRef}
         style={styles.mapView}
         initialRegion={region}
+        onRegionChangeComplete={posts && handleRegionChangeComplete}
         scrollEnabled={!isReadOnly}
         zoomEnabled={!isReadOnly}
         rotateEnabled={!isReadOnly}
@@ -106,30 +103,42 @@ export function Map({ posts, useMarkers=true, onPressLocation, isReadOnly=false,
         {/* Modo readonly — marker fixo */}
         {isReadOnly &&
           coordinateLat && coordinateLng && (
-            <Marker coordinate={{ latitude: coordinateLat, longitude: coordinateLng }}/>
+            <Marker
+              coordinate={{ latitude: coordinateLat, longitude: coordinateLng }}
+            >
+              <MapPin size={32} color={getMarkerColor(postStatus)} fill={colors.white}/>
+            </Marker>
           )
         }
         {/* Modo interativo padrão */}
         {!isReadOnly &&
-          useMarkers ?
-            posts.map((post, index) => {
-              const _marker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
+          posts ?
+            posts.map((post) => {
+              const postMarker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
               return (
-                <Marker key={index} coordinate={_marker} onPress={Alert.alert(post.address)}/>
-              )
+                <Marker
+                  key={post.id}
+                  coordinate={postMarker}
+                  onPress={() => onPressMarker?.(post)}
+                >
+                  <MapPin size={32} color={getMarkerColor(post.status)} fill={colors.white}/>
+                </Marker>
+              );
             }
           ) : marker && (
-            <Marker coordinate={marker} />
+            <Marker coordinate={marker}>
+              <MapPin size={32} color={getMarkerColor(postStatus)} fill={colors.white}/>
+            </Marker>
           )
         }
       </MapView>
 
       {!isReadOnly && (
         <View style={styles.zoomControls}>
-          <TouchableOpacity style={styles.zoomButton} onPress={zoomIn}>
+          <TouchableOpacity style={styles.zoomButton} onPress={() => zoomIn(marker, region, setRegion, mapRef)}>
             <Text style={styles.zoomText}>+</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.zoomButton} onPress={zoomOut}>
+          <TouchableOpacity style={styles.zoomButton} onPress={() => zoomOut(marker, region, setRegion, mapRef)}>
             <Text style={styles.zoomText}>−</Text>
           </TouchableOpacity>
         </View>

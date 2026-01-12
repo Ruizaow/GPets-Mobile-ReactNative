@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Platform } from 'react-native';
+import { StyleSheet, View, Text, Platform, useWindowDimensions } from 'react-native';
 import { MapPin } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
 import { Map } from '@components/map';
@@ -7,14 +7,15 @@ import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 import { getPosts } from '@services/getPosts';
 
-export default function MapView() {
+export default function MapView({ setPostMarker }) {
   const { theme } = useTheme();
   const { posts, loading } = getPosts();
-
+  const { height } = useWindowDimensions();
   const fontsLoaded = useFontsCustom();
-  if (!fontsLoaded || loading) return null;
 
-  function Subtitle({ color, text }) {
+  const mapHeight = height - 128;
+
+  const Subtitle = ({ color, text }) => {
     return (
       <View style={styles.subtitle}>
         <MapPin size={24} color={color}/>
@@ -23,11 +24,17 @@ export default function MapView() {
     );
   }
 
+  if (!fontsLoaded || loading) return null;
+
   return (
-    <View style={styles.mapContainer}>
+    <View style={[styles.mapContainer, { height: mapHeight }]}>
       <View style={[styles.mapView, { borderColor: theme.primaryText }]}>
-        <Map posts={posts}/>
+        <Map
+          posts={posts}
+          onPressMarker={(post) => {setPostMarker(post)}}
+        />
       </View>
+
       <View style={styles.subtitles}>
         <View style={styles.subtitles_column}>
           <Subtitle color={colors.green} text='Pet encontrado' />
@@ -44,12 +51,13 @@ export default function MapView() {
 
 const styles = StyleSheet.create({
   mapContainer: {
-    marginTop: 16,
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingTop: 16,
+    paddingBottom: 148
   },
   mapView: {
     width: 343,
-    height: 532,
+    flex: 1,
     borderRadius: 16,
     marginBottom: 16,
     overflow: 'hidden',

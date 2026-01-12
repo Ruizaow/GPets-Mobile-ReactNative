@@ -78,7 +78,8 @@ export default function ChangePassword({ animatedOffset, onBackToLogin }) {
         <View style={styles.submitArea}>
           <Button
             text='Finalizar'
-            variant='beige'
+            textColor={colors.dark}
+            bgColor={colors.beige}
             onPress={() => {
               trigger(['password', 'confirmPassword']).then((valid) => {
                 if (valid) setStep(2);
@@ -106,7 +107,12 @@ export default function ChangePassword({ animatedOffset, onBackToLogin }) {
         </View>
 
         <View style={styles.submitArea}>
-          <Button text='Continuar' variant='beige' onPress={onBackToLogin} />
+          <Button
+            text='Continuar'
+            textColor={colors.dark}
+            bgColor={colors.beige}
+            onPress={onBackToLogin}
+          />
         </View>
       </View>
     ];
@@ -132,19 +138,21 @@ const styles = StyleSheet.create({
     gap: 32,
   },
   backSection: {
-    marginHorizontal: 32,
+    paddingHorizontal: 32,
     marginTop: 80,
   },
   content: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 32
   },
   contentFinal: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 160,
+    paddingHorizontal: 32
   },
   textArea: {
     alignItems: 'center',
@@ -174,5 +182,6 @@ const styles = StyleSheet.create({
   },
   submitArea: {
     gap: 12,
+    flexDirection: 'row'
   },
 });

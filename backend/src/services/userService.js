@@ -78,7 +78,7 @@ export const userService = {
     if (!user)
       throw new Error('Usuário não identificado.');
     
-    const { name, bio, email, phone, imageUrl } = userData;
+    const { name, bio, email, phone, address, imageUrl } = userData;
 
     // Verifica se o usuário está alterando o email para um que já existe (exceto o seu próprio atual)
     const existingEmail = await prisma.user.findUnique({ where: { email, NOT: { id: userId } } });
@@ -94,6 +94,7 @@ export const userService = {
     if (bio || bio === '') updatedData.bio = bio;
     if (email) updatedData.email = email;
     if (phone || phone === '') updatedData.phone = phone;
+    if (address) updatedData.address = address;
     updatedData.imageUrl = imageUrl;
 
     const updatedUser = await prisma.user.update({

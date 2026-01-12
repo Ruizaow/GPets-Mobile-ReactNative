@@ -26,6 +26,7 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
     const { email, password } = getValues();
 
     const data = await loginUser(email, password);
+    if (!data) return;
 
     await login(data.token, data.user);
     navigation.navigate('Home');
@@ -54,8 +55,11 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
           <View style={styles.buttonArea}>
             <Button
               text='Continuar com Google'
-              imageSrc={require('@assets/images/google-2015-seeklogo.png')}
-              variant='disabled'
+              textColor={colors.beige}
+              bgColor={colors.disabled}
+              widthStyle={'flex: 1'}
+              image={require('@assets/images/google-2015-seeklogo.png')}
+              isDisabled={true}
             />
           </View>
           <View style={styles.lineDivision}>
@@ -101,19 +105,31 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
           </View>
 
           <View style={styles.submitArea}>
-            <Button
-              text='Entrar'
-              variant='beige'
-              onPress={async () => {
-                const valid = await trigger(['email', 'password']);
-                if (valid) {
-                  await handleLogin();
-                }
-              }}
-            />
-            <Button text='Cadastrar-se' variant='signUp' onPress={onGoToSignUp} />
+            <View style={styles.button}>
+              <Button
+                text='Entrar'
+                textColor={colors.dark}
+                bgColor={colors.beige}
+                onPress={async () => {
+                  const valid = await trigger(['email', 'password']);
+                  if (valid) {
+                    await handleLogin();
+                  }
+                }}
+              />
+            </View>
+            <View style={styles.button}>
+              <Button
+                text='Cadastrar-se'
+                textColor={colors.beige}
+                bgColor={'transparent'}
+                borderColor={colors.beige}
+                onPress={onGoToSignUp}
+              />
+            </View>
           </View>
         </View>
+
         <StatusBar style='auto' />
       </Animated.View>
     </ScrollView>
@@ -128,10 +144,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.blue,
+    paddingHorizontal: 32,
     gap: 32,
   },
   backSection: {
-    marginHorizontal: 32,
     marginTop: 80,
   },
   content: {
@@ -147,6 +163,7 @@ const styles = StyleSheet.create({
   buttonArea: {
     gap: 10,
     marginBottom: 24,
+    flexDirection: 'row'
   },
   lineDivision: {
     flexDirection: 'row',
@@ -169,5 +186,9 @@ const styles = StyleSheet.create({
   },
   submitArea: {
     gap: 12,
+    width: '100%'
   },
+  button: {
+    flexDirection: 'row'
+  }
 });

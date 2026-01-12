@@ -1,7 +1,7 @@
-import { StyleSheet, View, ScrollView, Text, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { useRef, useState, useMemo, useCallback } from 'react';
-import { Pencil, Mail, Phone, BookImage, Star } from 'lucide-react-native';
+import { useRef, useState, useCallback } from 'react';
+import { Pencil, Mail, Phone, MapPin, Image, Star } from 'lucide-react-native';
 import { mockedPosts } from '@constants/mockDataPost';
 import { mockedBookmarks } from '@constants/mockDataBookmark';
 import { useTheme } from '@context/ThemeContext';
@@ -13,44 +13,35 @@ import { Pagination } from '@components/pagination';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { usePagination } from '@hooks/usePagination';
+import { handleChangePage } from '@handlers/handleChangePage';
 
-const POSTS_PER_PAGE = 20;
-
-export default function ProfileView({ loadedUser, loading, navigation, onGoToEditProfile }) {
+export default function ProfileView({ userProfile, loadedUser, loading, navigation, onGoToEditProfile }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
-  const { activeTab, setActiveTab } = useProfileTab();
-  
-  function switchTab(tab) {
-    if (tab === activeTab)
-      return;
+  const isUserProfile = loadedUser.id === userProfile.id
+  const user = isUserProfile ? loadedUser : userProfile
 
+  const scrollRef = useRef(null);
+  const [currentPagePost, setCurrentPagePost] = useState(1);
+  const [currentPageBookmark, setCurrentPageBookmark] = useState(1);
+
+  const {
+    totalPages: totalPagesPosts,
+    paginatedData: paginatedPosts
+  } = usePagination(mockedPosts, currentPagePost);
+  const {
+    totalPages: totalPagesBookmarks,
+    paginatedData: paginatedBookmarks
+  } = usePagination(mockedBookmarks, currentPageBookmark);
+
+  const { activeTab, setActiveTab } = useProfileTab();
+  function switchTab(tab) {
+    if (tab === activeTab) return;
     setActiveTab(tab);
   }
-
-  const [currentPagePost, setCurrentPagePost] = useState(1);
-
-  const orderedPosts = useMemo(() => [...mockedPosts].reverse(), []);
-  const totalPagesPosts = Math.ceil(orderedPosts.length / POSTS_PER_PAGE);
-
-  const paginatedPosts = useMemo(() => {
-    const start = (currentPagePost - 1) * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
-    return orderedPosts.slice(start, end);
-  }, [currentPagePost, orderedPosts]);
-
-  const [currentPageBookmark, setCurrentPageBookmark] = useState(1);
-  
-  const orderedBookmarks = useMemo(() => [...mockedBookmarks].reverse(), []);
-  const totalPagesBookmarks = Math.ceil(orderedBookmarks.length / POSTS_PER_PAGE);
-
-  const paginatedBookmarks = useMemo(() => {
-    const start = (currentPageBookmark - 1) * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
-    return orderedBookmarks.slice(start, end);
-  }, [currentPageBookmark, orderedBookmarks]);
 
   useFocusEffect(
     useCallback(() => {
@@ -66,91 +57,99 @@ export default function ProfileView({ loadedUser, loading, navigation, onGoToEdi
     }, [])
   );
 
-  const scrollRef = useRef(null);
-  const paginationRef = useRef(null);
-
-  function handleChangePage(page, activeTab) {
-    if (activeTab === 'post') {
-      setCurrentPagePost(page);
-    }
-    else {
-      setCurrentPageBookmark(page);
-    }
-
-    requestAnimationFrame(() => {
-      paginationRef.current?.measureLayout(
-        scrollRef.current,
-        (x, y) => {
-          scrollRef.current.scrollTo({
-            x,
-            y: y - 16,
-            animated: true,
-          });
-        },
-        () => {}
-      );
-    });
-  }
-
   if (loading) return null;
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
       <GoBackHeader
         headerTitle={'Perfil'}
-        onPress={() => navigation.navigate('Home')}
+        onPress={() => navigation.goBack()}
         showLineDivision={false}
       />
+
       <ScrollView ref={scrollRef}>
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            <ProfilePicture loadedUser={loadedUser} size={80}/>
-            <View style={styles.userInfoColumn}>
-              <Text style={[fontStyles.postTitle, { color: theme.secondaryText }]}>
-                {loadedUser.name}
-              </Text>
-              <Text style={[fontStyles.subtitle_2, { color: theme.secondaryText }]}>
-                {loadedUser.bio}
-              </Text>
-              <View style={styles.user_email}>
-                <Mail size={24} color={theme.secondaryText}/>
-                <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                  {loadedUser.email}
+            <View style={[styles.headerContentSection, styles.mainHeader]}>
+              <ProfilePicture loadedUser={user} size={80}/>
+              <View style={styles.userDataColumn}>
+                <Text style={[fontStyles.postTitle, { color: theme.secondaryText }]}>
+                  {user.name}
                 </Text>
+                {user.bio ? (
+                  <Text style={[fontStyles.subtitle_2, { color: theme.secondaryText }]}>
+                    {user.bio}
+                  </Text>
+                ) : (
+                  <Text style={[fontStyles.subtitle_2, { color: colors.darkGreyAlt }]}>
+                    {isUserProfile
+                      ? 'Adicione uma descrição de perfil para facilitar a ajuda de outros usuários.'
+                      : 'Este usuário não possui uma descrição de perfil.'
+                    }
+                  </Text>
+                )}
               </View>
-              <View style={styles.user_phone}>
-                <Phone size={24} color={theme.secondaryText}/>
+              {isUserProfile &&
+                <TouchableOpacity onPress={onGoToEditProfile}>
+                  <Pencil size={24} color={theme.secondaryText}/>
+                </TouchableOpacity>
+              }
+            </View>
+            <View style={styles.headerLineDivision}/>
+            <View style={styles.headerContentSection}>
+              <View style={styles.userDataColumn}>
+                <View style={styles.userDataRow}>
+                  <Mail size={24} color={theme.secondaryText}/>
+                  <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
+                    {user.email}
+                  </Text>
+                </View>
+                {user.phone &&
+                  <View style={styles.userDataRow}>
+                    <Phone size={24} color={theme.secondaryText}/>
+                    <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
+                      {user.phone}
+                    </Text>
+                  </View>
+                }
+              </View>
+            </View>
+            <View style={styles.headerLineDivision}/>
+            <View style={styles.headerContentSection}>
+              <View style={styles.userDataRow}>
+                <View style={{ transform: [{ scale: 1.1 }, { translateX: -0.2 }] }}>
+                  <MapPin size={24} color={theme.secondaryText}/>
+                </View>
                 <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                  {loadedUser.phone}
+                  {user.address}
                 </Text>
               </View>
             </View>
-            <TouchableOpacity onPress={onGoToEditProfile}>
-              <Pencil size={24} color={theme.secondaryText}/>
-            </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.selectSection}>
           <TouchableOpacity style={styles.iconText} onPress={() => switchTab('posts')}>
-            <BookImage
+            <Image
               size={24}
               color={activeTab === 'posts' ? theme.primaryText : colors.grey}
             />
             <Text style={[fontStyles.subtitle_1, { color: activeTab === 'posts' ? theme.primaryText : colors.grey } ]}>
-              Minhas publicações
+              {isUserProfile ? 'Minhas publicações' : 'Publicações'}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.iconText} onPress={() => switchTab('bookmarks')}>
-            <Star
-              size={24}
-              color={activeTab === 'bookmarks' ? theme.primaryText : colors.grey}
-            />
-            <Text style={[fontStyles.subtitle_1, { color: activeTab === 'bookmarks' ? theme.primaryText : colors.grey } ]}>
-              Salvos
-            </Text>
-          </TouchableOpacity>
+          {isUserProfile &&
+            <TouchableOpacity style={styles.iconText} onPress={() => switchTab('bookmarks')}>
+              <Star
+                size={24}
+                color={activeTab === 'bookmarks' ? theme.primaryText : colors.grey}
+              />
+              <Text style={[fontStyles.subtitle_1, { color: activeTab === 'bookmarks' ? theme.primaryText : colors.grey } ]}>
+                Salvos
+              </Text>
+            </TouchableOpacity>
+          }
         </View>
 
         <View style={styles.lineDivision}/>
@@ -173,19 +172,17 @@ export default function ProfileView({ loadedUser, loading, navigation, onGoToEdi
           {activeTab === 'posts' ? (
             totalPagesPosts > 1 && (
               <Pagination
-                ref={paginationRef}
                 currentPage={currentPagePost}
                 totalPages={totalPagesPosts}
-                onChangePage={(page) => {handleChangePage(page, 'post')}}
+                onChangePage={(page) => {handleChangePage(page, setCurrentPagePost, scrollRef)}}
               />
             )
           ) : (
             totalPagesBookmarks > 1 && (
               <Pagination
-                ref={paginationRef}
                 currentPage={currentPageBookmark}
                 totalPages={totalPagesBookmarks}
-                onChangePage={(page) => {handleChangePage(page, 'bookmark')}}
+                onChangePage={(page) => {handleChangePage(page, setCurrentPageBookmark, scrollRef)}}
               />
             )
           )}
@@ -203,24 +200,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerContent: {
-    flexDirection: 'row',
     borderWidth: 1.6,
     borderColor: colors.grey,
     borderRadius: 12,
     marginBottom: 24,
+  },
+  headerContentSection: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 12
   },
-  userInfoColumn: {
-    flex: 1
-  },
-  user_email: {
+  mainHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12
   },
-  user_phone: {
+  userDataColumn: {
+    flex: 1,
+    gap: 4
+  },
+  headerLineDivision: {
+    width: '100%',
+    height: 1,
+    backgroundColor: colors.grey
+  },
+  userDataRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12

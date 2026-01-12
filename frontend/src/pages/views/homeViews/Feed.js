@@ -1,31 +1,24 @@
-import { StyleSheet, View } from 'react-native';
-import { useRef, useState, useMemo } from 'react';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { useTheme } from '@context/ThemeContext';
 import { Post } from '@components/post';
 import { Pagination } from '@components/pagination';
 import { useFontsCustom } from '@hooks/useFontsCustom';
-
-const POSTS_PER_PAGE = 10;
+import { usePagination } from '@hooks/usePagination';
+import { handleChangePage } from '@handlers/handleChangePage';
 
 export default function Feed({ navigation, posts, loading, currentPage, setCurrentPage, openKebabMenu, scrollRef }) {
+  const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
-  const paginationRef = useRef(null);
+  const {
+    totalPages,
+    paginatedData: paginatedPosts
+  } = usePagination(posts, currentPage, 10);
 
-  const orderedPosts = useMemo(
-    () => [...posts].reverse(),
-    [posts]
+  if (loading) return (
+    <ActivityIndicator style={styles.loading} size='large' color={theme.primaryText}/>
   );
-
-  const totalPages = Math.ceil(orderedPosts.length / POSTS_PER_PAGE);
-
-  const paginatedPosts = useMemo(() => {
-    const start = (currentPage - 1) * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
-    return orderedPosts.slice(start, end);
-  }, [currentPage, orderedPosts]);
-
-  if (loading) return null;
 
   return (
     <View style={styles.feed}>
@@ -33,31 +26,16 @@ export default function Feed({ navigation, posts, loading, currentPage, setCurre
         <Post
           key={index}
           post={post}
-          onOpenMenu={() => openKebabMenu('post', post)} navigation={navigation}
+          navigation={navigation}
+          onOpenMenu={() => openKebabMenu('post', post)}
+          originRoute={'Home'}
         />
       ))}
       {totalPages > 1 && (
         <Pagination
-          ref={paginationRef}
           currentPage={currentPage}
           totalPages={totalPages}
-          onChangePage={(page) => {
-            setCurrentPage(page);
-
-            requestAnimationFrame(() => {
-              paginationRef.current?.measureLayout(
-                scrollRef.current,
-                (x, y) => {
-                  scrollRef.current.scrollTo({
-                    x,
-                    y: y - 16,
-                    animated: true,
-                  });
-                },
-                () => {}
-              );
-            });
-          }}
+          onChangePage={(page) => {handleChangePage(page, setCurrentPage, scrollRef)}}
         />
       )}
     </View>
@@ -65,9 +43,12 @@ export default function Feed({ navigation, posts, loading, currentPage, setCurre
 };
 
 const styles = StyleSheet.create({
+  loading: {
+    marginTop: 16
+  },
   feed: {
     marginTop: 16,
-    marginBottom: 156,
+    marginBottom: 136,
     gap: 32,
     alignItems: 'center'
   },

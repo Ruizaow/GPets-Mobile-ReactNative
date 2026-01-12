@@ -74,6 +74,7 @@ export default function PostView({ route, navigation }) {
         <View style={styles.postWrapper}>
           <Post
             post={post}
+            navigation={navigation}
             onOpenMenu={() => openKebabMenu('post', post)}
             footer={
               <View style={styles.commentInputWrapper}>
@@ -96,11 +97,13 @@ export default function PostView({ route, navigation }) {
                     return (
                       <View key={index}>
                         <View style={styles.comment}>
-                          <ProfilePicture loadedUser={comment.user} size={44}/>
+                          <TouchableOpacity onPress={() => navigation.navigate('Profile', { user: comment.user })}>
+                            <ProfilePicture loadedUser={comment.user} size={44}/>
+                          </TouchableOpacity>
                           <View style={styles.commentData}>
                             <View style={styles.commentTextArea}>
                               <Text style={[fontStyles.commentUsername, { color: theme.primaryText }]}>
-                                {comment.user?.name}
+                                {comment.user.name}
                               </Text>
                               <Text style={[fontStyles.commentTimestamp, { color: theme.primaryText }]}>
                                 {comment.timestamp}
@@ -133,7 +136,11 @@ export default function PostView({ route, navigation }) {
           data={kebabMenu.data}
           onClose={() => setKebabMenu(null)}
           onDelete={() => setModal(kebabMenu.data.id)}
-          canDelete={kebabMenu.data.user?.id === user.id}
+          canDelete={
+            kebabMenu.type === 'post'
+              ? kebabMenu.data.userId === user.id
+              : kebabMenu.data.user?.id === user.id
+          }
         />
       )}
       {Boolean(modal) && (

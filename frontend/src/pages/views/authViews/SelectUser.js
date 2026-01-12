@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Animated, View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Button } from '@components/button';
 import { BackArrow } from '@components/backArrow';
 import { colors } from '@styles/colors';
@@ -12,23 +12,40 @@ export default function SelectUser({ navigation, onSelectUser, onSelectOng }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.backSection}><BackArrow text={'Voltar'} onPress={() => navigation.navigate('Start')}/></View>
-      <View style={styles.wrapper}>
-        <View style={styles.content}>
-          <View style={styles.textArea}>
-            <Text style={[fontStyles.title_2, { color: colors.dark }]}>
-              Antes de continuarmos, {'\n'}gostaríamos de saber em {'\n'}qual perfil você se encaixa 
-            </Text>
-            <Text style={[fontStyles.subtitle_1, { color: colors.dark }]}>
-              Selecione uma das opções abaixo:
-            </Text>
-          </View>
-          <View style={styles.buttonArea}>
-            <Button text='Pessoa Física' variant='disabled' onPress={onSelectUser} isDisabled={true}/>
-            <Button text='ONG’s' variant='blue' onPress={onSelectOng}/>
-          </View>
-          <StatusBar style='auto'/>
+      <View style={styles.backSection}>
+        <BackArrow text={'Voltar'} onPress={() => navigation.navigate('Start')}/>
+      </View>
+
+      <View style={styles.content}>
+        <View style={styles.textArea}>
+          <Text style={[fontStyles.title_2, { color: colors.dark }]}>
+            Antes de continuarmos, gostaríamos de saber em qual perfil você se encaixa 
+          </Text>
+          <Text style={[fontStyles.subtitle_1, { color: colors.dark }]}>
+            Selecione uma das opções abaixo:
+          </Text>
         </View>
+        <View style={styles.buttonArea}>
+          <View style={styles.button}>
+            <Button
+              text='Pessoa Física'
+              textColor={colors.beige}
+              bgColor={colors.disabled}
+              onPress={onSelectUser}
+              isDisabled={true}
+            />
+          </View>
+          <View style={styles.button}>
+            <Button
+              text='ONG’s'
+              textColor={colors.dark}
+              bgColor={colors.blue}
+              onPress={onSelectOng}
+            />
+          </View>
+        </View>
+
+        <StatusBar style='auto'/>
       </View>
     </View>
   );
@@ -38,28 +55,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.beige,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingHorizontal: 32
   },
   backSection: {
-    marginHorizontal: 32,
     marginTop: 80
-  },
-  wrapper: {
-    flex: 1,
-    alignItems: 'center',
   },
   content: {
     flex: 1,
-    flexDirection: 'column',
     justifyContent: 'center',
+    alignItems: 'center',
     paddingBottom: 256
   },
   textArea: {
+    width: '100%',
     alignItems: 'start',
     gap: 16,
     marginBottom: 32
   },
   buttonArea: {
+    width: '100%',
     gap: 10
+  },
+  button: {
+    flexDirection: 'row'
   }
 });

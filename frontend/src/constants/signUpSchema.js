@@ -13,7 +13,9 @@ export const signUpSchema = z
     cnpj: z
       .string()
       .min(18, 'CNPJ incompleto')
-      .refine(isValidCNPJ, 'CNPJ inválido'),
+      .refine((cnpj) => isValidCNPJ(cnpj, false), {
+        message: 'CNPJ inválido',
+      }),
     address: z
       .string()
       .nonempty('Campo obrigatório'),
