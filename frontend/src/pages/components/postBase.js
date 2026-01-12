@@ -1,18 +1,28 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import { EllipsisVertical, Star } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
 import { sizes } from '@constants/postPropertiesSizes';
 import { useTheme } from '@context/ThemeContext';
 import { ProfilePicture } from '@components/profilePicture';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { getUser } from '@services/getUser';
+import { savePost, unsavePost } from '@services/bookmarkPost';
+import { handleToggleBookmark } from '@handlers/handleToggleBookmark';
 
-export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=false, isReduced=false }) {
+export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=false, isOnProfile=false, isReduced=false }) {
   const { theme } = useTheme();
+  const { user, loading } = getUser(post.userId);
+
+  const [isSaved, setIsSaved] = useState(post.isSaved);
+  const [loadingSave, setLoadingSave] = useState(false);
+
+  useEffect(() => {
+    setIsSaved(!!post.isSaved);
+  }, [post.isSaved]);
+
   const hasOwnerTag = post.isOwner !== null;
   const s = scale;
-
-  const { user, loading } = getUser(post.userId);
 
   function getTagColor(tag) {
     switch (tag) {
@@ -109,15 +119,21 @@ export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=f
               }]}>
                 <Text style={[fontStyles.postTag,
                   { color: getTagColor(post.status) },
-                  !isReduced
-                    ? { fontSize: sizes.postTag * s }
-                    : { fontSize: sizes.title3 * s }
+                  { fontSize: sizes.postTag * s }
                 ]}>
                   {post.status}
                 </Text>
-                {!isReduced &&
-                  <Star size={sizes.star * s} color={colors.disabled} />
-                }
+                {(!isReduced || (isReduced && isOnProfile)) && (
+                  <TouchableOpacity onPress={() => 
+                    handleToggleBookmark(post, isSaved, setIsSaved, loadingSave, setLoadingSave, savePost, unsavePost)
+                  }>
+                    <Star
+                      size={sizes.star * s}
+                      color={isSaved ? colors.yellow : colors.grey}
+                      fill={isSaved ? colors.yellow : 'transparent'}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
             }
           </View>

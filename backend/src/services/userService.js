@@ -122,17 +122,53 @@ export const userService = {
     };
   },
 
-  getBookmarks: async (id) => {
-    const bookmarks = await prisma.savedPost.findMany({
-      where: { id },
-      include: { post: true }
+  getPosts: async (userId, loggedUserId) => {
+    const posts = await prisma.post.findMany({
+      where: { userId },
+      include: {
+        savedBy: loggedUserId
+          ? { where: { userId },
+              select: { id: true } }
+          : false
+      }
     });
 
-    const savedPosts = bookmarks.map(item => item.post);
+    const formattedPosts = posts.map(post => ({
+      ...post,
+      isSaved: loggedUserId ? post.savedBy.length > 0 : false,
+      savedBy: undefined
+    }));
 
     return {
-      message: `Aqui está a lista de posts salvos pelo usuário ${id}.`,
-      bookmarks: savedPosts
+      message: `Aqui está a lista de posts criados pelo usuário ${userId}.`,
+      posts: formattedPosts
+    };
+  },
+
+  getBookmarks: async (userId) => {
+    const bookmarks = await prisma.savedPost.findMany({
+      where: { userId },
+      include: {
+        post: {
+          include: {
+            savedBy: {
+              where: { userId },
+              select: { id: true }
+            },
+          },
+        },
+      },
+    });
+
+    const formattedPosts = bookmarks.map(item => ({
+      ...item.post,
+      isSaved: true,
+      savedBy: undefined
+    }));
+
+    return {
+      message: `Aqui está a lista de posts salvos pelo usuário ${userId}.`,
+      bookmarks: formattedPosts
     };
   }
 };

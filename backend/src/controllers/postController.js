@@ -3,7 +3,9 @@ import { getErrorResponse } from '../utils/index.js';
 
 export const getPosts = async (req, res) => {
   try {
-    const postsData = await postService.getAll();
+    const userId = req.user?.id ?? null;
+
+    const postsData = await postService.getAll(userId);
 
     res.status(200).json({
       message: postsData.message,
@@ -55,10 +57,10 @@ export const deletePost = async (req, res) => {
 
 export const savePost = async (req, res) => {
   try {
-    const userUsername = req.user?.username;
+    const userId = req.user.id;
     const postId = parseInt(req.params.id);
 
-    const savedPost = await postService.savePost(userUsername, postId);
+    const savedPost = await postService.savePost(userId, postId);
 
     res.status(201).json({
       message: savedPost.message,
@@ -71,10 +73,10 @@ export const savePost = async (req, res) => {
 
 export const unsavePost = async (req, res) => {
   try {
-    const userUsername = req.user?.username;
+    const userId = req.user.id;
     const postId = parseInt(req.params.id);
 
-    const unsavedPost = await postService.unsavePost(userUsername, postId);
+    const unsavedPost = await postService.unsavePost(userId, postId);
 
     res.status(200).json({
       message: unsavedPost.message,

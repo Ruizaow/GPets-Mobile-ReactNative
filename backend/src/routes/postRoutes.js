@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middlewares/authMiddleware.js';
+import { authenticateToken, optionalAuthenticateToken } from '../middlewares/authMiddleware.js';
 import { getPosts, getPost, createPost, deletePost, savePost, unsavePost } from '../controllers/postController.js';
 import { getComments } from '../controllers/commentController.js';
 
 const postRouter = Router();
 
-postRouter.get('/', getPosts);
+postRouter.get('/', optionalAuthenticateToken, getPosts);
 
 postRouter.post('/:id/bookmark', authenticateToken, savePost);
 postRouter.delete('/:id/bookmark', authenticateToken, unsavePost);

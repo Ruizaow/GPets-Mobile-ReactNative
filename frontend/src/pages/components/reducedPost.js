@@ -4,7 +4,7 @@ import { useTheme } from '@context/ThemeContext';
 import { PostBase } from '@components/postBase';
 import { colors } from '@styles/colors.js';
 
-export function ReducedPost({ post, navigation, scale=1, isPressable=true, originRoute, currentPagePost, currentPageBookmark }) {
+export function ReducedPost({ post, navigation, scale=1, isPressable=true, isOnProfile=false, originRoute, currentPagePost, currentPageBookmark }) {
   const { theme } = useTheme();
   const s = scale;
 
@@ -31,6 +31,7 @@ export function ReducedPost({ post, navigation, scale=1, isPressable=true, origi
             post={post}
             navigation={navigation}
             scale={scale}
+            isOnProfile={isOnProfile}
             isReduced={true}
           />
           {pressed && (<View pointerEvents='none' style={[

@@ -2,7 +2,6 @@ import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-nati
 import { useFocusEffect } from '@react-navigation/native';
 import { useRef, useState, useCallback } from 'react';
 import { Pencil, Mail, Phone, MapPin, Image, Star } from 'lucide-react-native';
-import { mockedPosts } from '@constants/mockDataPost';
 import { mockedBookmarks } from '@constants/mockDataBookmark';
 import { useTheme } from '@context/ThemeContext';
 import { useProfileTab } from '@context/ProfileTabContext';
@@ -16,7 +15,7 @@ import { useFontsCustom } from '@hooks/useFontsCustom';
 import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
 
-export default function ProfileView({ userProfile, loadedUser, loading, navigation, onGoToEditProfile }) {
+export default function ProfileView({ userProfile, loadedUser, userPosts, navigation, onGoToEditProfile }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -31,7 +30,7 @@ export default function ProfileView({ userProfile, loadedUser, loading, navigati
   const {
     totalPages: totalPagesPosts,
     paginatedData: paginatedPosts
-  } = usePagination(mockedPosts, currentPagePost);
+  } = usePagination(userPosts, currentPagePost);
   const {
     totalPages: totalPagesBookmarks,
     paginatedData: paginatedBookmarks
@@ -56,8 +55,6 @@ export default function ProfileView({ userProfile, loadedUser, loading, navigati
       }
     }, [])
   );
-
-  if (loading) return null;
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
@@ -90,7 +87,7 @@ export default function ProfileView({ userProfile, loadedUser, loading, navigati
                 )}
               </View>
               {isUserProfile &&
-                <TouchableOpacity onPress={onGoToEditProfile}>
+                <TouchableOpacity onPress={(onGoToEditProfile)}>
                   <Pencil size={24} color={theme.secondaryText}/>
                 </TouchableOpacity>
               }
@@ -160,6 +157,8 @@ export default function ProfileView({ userProfile, loadedUser, loading, navigati
               <ReducedPost
                 post={post}
                 navigation={navigation}
+                scale={0.52}
+                isOnProfile={true}
                 originRoute={'Profile'}
                 currentPagePost={currentPagePost}
                 currentPageBookmark={currentPageBookmark}

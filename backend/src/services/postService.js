@@ -1,14 +1,25 @@
 import prisma from '../lib/prismaClient.js';
 
 export const postService = {
-  getAll: async () => {
+  getAll: async (userId) => {
     const posts = await prisma.post.findMany({
-      orderBy: { timestamp: 'desc' },
+      include: {
+        savedBy: userId
+          ? { where: { userId },
+              select: { id: true } }
+          : false
+      }
     });
+
+    const formattedPosts = posts.map(post => ({
+      ...post,
+      isSaved: userId ? post.savedBy.length > 0 : false,
+      savedBy: undefined
+    }));
 
     return {
       message: 'Aqui está a lista de posts.',
-      posts,
+      posts: formattedPosts,
     };
   },
 
