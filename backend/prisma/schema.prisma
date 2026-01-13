@@ -15,8 +15,8 @@ model User {
   cnpj              String          @unique
   address           String
   password          String
-  bio               String
-  phone             String
+  bio               String?
+  phone             String?
   imageUrl          String?
   createdAt         DateTime        @default(now())
   
@@ -34,20 +34,20 @@ model Post {
   id                Int             @id @default(autoincrement())
   type              String
   timestamp         String
-  isOwner           Boolean
-  imageUrl          String?
+  isOwner           Boolean?
+  imageUrl          String
   name              String
-  status            String
+  status            String?
   date              String
-  sex               String
-  breed             String
-  temper            String
-  owner             String
+  sex               String?
+  breed             String?
+  temper            String?
+  owner             String?
   phone             String
   description       String
   address           String
-  coordinateLat     Float
-  coordinateLng     Float
+  coordinateLat     Float?
+  coordinateLng     Float?
 
   userId            Int
 

@@ -25,14 +25,14 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
     }
     await deletePost(postId, () => {
       onPostDeleted(postId);
-      setDeleteModal(null);
+      setDeletePostModal(null);
     });
   }
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMenuLocked, setIsMenuLocked] = useState(false);
   const [kebabMenu, setKebabMenu] = useState(null);
-  const [deleteModal, setDeleteModal] = useState(null);
+  const [deletePostModal, setDeletePostModal] = useState(null);
   const [rescueModal, setRescueModal] = useState(null);
   const [showExitModal, setShowExitModal] = useState(false);
 
@@ -150,7 +150,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
           type={kebabMenu.type}
           data={kebabMenu.data}
           onClose={closeKebabMenu}
-          onDelete={() => setDeleteModal(kebabMenu.data.id)}
+          onDelete={() => setDeletePostModal(kebabMenu.data.id)}
           canDelete={kebabMenu.data.userId === user.id}
         />
       )}
@@ -168,12 +168,12 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
       )}
 
       {/* MODAL para DELETAR POST */}
-      {Boolean(deleteModal) && (
+      {Boolean(deletePostModal) && (
         <Modal
           text={`Deseja excluir esta publicação?`}
           confirmButton={`Sim, excluir`}
-          onClose={() => setDeleteModal(null)}
-          onConfirm={() => handleDeletePost(deleteModal)}
+          onClose={() => setDeletePostModal(null)}
+          onConfirm={() => handleDeletePost(deletePostModal)}
         />
       )}
 

@@ -43,14 +43,16 @@ export default function SelectPost({ navigation }) {
 const styles = StyleSheet.create({
   selectPost: {
     alignItems: 'center',
-    marginTop: 48
+    marginTop: 48,
+    paddingHorizontal: 80
   },
   logo: {
     marginBottom: 24
   },
   text: {
     ...fontStyles.title_3,
-    marginBottom: 24
+    marginBottom: 24,
+    textAlign: 'center'
   },
   buttons: {
     gap: 12

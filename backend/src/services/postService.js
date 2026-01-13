@@ -44,8 +44,16 @@ export const postService = {
       address, coordinateLat, coordinateLng
     } = postData;
 
-    const newPost = await prisma.post.create({
-      data: {
+    if (!['Pet', 'Evento'].includes(type)) {
+      throw new Error('Tipo de post inválido');
+    }
+
+    let data;
+    if (type === 'Evento') {
+      data = { userId, type, timestamp, imageUrl, name, date, phone, description, address };
+    }
+    else {
+      data = {
         userId,
         type,
         timestamp,
@@ -63,8 +71,10 @@ export const postService = {
         address,
         coordinateLat: parseFloat(coordinateLat),
         coordinateLng: parseFloat(coordinateLng)
-      },
-    });
+      };
+    }
+    
+    const newPost = await prisma.post.create({ data });
 
     return {
       message: 'Post criado com sucesso!',
