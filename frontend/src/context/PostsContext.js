@@ -7,6 +7,18 @@ export function PostsProvider({ children }) {
   const [userPosts, setUserPosts] = useState([]);
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
+  function updatePostStatus(postId, status) {
+    const update = posts =>
+      posts.map(post =>
+        post.id === postId
+          ? { ...post, status }
+          : post
+      );
+    setFeedPosts(prev => update(prev));
+    setUserPosts(prev => update(prev));
+    setBookmarkedPosts(prev => update(prev));
+  }
+
   function updatePostSaved(postId, isSaved) {
     const update = posts =>
       posts.map(post =>
@@ -14,7 +26,6 @@ export function PostsProvider({ children }) {
           ? { ...post, isSaved }
           : post
       );
-
     setFeedPosts(prev => update(prev));
     setUserPosts(prev => update(prev));
 
@@ -46,6 +57,7 @@ export function PostsProvider({ children }) {
         setUserPosts,
         bookmarkedPosts,
         setBookmarkedPosts,
+        updatePostStatus,
         updatePostSaved
       }}
     >

@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   content: {
-    height: 64,
+    height: 56,
     borderRadius: 40,
     alignItems: 'center',
     overflow: 'hidden',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   pagItem: {
     width: ITEM_WIDTH,
-    height: 48,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -2,13 +2,9 @@ import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { useTheme } from '@context/ThemeContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
-import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export function Radio({ selected, onPress, label, disabled=false, icon: Icon=null, iconColor }) {
   const { theme } = useTheme();
-
-  const fontsLoaded = useFontsCustom();
-  if (!fontsLoaded) return null;
 
   return (
     <TouchableOpacity style={styles.radioField} onPress={onPress} disabled={disabled}>

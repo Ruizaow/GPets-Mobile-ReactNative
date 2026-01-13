@@ -1,6 +1,6 @@
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Pencil, Mail, Phone, MapPin, Image, Star, CopyPlus } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
 import { useProfileTab } from '@context/ProfileTabContext';
@@ -8,6 +8,7 @@ import { GoBackHeader } from '@components/goBackHeader';
 import { ProfilePicture } from '@components/profilePicture';
 import { ReducedPost } from '@components/reducedPost';
 import { Pagination } from '@components/pagination';
+import { EmptyMessage } from '@components/emptyMessage';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
@@ -40,7 +41,12 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
     if (tab === activeTab) return;
     setActiveTab(tab);
   }
-
+  useEffect(() => {
+    if (!isUserProfile && activeTab !== 'posts') {
+      setActiveTab('posts');
+    }
+  }, [isUserProfile]);
+  
   useFocusEffect(
     useCallback(() => {
       const state = navigation.getState();
@@ -55,8 +61,13 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
     }, [])
   );
 
-  const hasPosts = activeTab === 'posts' && paginatedPosts.length > 0;
-  const hasBookmarks = activeTab === 'bookmarks' && paginatedBookmarks.length > 0;
+  const isPostsTab = activeTab === 'posts';
+  const isBookmarksTab = activeTab === 'bookmarks';
+
+  const hasPosts = paginatedPosts.length > 0;
+  const hasBookmarks = paginatedBookmarks.length > 0;
+
+  const shouldShowList = (isPostsTab && hasPosts) || (isBookmarksTab && hasBookmarks);
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
@@ -136,9 +147,9 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
           <TouchableOpacity style={styles.iconText} onPress={() => switchTab('posts')} disabled={!isUserProfile}>
             <Image
               size={24}
-              color={activeTab === 'posts' ? theme.primaryText : colors.grey}
+              color={isPostsTab ? theme.primaryText : colors.grey}
             />
-            <Text style={[fontStyles.subtitle_1, { color: activeTab === 'posts' ? theme.primaryText : colors.grey } ]}>
+            <Text style={[fontStyles.subtitle_1, { color: isPostsTab ? theme.primaryText : colors.grey } ]}>
               {isUserProfile ? 'Minhas publicações' : 'Publicações'}
             </Text>
           </TouchableOpacity>
@@ -158,10 +169,10 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
 
         <View style={styles.lineDivision}/>
         
-        {hasPosts ? (
+        {shouldShowList ? (
           <>
             <View style={styles.posts}>
-              {(activeTab === 'posts' ? paginatedPosts : paginatedBookmarks).map((post) => {
+              {(isPostsTab ? paginatedPosts : paginatedBookmarks).map((post) => {
                 return (
                   <View key={post.id} style={styles.post}>
                     <ReducedPost
@@ -178,7 +189,7 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
             </View>
 
             <View style={styles.paginationSection}>
-              {activeTab === 'posts' ? (
+              {isPostsTab ? (
                 totalPagesPosts > 1 && (
                   <Pagination
                     currentPage={currentPagePost}
@@ -197,18 +208,20 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
               )}
             </View>
           </>
+        ) : isPostsTab ? (
+          <EmptyMessage
+            title={isUserProfile ? 'Você ainda não publicou nada' : 'Sem publicações'}
+            subtitle={isUserProfile
+              ? 'Publique algo para começar a ver conteúdos no seu feed.'
+              : 'Este usuário ainda não publicou nada.'}
+            icon={CopyPlus}
+          />
         ) : (
-          <View style={styles.emptyMessageSection}>
-            <CopyPlus size={80} color={theme.primaryText}/>
-            <View style={styles.emptyMessage}>
-              <Text style={fontStyles.title_3}>
-                Você ainda não publicou nada
-              </Text>
-              <Text style={fontStyles.subtitle_2}>
-                Publique algo para começar a ver conteúdos no seu feed
-              </Text>
-            </View>
-          </View>
+          <EmptyMessage
+            title={'Nenhum post salvo'}
+            subtitle={'Quando você salvar um post, ele vai aparecer aqui para acessar depois.'}
+            icon={Star}
+          />
         )}        
       </ScrollView>
     </View>

@@ -1,15 +1,19 @@
 import { StyleSheet, Pressable, View, Text, Animated } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
+import { usePosts } from '@context/PostsContext';
 import { PostBase } from '@components/postBase';
 import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { updatePost } from '@services/updatePost';
+import { getStatusColor } from '@utils/getStatusColor';
 
 const POST_BASE_HEIGHT = 374;
 
-export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm=false, footer=null }) {
+export function Post({ post, userId, navigation, onOpenMenu, onOpenModal, onPressButton, isOnPostForm=false, footer=null }) {
   const { theme } = useTheme();
+  const { updatePostStatus } = usePosts();
 
   const opacity = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -17,6 +21,39 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
       toValue: 1, duration: 100, useNativeDriver: true,
     }).start();
   }, []);
+
+  const [postStatus, setPostStatus] = useState(post.status);
+  const isOwner = post.userId === userId;
+  const isRescued = postStatus === 'Resgatado';
+
+  function handleRescue() {
+    if (!isOwner || isRescued) return;
+    onOpenModal({
+      text: (
+        <Text style={{ textAlign: 'center' }}>
+          Deseja alterar o status{' '}
+          <Text style={{ color: getStatusColor(postStatus) }}>
+            {postStatus}
+          </Text>{' '}
+          do animal desta publicação para{' '}
+          <Text style={{ color: colors.blue }}>
+            Resgatado
+          </Text>
+          ?
+        </Text>
+      ),
+      confirmButton: 'Sim, alterar',
+      onConfirm: async () => {
+        const updatedPost = await updatePost(post.id, 'Resgatado');
+        setPostStatus(updatedPost.status);
+        updatePostStatus(post.id, updatedPost.status);
+      }
+    });
+  }
+  
+  function substituirDepois() {
+    console.log('Substituir depois')
+  }
 
   return (
     <Pressable
@@ -38,6 +75,7 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
           <Animated.View style={{ minHeight: POST_BASE_HEIGHT, opacity }}>
             <PostBase
               post={post}
+              postStatus={postStatus}
               navigation={navigation}
               onOpenMenu={onOpenMenu}
               isOnPostForm={isOnPostForm}
@@ -92,9 +130,13 @@ export function Post({ post, navigation, onOpenMenu, onPressButton, isOnPostForm
                       <Button
                         text='Resgatado'
                         textColor={colors.white}
-                        bgColor={colors.blue}
+                        bgColor={!isRescued ? colors.blue : colors.disabled}
                         width={149}
                         height={48}
+                        onPress={isOwner
+                          ? handleRescue
+                          : substituirDepois}
+                        isDisabled={isRescued}
                       />
                     </>
                   )}

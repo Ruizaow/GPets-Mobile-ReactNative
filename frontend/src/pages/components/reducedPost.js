@@ -28,6 +28,7 @@ export function ReducedPost({ post, navigation, scale=1, isPressable=true, canBo
         ]}>
           <PostBase
             post={post}
+            postStatus={post.status}
             navigation={navigation}
             scale={scale}
             canBookmark={canBookmark}

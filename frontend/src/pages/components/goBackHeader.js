@@ -3,13 +3,9 @@ import { ArrowLeft } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
-import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export function GoBackHeader({ headerTitle, onPress, showLineDivision=true, icon: Icon=null, iconColor, onPressIcon }) {
   const { theme } = useTheme();
-
-  const fontsLoaded = useFontsCustom();
-  if (!fontsLoaded) return null;
 
   return (
     <View style={[styles.goBackHeader, !showLineDivision && { marginBottom: 16 }]}>

@@ -3,6 +3,7 @@ import prisma from '../lib/prismaClient.js';
 export const postService = {
   getAll: async (userId) => {
     const posts = await prisma.post.findMany({
+      orderBy: { id: 'asc' },
       include: {
         savedBy: userId
           ? { where: { userId },
@@ -68,6 +69,25 @@ export const postService = {
     return {
       message: 'Post criado com sucesso!',
       post: newPost,
+    };
+  },
+
+  update: async (postId, userId, status) => {
+    const post = await prisma.post.findUnique({
+      where: { id: postId }
+    });
+
+    if (!post) throw new Error('Post não encontrado.');
+    if (post.userId !== userId) throw new Error('Você não é o dono do post.');
+
+    const updatedPost = await prisma.post.update({
+      where: { id: postId },
+      data: { status }
+    });
+
+    return {
+      message: 'Post atualizado com sucesso!',
+      post: updatedPost
     };
   },
 

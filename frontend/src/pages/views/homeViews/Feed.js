@@ -1,13 +1,18 @@
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { Image } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
+import { useAuth } from '@context/AuthContext';
 import { Post } from '@components/post';
 import { Pagination } from '@components/pagination';
+import { EmptyMessage } from '@components/emptyMessage';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
 
-export default function Feed({ navigation, posts, loading, currentPage, setCurrentPage, openKebabMenu, scrollRef }) {
+export default function Feed({ navigation, posts, loading, currentPage, setCurrentPage, openKebabMenu, openRescueModal, scrollRef }) {
   const { theme } = useTheme();
+  const { user } = useAuth();
+
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
@@ -21,25 +26,36 @@ export default function Feed({ navigation, posts, loading, currentPage, setCurre
   );
 
   return (
-    <View style={styles.feed}>
-      {paginatedPosts.map((post, index) => (
-        <Post
-          key={index}
-          post={post}
-          navigation={navigation}
-          onOpenMenu={() => openKebabMenu('post', post)}
-        />
-      ))}
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onChangePage={(page) => {handleChangePage(page, setCurrentPage, scrollRef)}}
-        />
-      )}
-    </View>
-  );
-};
+    <>
+      {paginatedPosts.length > 0 ? (
+        <View style={styles.feed}>
+          {paginatedPosts.map((post, index) => (
+            <Post
+              key={index}
+              post={post}
+              userId={user.id}
+              navigation={navigation}
+              onOpenMenu={() => openKebabMenu('post', post)}
+              onOpenModal={openRescueModal}
+            />
+          ))}
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onChangePage={(page) => {handleChangePage(page, setCurrentPage, scrollRef)}}
+            />
+          )}
+        </View>
+    ) : (
+      <EmptyMessage
+        title={'Você ainda não publicou nada'}
+        subtitle={'Publique algo para começar a ver conteúdos no seu feed.'}
+        icon={Image}
+      />
+    )}
+  </>
+)};
 
 const styles = StyleSheet.create({
   loading: {

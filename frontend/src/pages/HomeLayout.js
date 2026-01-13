@@ -19,7 +19,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
     navigation.navigate('Start');
   }
 
-  async function handleDeletPost(postId) {
+  async function handleDeletePost(postId) {
     if (!postId) {
       return;
     }
@@ -33,6 +33,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
   const [isMenuLocked, setIsMenuLocked] = useState(false);
   const [kebabMenu, setKebabMenu] = useState(null);
   const [deleteModal, setDeleteModal] = useState(null);
+  const [rescueModal, setRescueModal] = useState(null);
   const [showExitModal, setShowExitModal] = useState(false);
 
   const scrollRef = useRef(null);
@@ -73,6 +74,9 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
     });
   }
 
+  function openRescueModal(modalData) {
+    setRescueModal(modalData);
+  }
   function openKebabMenu(type, data) {
     setKebabMenu({ type, data });
   }
@@ -104,7 +108,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
         />
         <ScrollView ref={scrollRef} style={styles.pageContent}>
           {children &&
-            React.cloneElement(children, { openKebabMenu, scrollRef })
+            React.cloneElement(children, { openKebabMenu, openRescueModal, scrollRef })
           }
         </ScrollView>
         <BottomNavbar
@@ -169,7 +173,20 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
           text={`Deseja excluir esta publicação?`}
           confirmButton={`Sim, excluir`}
           onClose={() => setDeleteModal(null)}
-          onConfirm={() => handleDeletPost(deleteModal)}
+          onConfirm={() => handleDeletePost(deleteModal)}
+        />
+      )}
+
+      {/* MODAL para MARCAR UM ANIMAL DE POST COMO RESGATADO */}
+      {Boolean(rescueModal) && (
+        <Modal
+          text={rescueModal.text}
+          confirmButton={rescueModal.confirmButton}
+          onClose={() => setRescueModal(null)}
+          onConfirm={async () => {
+            await rescueModal.onConfirm();
+            setRescueModal(null);
+          }}
         />
       )}
 

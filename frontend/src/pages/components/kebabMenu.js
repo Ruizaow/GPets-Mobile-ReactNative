@@ -4,12 +4,9 @@ import { useEffect, useRef } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
-import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export function KebabMenu({ type, data, onClose, onDelete, onChangeImage, canDelete }) {
+export function KebabMenu({ type, onClose, onDelete, onChangeImage, canDelete }) {
   const { theme } = useTheme();
-  const fontsLoaded = useFontsCustom();
-  if (!fontsLoaded) return null;
 
   const translateY = useRef(new Animated.Value(320)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;

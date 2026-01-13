@@ -6,12 +6,9 @@ import { Button } from '@components/button';
 import { ReducedPost } from '@components/reducedPost';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
-import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export function Modal({ navigation, text, confirmButton, onClose, onConfirm, post, hasMap=false }) {
   const { theme } = useTheme();
-  const fontsLoaded = useFontsCustom();
-  if (!fontsLoaded) return null;
 
   const overlayOpacity = useRef(new Animated.Value(0)).current;
 
@@ -100,7 +97,7 @@ export function Modal({ navigation, text, confirmButton, onClose, onConfirm, pos
                   <Button
                     text={confirmButton}
                     textColor={colors.white}
-                    bgColor={colors.red}
+                    bgColor={confirmButton !== 'Sim, alterar' ? colors.red : colors.blue}
                     width={149}
                     height={46}
                     onPress={() => {

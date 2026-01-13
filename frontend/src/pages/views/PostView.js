@@ -66,6 +66,7 @@ export default function PostView({ route, navigation }) {
         <View style={styles.postWrapper}>
           <Post
             post={post}
+            userId={user.id}
             navigation={navigation}
             onOpenMenu={() => openKebabMenu('post', post)}
             footer={

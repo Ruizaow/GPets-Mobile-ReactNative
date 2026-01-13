@@ -120,7 +120,7 @@ export const fontStyles = StyleSheet.create({
   },
   pagination: {
     fontFamily: 'Geologica-Medium',
-    fontSize: 26,
+    fontSize: 16,
     color: colors.darkerDark
   }
 });

@@ -1,9 +1,10 @@
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { EllipsisVertical } from 'lucide-react-native';
+import { EllipsisVertical, Bell } from 'lucide-react-native';
 import { useState } from 'react';
 import { mockedNotifications } from '@constants/mockDataNotification';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
+import { EmptyMessage } from '@components/emptyMessage';
 import { KebabMenu } from '@components/kebabMenu';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
@@ -28,35 +29,43 @@ export default function Notifications({ navigation }) {
     <View style={[styles.notifContainer, { backgroundColor: theme.background }]}>
       <GoBackHeader headerTitle={'Notificações'} onPress={() => navigation.navigate('Home')}/>
       <ScrollView>
-        <View style={styles.notifications}>
-          {notifications.map((notification, index) => (
-            <View key={index}>
-              <View style={styles.notifSection}>
-                <View style={styles.notifText}>
-                  {!notification.viewed ? (
-                    <View style={styles.newNotifWarning}/>
-                  ) : (
-                    <View style={styles.invisibleDiv}/>
-                  )}
-                  <View style={styles.textColumn}>
-                    <Text style={[styles.title, { color: theme.primaryText }]}>
-                      {notification.title}
-                    </Text>
-                    <Text style={[styles.description, { color: theme.secondaryText }]} numberOfLines={2}>
-                      {notification.description}
-                    </Text>
-                    <Text style={[styles.timestamp, { color: theme.secondaryText }]}>
-                      {notification.timestamp}
-                    </Text>
+        {notifications.length > 0 ? (
+          <View style={styles.notifications}>
+            {notifications.map((notification) => (
+              <View key={notification.id}>
+                <View style={styles.notifSection}>
+                  <View style={styles.notifText}>
+                    {!notification.viewed ? (
+                      <View style={styles.newNotifWarning}/>
+                    ) : (
+                      <View style={styles.invisibleDiv}/>
+                    )}
+                    <View style={styles.textColumn}>
+                      <Text style={[styles.title, { color: theme.primaryText }]}>
+                        {notification.title}
+                      </Text>
+                      <Text style={[styles.description, { color: theme.secondaryText }]} numberOfLines={2}>
+                        {notification.description}
+                      </Text>
+                      <Text style={[styles.timestamp, { color: theme.secondaryText }]}>
+                        {notification.timestamp}
+                      </Text>
+                    </View>
                   </View>
+                  <TouchableOpacity style={styles.pressIcon} onPress={() => openKebabMenu('notification', notification)}>
+                    <EllipsisVertical size={28} color={theme.primaryText}/>
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.pressIcon} onPress={() => openKebabMenu('notification', notification)}>
-                  <EllipsisVertical size={28} color={theme.primaryText}/>
-                </TouchableOpacity>
               </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        ) : (
+          <EmptyMessage
+            title={'Nenhuma notificação'}
+            subtitle={'Aqui você verá comentários, alertas e outras interações com seu perfil.'}
+            icon={Bell}
+          />
+        )}
       </ScrollView>
       {Boolean(kebabMenu) && (
         <KebabMenu

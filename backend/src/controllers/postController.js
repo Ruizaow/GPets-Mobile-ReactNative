@@ -42,6 +42,25 @@ export const createPost = async (req, res) => {
   }
 };
 
+export const updatePost = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const postId = parseInt(req.params.id);
+    const { status } = req.body;
+
+    const updatedPost = await postService.update(postId, userId, status);
+
+    res.status(200).json({
+      message: updatedPost.message,
+      data: updatedPost.post
+    });
+  } catch (err) {
+    res.status(403).json({
+      error: getErrorResponse(403, 'Ação não permitida.', err.message)
+    });
+  }
+};
+
 export const deletePost = async (req, res) => {
   try {
     const deletedPost = await postService.delete(parseInt(req.params.id));

@@ -124,6 +124,7 @@ export const userService = {
 
   getPosts: async (userId, loggedUserId) => {
     const posts = await prisma.post.findMany({
+      orderBy: { id: 'asc' },
       where: { userId },
       include: {
         savedBy: loggedUserId

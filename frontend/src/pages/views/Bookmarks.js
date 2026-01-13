@@ -1,9 +1,11 @@
 import { StyleSheet, View, ScrollView } from 'react-native';
+import { Star } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
 import { ReducedPost } from '@components/reducedPost';
 import { Pagination } from '@components/pagination';
+import { EmptyMessage } from '@components/emptyMessage';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
@@ -30,27 +32,37 @@ export default function Bookmarks({ navigation, route }) {
         showLineDivision={false}
       />
       <ScrollView ref={scrollRef}>
-        <View style={styles.posts}>
-          {(paginatedBookmarks).map((post, index) => (
-            <View key={index} style={styles.post}>
-              <ReducedPost
-                post={post}
-                navigation={navigation}
-                scale={0.52}
-                canBookmark={true}
-              />
+        {paginatedBookmarks.length > 0 ? (
+          <>
+            <View style={styles.posts}>
+              {(paginatedBookmarks).map((post, index) => (
+                <View key={index} style={styles.post}>
+                  <ReducedPost
+                    post={post}
+                    navigation={navigation}
+                    scale={0.52}
+                    canBookmark={true}
+                  />
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-        <View style={styles.paginationSection}>
-          {totalPages > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onChangePage={(page) => {handleChangePage(page, setCurrentPage, scrollRef)}}
-            />
-          )}
-        </View>
+            <View style={styles.paginationSection}>
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onChangePage={(page) => {handleChangePage(page, setCurrentPage, scrollRef)}}
+                />
+              )}
+            </View>
+          </>
+        ) : (
+          <EmptyMessage
+            title={'Nenhum post salvo'}
+            subtitle={'Quando você salvar um post, ele vai aparecer aqui para acessar depois.'}
+            icon={Star}
+          />
+        )}
       </ScrollView>
     </View>
   );

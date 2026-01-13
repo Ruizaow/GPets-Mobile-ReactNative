@@ -10,8 +10,9 @@ import { fontStyles } from '@styles/fonts';
 import { getUser } from '@services/getUser';
 import { savePost, unsavePost } from '@services/bookmarkPost';
 import { handleToggleBookmark } from '@handlers/handleToggleBookmark';
+import { getStatusColor } from '@utils/getStatusColor';
 
-export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=false, canBookmark=false, isReduced=false }) {
+export function PostBase({ post, postStatus, navigation, scale=1, onOpenMenu, isOnPostForm=false, canBookmark=false, isReduced=false }) {
   const { theme } = useTheme();
   const { user, loading } = getUser(post.userId);
   const { updatePostSaved } = usePosts();
@@ -25,21 +26,6 @@ export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=f
 
   const hasOwnerTag = post.isOwner !== null;
   const s = scale;
-
-  function getTagColor(tag) {
-    switch (tag) {
-      case 'Perdido':
-        return colors.red;
-      case 'Desabrigado':
-        return colors.orange;
-      case 'Resgatado':
-        return colors.blue;
-      case 'Encontrado':
-        return colors.green;
-      default:
-        return colors.dark;
-    }
-  }
 
   if (loading) return null;
 
@@ -120,10 +106,10 @@ export function PostBase({ post, navigation, scale=1, onOpenMenu, isOnPostForm=f
                 gap: sizes.tagGap * s
               }]}>
                 <Text style={[fontStyles.postTag,
-                  { color: getTagColor(post.status) },
+                  { color: getStatusColor(postStatus) },
                   { fontSize: sizes.postTag * s }
                 ]}>
-                  {post.status}
+                  {postStatus}
                 </Text>
                 {(!isReduced || (isReduced && canBookmark)) && (
                   <TouchableOpacity onPress={() => 
