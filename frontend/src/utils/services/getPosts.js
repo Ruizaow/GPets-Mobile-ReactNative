@@ -24,9 +24,5 @@ export function getPosts() {
     loadPosts();
   }, []);
 
-  return {
-    posts: feedPosts,
-    setPosts: setFeedPosts,
-    loading
-  };
+  return { posts: feedPosts, loading };
 }

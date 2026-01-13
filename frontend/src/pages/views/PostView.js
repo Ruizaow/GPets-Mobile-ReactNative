@@ -3,6 +3,7 @@ import { EllipsisVertical, SendHorizontal } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { useAuth } from '@context/AuthContext';
+import { usePosts } from '@context/PostsContext';
 import { GoBackHeader } from '@components/goBackHeader';
 import { ProfilePicture } from '@components/profilePicture';
 import { KebabMenu } from '@components/kebabMenu';
@@ -14,12 +15,14 @@ import { formattedTimestamp } from '@utils/timestampFormatting'
 import { useFontsCustom } from '@hooks/useFontsCustom';
 import { getComments } from '@services/getComments';
 import { createComment } from '@services/createComment';
+import { deletePost } from '@services/deletePost';
 import { deleteComment } from '@services/deleteComment';
 
 export default function PostView({ route, navigation }) {
   const { post } = route.params;
   const { theme } = useTheme();
   const { user } = useAuth();
+  const { removePost } = usePosts();
 
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -28,7 +31,8 @@ export default function PostView({ route, navigation }) {
   
   const [inputValue, setInputValue] = useState('');
   const [kebabMenu, setKebabMenu] = useState(null);
-  const [modal, setModal] = useState(null);
+  const [deletePostModal, setDeletePostModal] = useState(null);
+  const [deleteCommentModal, setDeleteCommentModal] = useState(null);
 
   async function handleCreateComment() {
     if (!inputValue.trim()) return;
@@ -46,10 +50,26 @@ export default function PostView({ route, navigation }) {
     }
   }
 
+  function handleOpenModal(type, dataId) {
+    if (type === 'post')
+      setDeletePostModal(dataId);
+    else
+      setDeleteCommentModal(dataId)
+  }
+
+  async function handleDeletePost(postId) {
+    if (!postId) return;
+    await deletePost(postId, () => {
+      removePost(postId);
+      setDeletePostModal(null);
+      navigation.goBack();
+    });
+  }
   async function handleDeleteComment(commentId) {
+    if (!commentId) return;
     await deleteComment(commentId);
     setComments(prev => prev.filter(c => c.id !== commentId));
-    setModal(null);
+    setDeleteCommentModal(null);
   }
 
   function openKebabMenu(type, data) {
@@ -128,7 +148,7 @@ export default function PostView({ route, navigation }) {
           type={kebabMenu.type}
           data={kebabMenu.data}
           onClose={() => setKebabMenu(null)}
-          onDelete={() => setModal(kebabMenu.data.id)}
+          onDelete={() => handleOpenModal(kebabMenu.type, kebabMenu.data.id)}
           canDelete={
             kebabMenu.type === 'post'
               ? kebabMenu.data.userId === user.id
@@ -136,12 +156,20 @@ export default function PostView({ route, navigation }) {
           }
         />
       )}
-      {Boolean(modal) && (
+      {Boolean(deletePostModal) && (
+        <Modal
+          text={`Deseja excluir esta publicação?`}
+          confirmButton={`Sim, excluir`}
+          onClose={() => setDeletePostModal(null)}
+          onConfirm={() => handleDeletePost(deletePostModal)}
+        />
+      )}
+      {Boolean(deleteCommentModal) && (
         <Modal
           text={`Deseja excluir este comentário?`}
           confirmButton={`Sim, excluir`}
-          onClose={() => setModal(null)}
-          onConfirm={() => handleDeleteComment(modal)}
+          onClose={() => setDeleteCommentModal(null)}
+          onConfirm={() => handleDeleteComment(deleteCommentModal)}
         />
       )}
     </View>

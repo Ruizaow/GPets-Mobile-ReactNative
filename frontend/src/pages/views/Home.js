@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHomeView } from '@context/HomeViewContext';
+import { usePosts } from '@context/PostsContext';
 import Feed from './homeViews/Feed';
 import SelectPost from './homeViews/SelectPost';
 import MapView from './homeViews/MapView';
@@ -8,16 +9,14 @@ import { getPosts } from '@services/getPosts';
 
 export default function Home({ navigation }) {
   const { currentView, setCurrentView } = useHomeView();
-  const { posts, setPosts, loading } = getPosts();
+  const { posts, loading } = getPosts();
+  const { removePost } = usePosts();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [postMarker, setPostMarker] = useState(null);
 
   function handleRemovePost(postId) {
-    setPosts(prev => prev.filter(
-      post => post.id !== postId
-    ));
-  
+    removePost(postId);
     setCurrentPage(prev => {
       const remainingPosts = posts.length - 1;
       const maxPage = Math.max(1, Math.ceil(remainingPosts / 10));

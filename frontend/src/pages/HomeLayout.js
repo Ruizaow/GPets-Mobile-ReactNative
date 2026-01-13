@@ -15,8 +15,8 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
   const { user, logout } = useAuth();
 
   async function handleLogout() {
+    navigation.navigate('Auth');
     await logout();
-    navigation.navigate('Start');
   }
 
   async function handleDeletePost(postId) {

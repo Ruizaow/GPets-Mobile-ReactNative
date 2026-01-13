@@ -24,6 +24,7 @@ export default function Feed({ navigation, posts, loading, currentPage, setCurre
   if (loading) return (
     <ActivityIndicator style={styles.loading} size='large' color={theme.primaryText}/>
   );
+  if (!user) return null;
 
   return (
     <>

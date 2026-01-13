@@ -48,6 +48,12 @@ export function PostsProvider({ children }) {
     }
   }
 
+  function removePost(postId) {
+    setFeedPosts(prev => prev.filter(post => post.id !== postId));
+    setUserPosts(prev => prev.filter(post => post.id !== postId));
+    setBookmarkedPosts(prev => prev.filter(post => post.id !== postId));
+  }
+
   return (
     <PostsContext.Provider
       value={{
@@ -58,7 +64,8 @@ export function PostsProvider({ children }) {
         bookmarkedPosts,
         setBookmarkedPosts,
         updatePostStatus,
-        updatePostSaved
+        updatePostSaved,
+        removePost
       }}
     >
       {children}
