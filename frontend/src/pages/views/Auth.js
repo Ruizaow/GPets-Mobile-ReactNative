@@ -9,7 +9,7 @@ import { useKeyboardAnimation } from '@hooks/useKeyboardAnimation';
 
 export default function Auth({ navigation }) {
   const [role, setRole] = useState(null);
-  const [currentView, setCurrentView] = useState('SelectUser');
+  const [currentView, setCurrentView] = useState('Login');
   const goTo = (viewName) => setCurrentView(viewName);
   
   const keyboardConfigByView = {
@@ -23,27 +23,26 @@ export default function Auth({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
-      {currentView === 'SelectUser' && (
-        <SelectUser
-          navigation={navigation}
-          onSelectUser={() => {
-            setRole('USER');
-            goTo('Login');
-          }}
-          onSelectOng={() => {
-            setRole('ORGANIZATION');
-            goTo('Login');
-          }}
-        />
-      )}
       {currentView === 'Login' && (
         <Login
           navigation={navigation}
           animatedOffset={animatedOffset}
           keyboardHeight={keyboardHeight}
-          onBack={() => goTo('SelectUser')}
-          onGoToSignUp={() => goTo('SignUp')}
+          onGoToSignUp={() => goTo('SelectUser')}
           onGoToForgotPassword={() => goTo('ForgotPassword')}
+        />
+      )}
+      {currentView === 'SelectUser' && (
+        <SelectUser
+          onBackToLogin={() => goTo('Login')}
+          onSelectUser={() => {
+            setRole('USER');
+            goTo('SignUp');
+          }}
+          onSelectOng={() => {
+            setRole('ORGANIZATION');
+            goTo('SignUp');
+          }}
         />
       )}
       {currentView === 'SignUp' && (

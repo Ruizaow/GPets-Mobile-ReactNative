@@ -55,7 +55,7 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
             Cadastrar-se
           </Text>
           <Text style={styles.description}>
-            Informe-nos os dados básicos para criar a {'\n'}sua conta GPets
+            Informe-nos os dados básicos para criar a sua conta GPets
           </Text>
         </View>
 
@@ -91,16 +91,18 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
         </View>
 
         <View style={styles.submitArea}>
-          <Button
-            text='Continuar'
-            textColor={colors.dark}
-            bgColor={colors.beige}
-            onPress={() => {
-              trigger(['name', 'email']).then((valid) => {
-                if (valid) goNext();
-              });
-            }}
-          />
+          <View style={styles.button}>
+            <Button
+              text='Continuar'
+              textColor={colors.dark}
+              bgColor={colors.beige}
+              onPress={() => {
+                trigger(['name', 'email']).then((valid) => {
+                  if (valid) goNext();
+                });
+              }}
+            />
+          </View>
         </View>
       </View>,
     ];
@@ -118,7 +120,7 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
             Cadastrar-se
           </Text>
           <Text style={styles.description}>
-            Precisamos de alguns dados oficiais para {'\n'}garantir a
+            Precisamos de alguns dados oficiais para garantir a
             credibilidade da sua ONG
           </Text>
         </View>
@@ -157,16 +159,18 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
         </View>
 
         <View style={styles.submitArea}>
-          <Button
-            text='Continuar'
-            textColor={colors.dark}
-            bgColor={colors.beige}
-            onPress={() => {
-              trigger(['cnpj', 'address']).then((valid) => {
-                if (valid) goNext();
-              });
-            }}
-          />
+          <View style={styles.button}>
+            <Button
+              text='Continuar'
+              textColor={colors.dark}
+              bgColor={colors.beige}
+              onPress={() => {
+                trigger(['cnpj', 'address']).then((valid) => {
+                  if (valid) goNext();
+                });
+              }}
+            />
+          </View>
         </View>
       </View>,
     ];
@@ -184,7 +188,7 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
             Cadastrar-se
           </Text>
           <Text style={styles.description}>
-            Estamos quase lá! Crie uma senha forte para {'\n'}concluir o
+            Estamos quase lá! Crie uma senha forte para concluir o
             cadastro da sua ONG
           </Text>
         </View>
@@ -221,15 +225,17 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
         </View>
 
         <View style={styles.submitArea}>
-          <Button
-            text='Finalizar cadastro'
-            textColor={colors.dark}
-            bgColor={colors.beige}
-            onPress={async () => {
-              const valid = await trigger(['password', 'confirmPassword']);
-              if (valid) await registerUser(role, getValues, () => setStep(4));
-            }}
-          />
+          <View style={styles.button}>
+            <Button
+              text='Finalizar cadastro'
+              textColor={colors.dark}
+              bgColor={colors.beige}
+              onPress={async () => {
+                const valid = await trigger(['password', 'confirmPassword']);
+                if (valid) await registerUser(role, getValues, () => setStep(4));
+              }}
+            />
+          </View>
         </View>
       </View>,
     ];
@@ -250,18 +256,20 @@ export default function SignUp({ animatedOffset, onBackToLogin, role }) {
             Cadastro concluído
           </Text>
           <Text style={styles.description}>
-            Sua conta Gpets foi criada com sucesso. Seja {'\n'}bem-vindo à
+            Sua conta Gpets foi criada com sucesso. Seja bem-vindo à
             comunidade do GPets!
           </Text>
         </View>
 
         <View style={styles.submitArea}>
-          <Button
-            text='Continuar'
-            textColor={colors.dark}
-            bgColor={colors.beige}
-            onPress={onBackToLogin}
-          />
+          <View style={styles.button}>
+            <Button
+              text='Continuar'
+              textColor={colors.dark}
+              bgColor={colors.beige}
+              onPress={onBackToLogin}
+            />
+          </View>
         </View>
       </View>,
     ];
@@ -298,7 +306,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 160,
+    paddingHorizontal: 32,
+    marginTop: 160
   },
   textArea: {
     alignItems: 'center',
@@ -327,11 +336,15 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   inputArea: {
+    width: '100%',
     alignItems: 'flex-end',
     marginBottom: 24,
   },
   submitArea: {
-    gap: 12,
-    flexDirection: 'row'
+    width: '100%',
+    gap: 12
   },
+  button: {
+    flexDirection: 'row'
+  }
 });

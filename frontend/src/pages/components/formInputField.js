@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     color: colors.red
   },
   input: {
+    outlineStyle: 'none',
     borderRadius: 12,
     borderWidth: 1,
     paddingHorizontal: 12,

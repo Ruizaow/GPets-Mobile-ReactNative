@@ -3,6 +3,7 @@ import { StyleSheet, Animated, TouchableOpacity, ScrollView, View, Text } from '
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema } from '@constants/signUpSchema';
+import { useTheme } from '@context/ThemeContext';
 import { useAuth } from '@context/AuthContext';
 import { Button } from '@components/button';
 import { InputField } from '@components/inputField';
@@ -12,8 +13,9 @@ import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 import { loginUser } from '@services/loginUser';
 
-export default function Login({ navigation, animatedOffset, keyboardHeight, onBack, onGoToSignUp, onGoToForgotPassword }) {
+export default function Login({ navigation, animatedOffset, keyboardHeight, onGoToSignUp, onGoToForgotPassword }) {
   const { login } = useAuth();
+  const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
   
@@ -34,28 +36,35 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
 
   return (
     <ScrollView
-      contentContainerStyle={[ styles.scrollContent, keyboardHeight > 0 && { paddingBottom: keyboardHeight } ]}
+      contentContainerStyle={[
+        styles.scrollContent,
+        { backgroundColor: theme.background },
+        keyboardHeight > 0 && { paddingBottom: keyboardHeight }
+      ]}
       keyboardShouldPersistTaps='handled'
       keyboardDismissMode='interactive'
     >
-      <Animated.View style={[styles.container, { transform: [{ translateY: animatedOffset }] }]}>
+      <Animated.View style={[styles.container, {
+        backgroundColor: theme.background,
+        transform: [{ translateY: animatedOffset }]
+      }]}>
         <View style={styles.backSection}>
-          <BackArrow text={'Voltar'} onPress={onBack} />
+          <BackArrow text={'Voltar'} onPress={() => navigation.navigate('Start')} />
         </View>
         
         <View style={styles.content}>
           <View style={styles.textArea}>
-            <Text style={[fontStyles.title_2, { color: colors.beige }]}>
+            <Text style={[fontStyles.title_2, { color: theme.primaryText }]}>
               Bem-vindo ao GPets
             </Text>
-            <Text style={[fontStyles.subtitle_2, { color: colors.beige }]}>
+            <Text style={[fontStyles.subtitle_2, { color: theme.primaryText }]}>
               Faça o seu login abaixo
             </Text>
           </View>
           <View style={styles.buttonArea}>
             <Button
               text='Continuar com Google'
-              textColor={colors.beige}
+              textColor={theme.disabled}
               bgColor={colors.disabled}
               widthStyle={'flex: 1'}
               image={require('@assets/images/google-2015-seeklogo.png')}
@@ -63,11 +72,11 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
             />
           </View>
           <View style={styles.lineDivision}>
-            <View style={styles.line} />
-            <Text style={[fontStyles.subtitle_1, { color: colors.beige }]}>
+            <View style={[styles.line, { backgroundColor: theme.primaryText }]}/>
+            <Text style={[fontStyles.subtitle_1, { color: theme.primaryText }]}>
               ou entre com
             </Text>
-            <View style={styles.line} />
+            <View style={[styles.line, { backgroundColor: theme.primaryText }]}/>
           </View>
 
           <View style={styles.inputArea}>
@@ -82,6 +91,10 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
                   value={field.value}
                   onChangeText={field.onChange}
                   errorMessage={fieldState.error?.message}
+                  textColor={colors.dark}
+                  bgColor={colors.grey}
+                  phColor={'rgba(50, 58, 66, 0.4)'}
+                  labelColor={theme.primaryText}
                 />
               )}
             />
@@ -96,11 +109,18 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
                   value={field.value}
                   onChangeText={field.onChange}
                   errorMessage={fieldState.error?.message}
+                  textColor={colors.dark}
+                  bgColor={colors.grey}
+                  phColor={'rgba(50, 58, 66, 0.4)'}
+                  labelColor={theme.primaryText}
+                  errorMessagePositionAbsolute={true}
                 />
               )}
             />
             <TouchableOpacity onPress={onGoToForgotPassword}>
-              <Text style={styles.forgotPassword}>Esqueceu a senha?</Text>
+              <Text style={[styles.forgotPassword, { color: theme.primaryText }]}>
+                Esqueceu a senha?
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -108,8 +128,8 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
             <View style={styles.button}>
               <Button
                 text='Entrar'
-                textColor={colors.dark}
-                bgColor={colors.beige}
+                textColor={colors.beige}
+                bgColor={colors.blue}
                 onPress={async () => {
                   const valid = await trigger(['email', 'password']);
                   if (valid) {
@@ -121,10 +141,18 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
             <View style={styles.button}>
               <Button
                 text='Cadastrar-se'
-                textColor={colors.beige}
-                bgColor={'transparent'}
-                borderColor={colors.beige}
+                textColor={colors.blue}
+                bgColor={theme.signUpButton}
+                borderColor={colors.blue}
                 onPress={onGoToSignUp}
+              />
+            </View>
+            <View style={[styles.button, { marginTop: 24 }]}>
+              <Button
+                text='Entrar como Visitante'
+                textColor={theme.primaryText}
+                bgColor={'transparent'}
+                borderColor={theme.primaryText}
               />
             </View>
           </View>
@@ -138,12 +166,10 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onBa
 
 const styles = StyleSheet.create({
   scrollContent: {
-    flexGrow: 1,
-    backgroundColor: colors.blue
+    flexGrow: 1
   },
   container: {
     flex: 1,
-    backgroundColor: colors.blue,
     paddingHorizontal: 32,
     gap: 32,
   },
@@ -173,20 +199,21 @@ const styles = StyleSheet.create({
   },
   line: {
     width: 94,
-    height: 1,
-    backgroundColor: colors.beige,
+    height: 1
   },
   inputArea: {
+    width: '100%',
     alignItems: 'flex-end',
     marginBottom: 24,
   },
   forgotPassword: {
     marginTop: -6,
-    ...fontStyles.forgotPassword,
+    ...fontStyles.forgotPassword
   },
   submitArea: {
-    gap: 12,
-    width: '100%'
+    width: '100%',
+    gap: 12
+    
   },
   button: {
     flexDirection: 'row'

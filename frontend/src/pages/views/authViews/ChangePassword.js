@@ -3,6 +3,7 @@ import { StyleSheet, Animated, View, Text } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTheme } from '@context/ThemeContext';
 import { changePasswordSchema } from '@constants/signUpSchema';
 import { Button } from '@components/button';
 import { InputField } from '@components/inputField';
@@ -13,6 +14,7 @@ import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
 export default function ChangePassword({ animatedOffset, onBackToLogin }) {
+  const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
@@ -35,11 +37,11 @@ export default function ChangePassword({ animatedOffset, onBackToLogin }) {
 
       <View key='content' style={styles.content}>
         <View style={styles.textArea}>
-          <Text style={[fontStyles.title_2, { color: colors.beige }]}>
+          <Text style={[fontStyles.title_2, { color: theme.primaryText }]}>
             Nova senha
           </Text>
-          <Text style={styles.description}>
-            Crie uma senha forte e segura para proteger {'\n'}a sua conta no
+          <Text style={[styles.description, { color: theme.primaryText }]}>
+            Crie uma senha forte e segura para proteger a sua conta no
             GPets e finalizar o processo
           </Text>
         </View>
@@ -56,6 +58,10 @@ export default function ChangePassword({ animatedOffset, onBackToLogin }) {
                 value={field.value}
                 onChangeText={field.onChange}
                 errorMessage={fieldState.error?.message}
+                textColor={colors.dark}
+                bgColor={colors.grey}
+                phColor={'rgba(50, 58, 66, 0.4)'}
+                labelColor={theme.primaryText}
               />
             )}
           />
@@ -70,22 +76,28 @@ export default function ChangePassword({ animatedOffset, onBackToLogin }) {
                 value={field.value}
                 onChangeText={field.onChange}
                 errorMessage={fieldState.error?.message}
+                textColor={colors.dark}
+                bgColor={colors.grey}
+                phColor={'rgba(50, 58, 66, 0.4)'}
+                labelColor={theme.primaryText}
               />
             )}
           />
         </View>
 
         <View style={styles.submitArea}>
-          <Button
-            text='Finalizar'
-            textColor={colors.dark}
-            bgColor={colors.beige}
-            onPress={() => {
-              trigger(['password', 'confirmPassword']).then((valid) => {
-                if (valid) setStep(2);
-              });
-            }}
-          />
+          <View style={styles.button}>
+            <Button
+              text='Finalizar'
+              textColor={colors.beige}
+              bgColor={colors.blue}
+              onPress={() => {
+                trigger(['password', 'confirmPassword']).then((valid) => {
+                  if (valid) setStep(2);
+                });
+              }}
+            />
+          </View>
         </View>
       </View>,
     ];
@@ -95,31 +107,40 @@ export default function ChangePassword({ animatedOffset, onBackToLogin }) {
     return [
       <View key='final' style={styles.contentFinal}>
         <View style={styles.checkSection}>
-          <View style={styles.checkBackground} />
-          <Check size={88} color={colors.green} />
+          <View style={styles.checkBackground}/>
+          <View style={styles.checkIcon}>
+            <Check size={88} color={theme.iconBackground}/>
+          </View>
         </View>
 
         <View style={styles.textArea}>
-          <Text style={[fontStyles.title_2, { color: colors.beige }]}>
+          <Text style={[fontStyles.title_2, { color: theme.primaryText }]}>
             Senha alterada
           </Text>
-          <Text style={styles.description}>Cuide bem da sua nova senha!</Text>
+          <Text style={[styles.description, { color: theme.primaryText }]}>
+            Cuide bem da sua nova senha!
+          </Text>
         </View>
 
         <View style={styles.submitArea}>
-          <Button
-            text='Continuar'
-            textColor={colors.dark}
-            bgColor={colors.beige}
-            onPress={onBackToLogin}
-          />
+          <View style={styles.button}>
+            <Button
+              text='Continuar'
+              textColor={colors.beige}
+              bgColor={colors.blue}
+              onPress={onBackToLogin}
+            />
+          </View>
         </View>
       </View>
     ];
   }
 
   return (
-    <Animated.View style={[styles.container, { transform: [{ translateY: animatedOffset }] } ]}>
+    <Animated.View style={[styles.container, {
+      transform: [{ translateY: animatedOffset }],
+      backgroundColor: theme.background
+    }]}>
       {step === 1 && Step1()}
       {step === 2 && Step2()}
       <StatusBar style='auto' />
@@ -128,14 +149,9 @@ export default function ChangePassword({ animatedOffset, onBackToLogin }) {
 }
 
 const styles = StyleSheet.create({
-  scrollContent: {
-    flexGrow: 1,
-    backgroundColor: colors.blue,
-  },
   container: {
     flex: 1,
-    backgroundColor: colors.blue,
-    gap: 32,
+    gap: 32
   },
   backSection: {
     paddingHorizontal: 32,
@@ -161,8 +177,7 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: 'center',
-    ...fontStyles.subtitle_2,
-    color: colors.beige,
+    ...fontStyles.subtitle_2
   },
   checkSection: {
     justifyContent: 'center',
@@ -170,18 +185,25 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   checkBackground: {
-    backgroundColor: colors.beige,
+    backgroundColor: colors.green,
     width: 100,
     height: 100,
     borderRadius: 50,
     position: 'absolute',
   },
+  checkIcon: {
+    zIndex: 1
+  },
   inputArea: {
+    width: '100%',
     alignItems: 'flex-end',
-    marginBottom: 24,
+    marginBottom: 24
   },
   submitArea: {
-    gap: 12,
-    flexDirection: 'row'
+    width: '100%',
+    gap: 12
   },
+  button: {
+    flexDirection: 'row'
+  }
 });

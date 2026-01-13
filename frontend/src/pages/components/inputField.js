@@ -4,7 +4,10 @@ import { Eye, EyeClosed } from 'lucide-react-native';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function InputField({ label, placeholder, type, value, onChangeText, errorMessage }) {
+export function InputField({ label, placeholder, type, value, onChangeText, errorMessage,
+  textColor=colors.dark, bgColor=colors.beige, phColor=colors.grey, labelColor=colors.beige,
+  errorMessagePositionAbsolute=false
+}) {
   const [showPassword, setShowPassword] = useState(false);
 
   const isPassword = type === 'password';
@@ -20,22 +23,29 @@ export function InputField({ label, placeholder, type, value, onChangeText, erro
   
   function getPlaceholderColor() {
     if (errorMessage) {
-      return 'rgba(255, 107, 107, 0.4)'
+      return phColor === colors.grey
+        ? 'rgba(255, 107, 107, 0.4)'
+        : 'rgba(255, 107, 107, 0.5)'
     }
-    return colors.grey
+    return phColor
   }
 
   return (
     <View style={styles.container}>
       {label && 
-        <Text style={styles.label}>
+        <Text style={[styles.label, { color: labelColor }]}>
           {label}
         </Text>
       }
 
       <View style={styles.inputField}>
         <TextInput
-          style={[styles.input, errorMessage && styles.inputError, errorMessage && styles.inputTextError]}
+          style={[
+            styles.input,
+            { color: textColor, backgroundColor: bgColor },
+            errorMessage && styles.inputError,
+            errorMessage && styles.inputTextError
+          ]}
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}
@@ -63,7 +73,14 @@ export function InputField({ label, placeholder, type, value, onChangeText, erro
       </View>
 
       {errorMessage && (
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
+        <Text style={[styles.errorMessage,
+          errorMessagePositionAbsolute && {
+            position: 'absolute',
+            marginTop: 74
+          }
+        ]}>
+          {errorMessage}
+        </Text>
       )}
     </View>
   );
@@ -71,12 +88,12 @@ export function InputField({ label, placeholder, type, value, onChangeText, erro
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     marginBottom: 10,
   },
   label: {
     marginBottom: 4,
-    ...fontStyles.subtitle_1,
-    color: colors.beige,
+    ...fontStyles.subtitle_1
   },
   inputField: {
     flexDirection: 'row',
@@ -87,9 +104,9 @@ const styles = StyleSheet.create({
     right: 16,
   },
   input: {
-    backgroundColor: colors.beige,
+    outlineStyle: 'none',
     borderRadius: 12,
-    width: 352,
+    width: '100%',
     height: 48,
     paddingHorizontal: 16,
     ...fontStyles.inputText

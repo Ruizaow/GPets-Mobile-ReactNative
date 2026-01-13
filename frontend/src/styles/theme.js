@@ -24,6 +24,8 @@ export const lightTheme = {
   navBackground: colors.beige,
   iconBackground: colors.beige,
   paginationText: colors.darkerDark,
+  disabled: colors.beige,
+  signUpButton: 'transparent',
   overlay: 'rgba(0, 0, 0, 0.6)',
 };
 
@@ -50,5 +52,7 @@ export const darkTheme = {
   navBackground: colors.dark,
   iconBackground: colors.white,
   paginationText: colors.white,
+  disabled: colors.darkGrey,
+  signUpButton: colors.white,
   overlay: 'rgba(255, 255, 255, 0.2)',
 };

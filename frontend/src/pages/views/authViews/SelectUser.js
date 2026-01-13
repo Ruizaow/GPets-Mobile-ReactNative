@@ -1,27 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Text } from 'react-native';
+import { useTheme } from '@context/ThemeContext';
 import { Button } from '@components/button';
 import { BackArrow } from '@components/backArrow';
 import { colors } from '@styles/colors';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export default function SelectUser({ navigation, onSelectUser, onSelectOng }) {
+export default function SelectUser({ onBackToLogin, onSelectUser, onSelectOng }) {
+  const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.backSection}>
-        <BackArrow text={'Voltar'} onPress={() => navigation.navigate('Start')}/>
+        <BackArrow text={'Voltar'} onPress={onBackToLogin}/>
       </View>
 
       <View style={styles.content}>
         <View style={styles.textArea}>
-          <Text style={[fontStyles.title_2, { color: colors.dark }]}>
+          <Text style={[fontStyles.title_2, { color: theme.primaryText }]}>
             Antes de continuarmos, gostaríamos de saber em qual perfil você se encaixa 
           </Text>
-          <Text style={[fontStyles.subtitle_1, { color: colors.dark }]}>
+          <Text style={[fontStyles.subtitle_1, { color: theme.primaryText }]}>
             Selecione uma das opções abaixo:
           </Text>
         </View>
@@ -29,7 +31,7 @@ export default function SelectUser({ navigation, onSelectUser, onSelectOng }) {
           <View style={styles.button}>
             <Button
               text='Pessoa Física'
-              textColor={colors.beige}
+              textColor={theme.disabled}
               bgColor={colors.disabled}
               onPress={onSelectUser}
               isDisabled={true}
@@ -38,7 +40,7 @@ export default function SelectUser({ navigation, onSelectUser, onSelectOng }) {
           <View style={styles.button}>
             <Button
               text='ONG’s'
-              textColor={colors.dark}
+              textColor={theme.iconBackground}
               bgColor={colors.blue}
               onPress={onSelectOng}
             />
@@ -54,7 +56,6 @@ export default function SelectUser({ navigation, onSelectUser, onSelectOng }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.beige,
     justifyContent: 'center',
     paddingHorizontal: 32
   },

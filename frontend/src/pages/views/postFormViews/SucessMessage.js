@@ -32,16 +32,18 @@ export default function LocationStep({ navigation }) {
           <Text style={[styles.title, { color: theme.background } ]}>
             Publicação Postada com Sucesso
           </Text>
-          <Text style={[styles.description, { color: theme.background } ]}>Agradecemos o seu registro. {'\n'}Desejamos boa sorte!</Text>
+          <Text style={[styles.description, { color: theme.background } ]}>Agradecemos o seu registro. Desejamos boa sorte!</Text>
         </View>
 
         <View style={styles.continueButton}>
-          <Button
-            text='Continuar'
-            textColor={theme.primaryText}
-            bgColor={theme.background}
-            onPress={handleContinue}
-          />
+          <View style={styles.button}>
+            <Button
+              text='Continuar'
+              textColor={theme.primaryText}
+              bgColor={theme.background}
+              onPress={handleContinue}
+            />
+          </View>
         </View>
       </View>
     </View>
@@ -86,6 +88,9 @@ const styles = StyleSheet.create({
     ...fontStyles.subtitle_2
   },
   continueButton: {
-    flexDirection: 'row',
+    width: '100%'
+  },
+  button: {
+    flexDirection: 'row'
   }
 });
