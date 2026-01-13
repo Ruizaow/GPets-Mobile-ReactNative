@@ -26,11 +26,11 @@ export default function MessagesList({ navigation, onGoToPrivateChat }) {
                       borderWidth: theme.name === 'dark' ? 1 : 0,
                       borderColor: theme.name === 'dark' ? colors.white : 'transparent'
                     }]}
-                    source={message.userProfilePicture}
+                    source={message.user.imageUrl}
                   />
                   <View style={{flex: 1}}>
                     <View style={styles.profileTimestamp}>
-                      <Text style={[fontStyles.subtitle_1, { color: theme.primaryText }]}>{message.userUsername}</Text>
+                      <Text style={[fontStyles.subtitle_1, { color: theme.primaryText }]}>{message.user.name}</Text>
                       <Text style={[fontStyles.commentTimestamp, { color: theme.primaryText }]}>{message.messages[message.messages.length - 1].timestamp}</Text>
                     </View>
                     <View style={styles.contentNumber}>

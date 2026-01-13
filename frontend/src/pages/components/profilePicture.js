@@ -11,17 +11,30 @@ export function ProfilePicture({ loadedUser, size=52 }) {
 
   return (
     <View>
-      {loadedUser?.imageUrl ? (
-        <Image
-          source={{ uri: loadedUser.imageUrl }}
-          style={[{
-            width: size,
-            height: size,
-            borderRadius: 100,
-            borderWidth: theme.name === 'dark' ? 1 : 0,
-            borderColor: theme.name === 'dark' ? colors.white : 'transparent',
-          }]}
-        />
+      {loadedUser.imageUrl ? (
+        loadedUser.role === 'ORGANIZATION' ? (
+          <Image
+            source={{ uri: loadedUser.imageUrl }}
+            style={[{
+              width: size,
+              height: size,
+              borderRadius: 100,
+              borderWidth: theme.name === 'dark' ? 1 : 0,
+              borderColor: theme.name === 'dark' ? colors.white : 'transparent',
+            }]}
+          />
+          ) : (
+            <Image
+              source={loadedUser.imageUrl}
+              style={[{
+                width: size,
+                height: size,
+                borderRadius: 100,
+                borderWidth: theme.name === 'dark' ? 1 : 0,
+                borderColor: theme.name === 'dark' ? colors.white : 'transparent',
+              }]}
+            />
+          )
       ) : (
         <View
           style={[styles.iconFallback, {

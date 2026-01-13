@@ -23,6 +23,7 @@ export default function Messages({ navigation }) {
       )}
       {currentView === 'PrivateChat' && selectedMessage && (
         <PrivateChat
+          navigation={navigation}
           onBack={() => goTo('MessagesList')}
           messageData={selectedMessage}
         />

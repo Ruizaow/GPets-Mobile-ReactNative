@@ -110,22 +110,27 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
                 }
               </View>
             </View>
-            <View style={styles.headerLineDivision}/>
-            <View style={styles.headerContentSection}>
-              <View style={styles.userDataRow}>
-                <View style={{ transform: [{ scale: 1.1 }, { translateX: -0.2 }] }}>
-                  <MapPin size={24} color={theme.secondaryText}/>
+            
+            {user.role === 'ORGANIZATION' &&
+              <>
+                <View style={styles.headerLineDivision}/>
+                <View style={styles.headerContentSection}>
+                  <View style={styles.userDataRow}>
+                    <View style={{ transform: [{ scale: 1.1 }, { translateX: -0.2 }] }}>
+                      <MapPin size={24} color={theme.secondaryText}/>
+                    </View>
+                    <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
+                      {user.address}
+                    </Text>
+                  </View>
                 </View>
-                <Text style={[fontStyles.subtitle_1, { color: theme.secondaryText }]}>
-                  {user.address}
-                </Text>
-              </View>
-            </View>
+              </>
+            }
           </View>
         </View>
 
         <View style={styles.selectSection}>
-          <TouchableOpacity style={styles.iconText} onPress={() => switchTab('posts')}>
+          <TouchableOpacity style={styles.iconText} onPress={() => switchTab('posts')} disabled={!isUserProfile}>
             <Image
               size={24}
               color={activeTab === 'posts' ? theme.primaryText : colors.grey}

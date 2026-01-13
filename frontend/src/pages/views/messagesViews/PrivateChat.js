@@ -6,7 +6,7 @@ import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 
-export default function PrivateChat({ onBack, messageData }) {
+export default function PrivateChat({ navigation, onBack, messageData }) {
   const { theme } = useTheme();
 
   const fontsLoaded = useFontsCustom();
@@ -43,18 +43,17 @@ export default function PrivateChat({ onBack, messageData }) {
             <ArrowLeft size={24} color={theme.primaryText}/>
           </TouchableOpacity>
           <View style={styles.userInfo}>
-            <TouchableOpacity>
-              {/* Substituir pelo componente ProfilePicture e navegar para Perfil no onPress */}
+            <TouchableOpacity onPress={() => navigation.navigate('Profile', { user: messageData.user })}>
               <Image
                 style={[styles.profilePicture, {
                   borderWidth: theme.name === 'dark' ? 1 : 0,
                   borderColor: theme.name === 'dark' ? colors.white : 'transparent'
                 }]}
-                source={messageData.userProfilePicture}
+                source={messageData.user.imageUrl}
               />
             </TouchableOpacity>
             <View>
-              <Text style={[styles.username, { color: theme.primaryText }]}>{messageData.userUsername}</Text>
+              <Text style={[styles.username, { color: theme.primaryText }]}>{messageData.user.name}</Text>
               <Text style={[fontStyles.postSubtitle, { color: theme.primaryText }]}>Visto por último - {messageData.messages[messageData.messages.length - 1].timestamp}</Text>
             </View>
           </View>
@@ -92,11 +91,11 @@ export default function PrivateChat({ onBack, messageData }) {
               </TouchableOpacity>
             ) : (
               <>
-                <TouchableOpacity>
-                  <ImageIcon size={24} color={colors.blue}/>
+                <TouchableOpacity disabled>
+                  <ImageIcon size={24} color={colors.disabled}/>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                  <Camera size={24} color={colors.blue}/>
+                <TouchableOpacity disabled>
+                  <Camera size={24} color={colors.disabled}/>
                 </TouchableOpacity>
               </>
             )}
