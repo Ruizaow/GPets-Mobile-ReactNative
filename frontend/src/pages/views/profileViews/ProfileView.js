@@ -1,7 +1,7 @@
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRef, useState, useCallback } from 'react';
-import { Pencil, Mail, Phone, MapPin, Image, Star } from 'lucide-react-native';
+import { Pencil, Mail, Phone, MapPin, Image, Star, CopyPlus } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
 import { useProfileTab } from '@context/ProfileTabContext';
 import { GoBackHeader } from '@components/goBackHeader';
@@ -54,6 +54,9 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
       }
     }, [])
   );
+
+  const hasPosts = activeTab === 'posts' && paginatedPosts.length > 0;
+  const hasBookmarks = activeTab === 'bookmarks' && paginatedBookmarks.length > 0;
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
@@ -139,7 +142,7 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
               {isUserProfile ? 'Minhas publicações' : 'Publicações'}
             </Text>
           </TouchableOpacity>
-
+          
           {isUserProfile &&
             <TouchableOpacity style={styles.iconText} onPress={() => switchTab('bookmarks')}>
               <Star
@@ -154,41 +157,59 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
         </View>
 
         <View style={styles.lineDivision}/>
-
-        <View style={styles.posts}>
-          {(activeTab === 'posts' ? paginatedPosts : paginatedBookmarks).map((post, index) => (
-            <View key={index} style={styles.post}>
-              <ReducedPost
-                post={post}
-                navigation={navigation}
-                scale={0.52}
-                canBookmark={true}
-                currentPagePost={currentPagePost}
-                currentPageBookmark={currentPageBookmark}
-              />
-            </View>
-          ))}
-        </View>
         
-        <View style={styles.paginationSection}>
-          {activeTab === 'posts' ? (
-            totalPagesPosts > 1 && (
-              <Pagination
-                currentPage={currentPagePost}
-                totalPages={totalPagesPosts}
-                onChangePage={(page) => {handleChangePage(page, setCurrentPagePost, scrollRef)}}
-              />
-            )
-          ) : (
-            totalPagesBookmarks > 1 && (
-              <Pagination
-                currentPage={currentPageBookmark}
-                totalPages={totalPagesBookmarks}
-                onChangePage={(page) => {handleChangePage(page, setCurrentPageBookmark, scrollRef)}}
-              />
-            )
-          )}
-        </View>
+        {hasPosts ? (
+          <>
+            <View style={styles.posts}>
+              {(activeTab === 'posts' ? paginatedPosts : paginatedBookmarks).map((post) => {
+                return (
+                  <View key={post.id} style={styles.post}>
+                    <ReducedPost
+                      post={post}
+                      navigation={navigation}
+                      scale={0.52}
+                      canBookmark={true}
+                      currentPagePost={currentPagePost}
+                      currentPageBookmark={currentPageBookmark}
+                    />
+                  </View>
+                )
+              })}
+            </View>
+
+            <View style={styles.paginationSection}>
+              {activeTab === 'posts' ? (
+                totalPagesPosts > 1 && (
+                  <Pagination
+                    currentPage={currentPagePost}
+                    totalPages={totalPagesPosts}
+                    onChangePage={(page) => {handleChangePage(page, setCurrentPagePost, scrollRef)}}
+                  />
+                )
+              ) : (
+                totalPagesBookmarks > 1 && (
+                  <Pagination
+                    currentPage={currentPageBookmark}
+                    totalPages={totalPagesBookmarks}
+                    onChangePage={(page) => {handleChangePage(page, setCurrentPageBookmark, scrollRef)}}
+                  />
+                )
+              )}
+            </View>
+          </>
+        ) : (
+          <View style={styles.emptyMessageSection}>
+            <CopyPlus size={80} color={theme.primaryText}/>
+            <View style={styles.emptyMessage}>
+              <Text style={fontStyles.title_3}>
+                Você ainda não publicou nada
+              </Text>
+              <Text style={fontStyles.subtitle_2}>
+                Publique algo para começar a ver conteúdos no seu feed
+              </Text>
+            </View>
+          </View>
+        )}        
       </ScrollView>
     </View>
   );
