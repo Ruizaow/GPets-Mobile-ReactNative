@@ -26,6 +26,11 @@ export default function Home({ navigation }) {
     });
   }
 
+  function handleGoToMap(post) {
+    setPostMarker(post);
+    setCurrentView('MapView');
+  }
+
   const views = {
     Feed: <Feed
       navigation={navigation}
@@ -33,11 +38,13 @@ export default function Home({ navigation }) {
       loading={loading}
       currentPage={currentPage}
       setCurrentPage={setCurrentPage}
+      onGoToMap={handleGoToMap}
     />,
     SelectPost: <SelectPost
       navigation={navigation}
     />,
     MapView: <MapView
+      postMarker={postMarker}
       setPostMarker={setPostMarker}
     />,
   };

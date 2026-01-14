@@ -9,7 +9,10 @@ import { useFontsCustom } from '@hooks/useFontsCustom';
 import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
 
-export default function Feed({ navigation, posts, loading, currentPage, setCurrentPage, openKebabMenu, openRescueModal, scrollRef }) {
+export default function Feed({
+  navigation, posts, loading, currentPage, setCurrentPage,
+  onGoToMap, openKebabMenu, openRescueModal, scrollRef
+}) {
   const { theme } = useTheme();
   const { user } = useAuth();
 
@@ -37,7 +40,8 @@ export default function Feed({ navigation, posts, loading, currentPage, setCurre
               userId={user.id}
               navigation={navigation}
               onOpenMenu={() => openKebabMenu('post', post)}
-              onOpenModal={openRescueModal}
+              onOpenRescueModal={openRescueModal}
+              onGoToMap={onGoToMap}
             />
           ))}
           {totalPages > 1 && (

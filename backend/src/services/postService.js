@@ -3,7 +3,7 @@ import prisma from '../lib/prismaClient.js';
 export const postService = {
   getAll: async (userId) => {
     const posts = await prisma.post.findMany({
-      orderBy: { id: 'asc' },
+      orderBy: { id: 'desc' },
       include: {
         savedBy: userId
           ? { where: { userId },

@@ -96,34 +96,31 @@ export function PostBase({ post, postStatus, navigation, scale=1, onOpenMenu, is
               : { marginBottom: sizes.nameTagMB_2 * s, marginTop: sizes.nameTagMT_2 * s }
           ]}>
             <Text style={[styles.name, {
-              color: theme.primaryText,
-              fontSize: sizes.title2 * s
+              color: theme.primaryText, fontSize: sizes.title2 * s
             }]}>
               {post.name}
             </Text>
-            {post.type === 'Pet' &&
-              <View style={[styles.tag, {
-                gap: sizes.tagGap * s
-              }]}>
+            <View style={[styles.tag, { gap: sizes.tagGap * s }]}>
+              {post.type === 'Pet' &&
                 <Text style={[fontStyles.postTag,
                   { color: getStatusColor(postStatus) },
                   { fontSize: sizes.postTag * s }
                 ]}>
                   {postStatus}
                 </Text>
-                {(!isReduced || (isReduced && canBookmark)) && (
-                  <TouchableOpacity onPress={() => 
-                    handleToggleBookmark(post, isSaved, setIsSaved, loadingSave, setLoadingSave, savePost, unsavePost, updatePostSaved)
-                  }>
-                    <Star
-                      size={sizes.star * s}
-                      color={isSaved ? colors.yellow : colors.grey}
-                      fill={isSaved ? colors.yellow : 'transparent'}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-            }
+              }
+              {(!isReduced || (isReduced && canBookmark)) && (
+                <TouchableOpacity onPress={() => 
+                  handleToggleBookmark(post, isSaved, setIsSaved, loadingSave, setLoadingSave, savePost, unsavePost, updatePostSaved)
+                }>
+                  <Star
+                    size={sizes.star * s}
+                    color={isSaved ? colors.yellow : colors.grey}
+                    fill={isSaved ? colors.yellow : 'transparent'}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
       </View>

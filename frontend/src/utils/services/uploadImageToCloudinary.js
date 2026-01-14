@@ -28,7 +28,7 @@ export async function uploadImageToCloudinary (image) {
     return json.secure_url ?? null;
   }
   catch (error) {
-    console.log('Erro ao enviar imagem para o Cloudinary:', error);
+    // console.log('Erro ao enviar imagem para o Cloudinary:', error);
     return null;
   }
 }

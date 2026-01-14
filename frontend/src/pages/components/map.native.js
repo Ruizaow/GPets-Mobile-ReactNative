@@ -6,6 +6,7 @@ import { useMapContext } from '@context/MapContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { zoomIn, zoomOut } from '@utils/mapZoom';
+import { isSameCoordinate } from '@utils/coordinateComparison';
 
 export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadOnly=false, coordinateLat, coordinateLng }) {
   const { mapState, updateMapState } = useMapContext();
@@ -115,13 +116,25 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
           posts ?
             posts.map((post) => {
               const postMarker = { latitude: post.coordinateLat, longitude: post.coordinateLng }
+              const isHighlighted =
+                typeof coordinateLat === 'number' &&
+                typeof coordinateLng === 'number' &&
+                isSameCoordinate(
+                  post.coordinateLat, post.coordinateLng,
+                  coordinateLat, coordinateLng
+                );
               return (
                 <Marker
                   key={post.id}
                   coordinate={postMarker}
                   onPress={() => onPressMarker?.(post)}
+                  zIndex={isHighlighted ? 999 : 0}
                 >
-                  <MapPin size={32} color={getMarkerColor(post.status)} fill={colors.white}/>
+                  <MapPin
+                    size={isHighlighted ? 48 : 32}
+                    color={getMarkerColor(post.status)}
+                    fill={colors.white}
+                  />
                 </Marker>
               );
             }

@@ -6,7 +6,7 @@ export async function deletePost(postId, onSuccess) {
     onSuccess?.();
   }
   catch (error) {
-    console.log(error?.response?.data || error);
+    // console.log(error?.response?.data || error);
     alert('Erro ao deletar publicação: ' + error?.response?.data?.error?.message);
   }
 }

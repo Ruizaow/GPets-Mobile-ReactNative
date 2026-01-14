@@ -35,6 +35,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
   const [deletePostModal, setDeletePostModal] = useState(null);
   const [rescueModal, setRescueModal] = useState(null);
   const [showExitModal, setShowExitModal] = useState(false);
+  const [showPostMarkerModal, setShowPostMarkerModal] = useState(false);
 
   const scrollRef = useRef(null);
 
@@ -108,7 +109,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
         />
         <ScrollView ref={scrollRef} style={styles.pageContent}>
           {children &&
-            React.cloneElement(children, { openKebabMenu, openRescueModal, scrollRef })
+            React.cloneElement(children, { openKebabMenu, openRescueModal, setShowPostMarkerModal, scrollRef })
           }
         </ScrollView>
         <BottomNavbar
@@ -136,7 +137,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
           <Sidebar
             navigation={navigation}
             onGoTo={handleGoToFromSidebar}
-            onOpenModal={() => setShowExitModal(true)}
+            onOpenExitModal={() => setShowExitModal(true)}
             onCloseSidebar={closeSidebar}
             isBackArrowDisabled={isMenuLocked}
             loadedUser={user}
@@ -156,13 +157,18 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
       )}
 
       {/* MODAL para EXIBIR POST DE MARCADOR NO MAPA */}
-      {postMarker && (
+      {showPostMarkerModal && (
         <Modal
           navigation={navigation}
           text={postMarker.address}
           confirmButton={`Ver publicação`}
-          onClose={() => setPostMarker(null)}
-          onConfirm={() => navigation.navigate('PostView', { post: postMarker })}
+          onClose={() => {
+            setShowPostMarkerModal(false);
+          }}
+          onConfirm={() => {
+            navigation.navigate('PostView', { post: postMarker })
+            setShowPostMarkerModal(false);
+          }}
           post={postMarker}
         />
       )}

@@ -1,10 +1,11 @@
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { Icon } from 'leaflet';
 import { useEffect, useRef, useState } from 'react';
 import { useMapContext } from '@context/MapContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
-import { Icon } from 'leaflet';
+import { isSameCoordinate } from '@utils/coordinateComparison';
 
 import red from '@assets/markers/marker_red.png';
 import yellow from '@assets/markers/marker_yellow.png';
@@ -18,6 +19,13 @@ const markerIcons = {
   Encontrado: new Icon({ iconUrl: green.uri, shadowUrl: null, iconSize: [23, 28], iconAnchor: [11, 28] }),
   Resgatado: new Icon({ iconUrl: blue.uri, shadowUrl: null, iconSize: [23, 28], iconAnchor: [11, 28] }),
   default: new Icon({ iconUrl: grey.uri, shadowUrl: null, iconSize: [23, 28], iconAnchor: [11, 28] })
+};
+const markerIconsLarge = {
+  Perdido: new Icon({ iconUrl: red.uri, iconSize: [34.5, 42], iconAnchor: [22.5, 42] }),
+  Desabrigado: new Icon({ iconUrl: yellow.uri, iconSize: [34.5, 42], iconAnchor: [22.5, 42] }),
+  Encontrado: new Icon({ iconUrl: green.uri, iconSize: [34.5, 42], iconAnchor: [22.5, 42] }),
+  Resgatado: new Icon({ iconUrl: blue.uri, iconSize: [34.5, 42], iconAnchor: [22.5, 42] }),
+  default: new Icon({ iconUrl: grey.uri, iconSize: [34.5, 42], iconAnchor: [22.5, 42] }),
 };
 
 const MapEvents = () => {
@@ -80,6 +88,12 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
   const center = [getCenter().latitude, getCenter().longitude]
 
   function getMarkerIcon(status) {
+    return markerIcons[status] || markerIcons.default;
+  }
+  function getMarkerIconByHighlight(status, isHighlighted) {
+    if (isHighlighted) {
+      return markerIconsLarge[status] || markerIconsLarge.default;
+    }
     return markerIcons[status] || markerIcons.default;
   }
   
@@ -154,12 +168,20 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
         {!isReadOnly &&
           posts ?
             posts.map((post) => {
-              const position = [post.coordinateLat, post.coordinateLng]
+              const position = [post.coordinateLat, post.coordinateLng];
+              const isHighlighted =
+                typeof coordinateLat === 'number' &&
+                typeof coordinateLng === 'number' &&
+                isSameCoordinate(
+                  post.coordinateLat, post.coordinateLng,
+                  coordinateLat, coordinateLng
+                );
               return (
                 <Marker
                   key={post.id}
-                  icon={getMarkerIcon(post.status)}
+                  icon={getMarkerIconByHighlight(post.status, isHighlighted)}
                   position={position}
+                  zIndexOffset={isHighlighted ? 1000 : 0}
                   eventHandlers={{click: () => onPressMarker?.(post)}}
                 />
               )

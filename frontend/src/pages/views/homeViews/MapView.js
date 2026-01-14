@@ -7,9 +7,9 @@ import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
 import { getPosts } from '@services/getPosts';
 
-export default function MapView({ setPostMarker }) {
+export default function MapView({ postMarker, setPostMarker, setShowPostMarkerModal }) {
   const { theme } = useTheme();
-  const { posts, loading } = getPosts();
+  const { petPosts, loading } = getPosts();
   const { height } = useWindowDimensions();
   const fontsLoaded = useFontsCustom();
 
@@ -30,8 +30,13 @@ export default function MapView({ setPostMarker }) {
     <View style={[styles.mapContainer, { height: mapHeight }]}>
       <View style={[styles.mapView, { borderColor: theme.primaryText }]}>
         <Map
-          posts={posts}
-          onPressMarker={(post) => {setPostMarker(post)}}
+          posts={petPosts}
+          coordinateLat={postMarker?.coordinateLat}
+          coordinateLng={postMarker?.coordinateLng}
+          onPressMarker={(post) => {
+            setPostMarker(post);
+            setShowPostMarkerModal(true);
+          }}
         />
       </View>
 

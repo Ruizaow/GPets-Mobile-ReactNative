@@ -11,7 +11,10 @@ import { getStatusColor } from '@utils/getStatusColor';
 
 const POST_BASE_HEIGHT = 374;
 
-export function Post({ post, userId, navigation, onOpenMenu, onOpenModal, onPressButton, isOnPostForm=false, footer=null }) {
+export function Post({
+  post, userId, navigation, onOpenMenu, onOpenRescueModal,
+  onOpenMapModal, onGoToMap, isOnPostForm=false, footer=null
+}) {
   const { theme } = useTheme();
   const { updatePostStatus } = usePosts();
 
@@ -28,7 +31,7 @@ export function Post({ post, userId, navigation, onOpenMenu, onOpenModal, onPres
 
   function handleRescue() {
     if (!isOwner || isRescued) return;
-    onOpenModal({
+    onOpenRescueModal({
       text: (
         <Text style={{ textAlign: 'center' }}>
           Deseja alterar o status{' '}
@@ -115,7 +118,7 @@ export function Post({ post, userId, navigation, onOpenMenu, onOpenModal, onPres
                       bgColor={theme.stateButton}
                       borderColor={theme.postPetButtonBorder}
                       height={48}
-                      onPress={onPressButton}
+                      onPress={onOpenMapModal}
                     />
                   ) : (
                     <>
@@ -126,6 +129,7 @@ export function Post({ post, userId, navigation, onOpenMenu, onOpenModal, onPres
                         borderColor={theme.postPetButtonBorder}
                         width={149}
                         height={48}
+                        onPress={() => onGoToMap?.(post)}
                       />
                       <Button
                         text='Resgatado'

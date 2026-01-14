@@ -6,7 +6,7 @@ export async function createComment(commentData) {
     return response.data.data;
   }
   catch (error) {
-    console.log(error?.response?.data || error);
+    // console.log(error?.response?.data || error);
     alert('Erro ao criar comentário. Tente novamente.');
     return null;
   }

@@ -73,7 +73,11 @@ export default function PreviewStep({ postType, postData, onGoBack, onGoNext, on
             </Text>
           </View>
 
-          <Post post={post} onPressButton={() => setShowModal(true)} isOnPostForm={true}/>
+          <Post
+            post={post}
+            onOpenLocationModal={() => setShowModal(true)}
+            isOnPostForm={true}
+          />
 
           <View style={styles.publishButton}>
             <Button

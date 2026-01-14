@@ -14,10 +14,8 @@ export function useFontsCustom() {
     try {
       if (fontsLoaded) {
         setLoaded(true);
-        console.log('📘 Fonts loaded!');
       }
     } catch (err) {
-      console.error('❌ Error loading fonts:', err);
       setLoaded(false);
     }
   }, [fontsLoaded]);

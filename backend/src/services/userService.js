@@ -124,7 +124,7 @@ export const userService = {
 
   getPosts: async (userId, loggedUserId) => {
     const posts = await prisma.post.findMany({
-      orderBy: { id: 'asc' },
+      orderBy: { id: 'desc' },
       where: { userId },
       include: {
         savedBy: loggedUserId
@@ -148,6 +148,7 @@ export const userService = {
 
   getBookmarks: async (userId) => {
     const bookmarks = await prisma.savedPost.findMany({
+      orderBy: { id: 'desc' },
       where: { userId },
       include: {
         post: {

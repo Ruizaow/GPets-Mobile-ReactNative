@@ -16,7 +16,7 @@ export async function updateUser(loadedUser, newUserData, setUser, exitUpdateFor
     exitUpdateForm();
   }
   catch (error) {
-    console.log(error?.response?.data || error);
+    // console.log(error?.response?.data || error);
 
     const backendMessage =
       'Erro: ' + error?.response?.data?.error?.message ||

@@ -1,21 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 export function usePagination(data = [], currentPage=1, itemsPerPage = 20) {
-  const orderedData = useMemo(
-    () => [...data].reverse(),
-    [data]
-  );
-
   const totalPages = useMemo(
-    () => Math.ceil(orderedData.length / itemsPerPage),
-    [orderedData, itemsPerPage]
+    () => Math.ceil(data.length / itemsPerPage),
+    [data, itemsPerPage]
   );
 
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return orderedData.slice(start, end);
-  }, [currentPage, orderedData, itemsPerPage]);
+    return data.slice(start, end);
+  }, [currentPage, data, itemsPerPage]);
 
   return { totalPages, paginatedData };
 }

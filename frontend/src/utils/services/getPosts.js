@@ -1,5 +1,5 @@
 import { api } from '@api';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { usePosts } from '@context/PostsContext';
 
 export function getPosts() {
@@ -24,5 +24,10 @@ export function getPosts() {
     loadPosts();
   }, []);
 
-  return { posts: feedPosts, loading };
+  const petPosts = useMemo(
+    () => feedPosts.filter(post => post.type === 'Pet'),
+    [feedPosts]
+  );
+
+  return { posts: feedPosts, petPosts, loading };
 }

@@ -7,7 +7,7 @@ import { Switch } from '@components/switch';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function Sidebar({ navigation, onGoTo, onOpenModal, onCloseSidebar, isBackArrowDisabled, loadedUser }) {
+export function Sidebar({ navigation, onGoTo, onOpenExitModal, onCloseSidebar, isBackArrowDisabled, loadedUser }) {
   const { theme, toggleTheme } = useTheme();
 
   function handleSelectItem(menuItem) {
@@ -24,10 +24,6 @@ export function Sidebar({ navigation, onGoTo, onOpenModal, onCloseSidebar, isBac
         : navigation.navigate(menuItem, { user: loadedUser });
     }
   };
-
-  function handleExitAccount() {
-    onOpenModal();
-  }
 
   const menuItems = {
     Feed: {
@@ -103,7 +99,7 @@ export function Sidebar({ navigation, onGoTo, onOpenModal, onCloseSidebar, isBac
         </View>
       </View>
 
-      <TouchableOpacity style={styles.exitButton} onPress={handleExitAccount}>
+      <TouchableOpacity style={styles.exitButton} onPress={onOpenExitModal}>
         <DoorOpen size={24} color={colors.red}/>
         <Text style={[fontStyles.subtitle_1, { color: colors.red }]}>Sair da conta</Text>
       </TouchableOpacity>
