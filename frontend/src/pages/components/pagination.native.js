@@ -45,16 +45,11 @@ export function Pagination({ currentPage, totalPages, onChangePage }) {
 
   return (
     <View style={styles.paginationContainer}>
-      <View
-        style={[
-          styles.content,
-          {
-            backgroundColor: theme.post,
-            borderWidth: theme.name === 'dark' ? 1 : 0,
-            borderColor: theme.name === 'dark' ? colors.white : 'transparent',
-          },
-        ]}
-      >
+      <View style={[styles.content, {
+        backgroundColor: theme.post,
+        borderWidth: theme.name === 'dark' ? 1 : 0,
+        borderColor: theme.name === 'dark' ? colors.white : 'transparent' },
+      ]}>
         <ScrollView
           ref={scrollRef}
           horizontal
@@ -70,13 +65,10 @@ export function Pagination({ currentPage, totalPages, onChangePage }) {
               style={[styles.pagItem, page === currentPage && styles.selected]}
               onPress={() => onChangePage(page)}
             >
-              <Text
-                style={[
-                  fontStyles.pagination,
-                  { color: theme.paginationText },
-                  page === currentPage && { color: colors.white },
-                ]}
-              >
+              <Text style={[fontStyles.pagination, {
+                color: theme.paginationText },
+                page === currentPage && { color: colors.white },
+              ]}>
                 {page}
               </Text>
             </TouchableOpacity>

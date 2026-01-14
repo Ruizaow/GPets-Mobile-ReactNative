@@ -1,8 +1,8 @@
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Image } from 'lucide-react-native';
-import { useTheme } from '@context/ThemeContext';
 import { useAuth } from '@context/AuthContext';
 import { Post } from '@components/post';
+import { Loading } from '@components/loading';
 import { Pagination } from '@components/pagination';
 import { EmptyMessage } from '@components/emptyMessage';
 import { useFontsCustom } from '@hooks/useFontsCustom';
@@ -13,7 +13,6 @@ export default function Feed({
   navigation, posts, loading, currentPage, setCurrentPage,
   onGoToMap, openKebabMenu, openRescueModal, scrollRef
 }) {
-  const { theme } = useTheme();
   const { user } = useAuth();
 
   const fontsLoaded = useFontsCustom();
@@ -24,9 +23,7 @@ export default function Feed({
     paginatedData: paginatedPosts
   } = usePagination(posts, currentPage, 10);
 
-  if (loading) return (
-    <ActivityIndicator style={styles.loading} size='large' color={theme.primaryText}/>
-  );
+  if (loading) return <Loading/>;
   if (!user) return null;
 
   return (

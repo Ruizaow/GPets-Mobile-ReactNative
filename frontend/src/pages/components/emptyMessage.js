@@ -10,10 +10,10 @@ export function EmptyMessage({ title, subtitle, icon: Icon=null }) {
         <Icon size={80} color={theme.primaryText} />
       }
       <View style={styles.emptyMessage}>
-        <Text style={[fontStyles.title_3, styles.emptyText]}>
+        <Text style={[fontStyles.title_3, styles.emptyText, { color: theme.primaryText }]}>
           {title}
         </Text>
-        <Text style={[fontStyles.subtitle_2, styles.emptyText]}>
+        <Text style={[fontStyles.subtitle_2, styles.emptyText, { color: theme.primaryText }]}>
           {subtitle}
         </Text>
       </View>

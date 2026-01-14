@@ -131,7 +131,7 @@ export function Map({ posts, postStatus, onPressLocation, onPressMarker, isReadO
                   zIndex={isHighlighted ? 999 : 0}
                 >
                   <MapPin
-                    size={isHighlighted ? 48 : 32}
+                    size={isHighlighted ? 40 : 32}
                     color={getMarkerColor(post.status)}
                     fill={colors.white}
                   />

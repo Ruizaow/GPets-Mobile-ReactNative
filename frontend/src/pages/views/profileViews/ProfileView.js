@@ -5,6 +5,7 @@ import { Pencil, Mail, Phone, MapPin, Image, Star, CopyPlus } from 'lucide-react
 import { useTheme } from '@context/ThemeContext';
 import { useProfileTab } from '@context/ProfileTabContext';
 import { GoBackHeader } from '@components/goBackHeader';
+import { Loading } from '@components/loading';
 import { ProfilePicture } from '@components/profilePicture';
 import { ReducedPost } from '@components/reducedPost';
 import { Pagination } from '@components/pagination';
@@ -15,7 +16,7 @@ import { useFontsCustom } from '@hooks/useFontsCustom';
 import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
 
-export default function ProfileView({ userProfile, loadedUser, userPosts, userBookmarks, navigation, onGoToEditProfile }) {
+export default function ProfileView({ userProfile, loadedUser, userPosts, userBookmarks, isLoading, navigation, onGoToEditProfile }) {
   const { theme } = useTheme();
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -68,6 +69,17 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
   const hasBookmarks = paginatedBookmarks.length > 0;
 
   const shouldShowList = (isPostsTab && hasPosts) || (isBookmarksTab && hasBookmarks);
+
+  if (isLoading) return (
+    <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
+      <GoBackHeader
+        headerTitle={'Perfil'}
+        onPress={() => navigation.goBack()}
+        showLineDivision={false}
+      />
+      <Loading marginTop={0} hasContainer={true}/>
+    </View>
+  )
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>

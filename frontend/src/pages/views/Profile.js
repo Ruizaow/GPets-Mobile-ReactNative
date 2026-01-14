@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from '@context/ThemeContext';
 import { useAuth } from '@context/AuthContext';
 import { getUserPosts } from '@services/getUserPosts';
 import { getUserBookmarks } from '@services/getUserBookmarks';
@@ -6,6 +7,7 @@ import ProfileView from './profileViews/ProfileView';
 import EditProfile from './profileViews/EditProfile';
 
 export default function Profile({ navigation, route }) {
+  const { theme } = useTheme();
   const { user } = route.params;
   const { user: loadedUser,
           setUser,
@@ -19,7 +21,6 @@ export default function Profile({ navigation, route }) {
   const goTo = (viewName) => setCurrentView(viewName);
 
   const isLoading = loadingUser || loadingPosts || loadingBookmarks;
-  if (isLoading) return null;
 
   return (
     <>
@@ -29,6 +30,7 @@ export default function Profile({ navigation, route }) {
           loadedUser={loadedUser}
           userPosts={posts}
           userBookmarks={bookmarks}
+          isLoading={isLoading}
           navigation={navigation}
           onGoToEditProfile={() => goTo('EditProfile')}
         />

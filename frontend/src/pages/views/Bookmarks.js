@@ -3,6 +3,7 @@ import { Star } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { GoBackHeader } from '@components/goBackHeader';
+import { Loading } from '@components/loading';
 import { ReducedPost } from '@components/reducedPost';
 import { Pagination } from '@components/pagination';
 import { EmptyMessage } from '@components/emptyMessage';
@@ -22,7 +23,16 @@ export default function Bookmarks({ navigation, route }) {
   const { totalPages, paginatedData: paginatedBookmarks } = usePagination(bookmarks, currentPage);
 
   const isLoading = !fontsLoaded || loadingBookmarks;
-  if (isLoading) return null;
+  if (isLoading) return (
+    <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
+      <GoBackHeader
+        headerTitle={'Salvos'}
+        onPress={() => navigation.navigate('Home')}
+        showLineDivision={false}
+      />
+      <Loading marginTop={0} hasContainer={true}/>
+    </View>
+  )
 
   return (
     <View style={[styles.profileContainer, { backgroundColor: theme.background }]}>
