@@ -1,7 +1,8 @@
-import { StyleSheet, View, ScrollView, Text, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { MessageCircle } from 'lucide-react-native';
 import { mockedMessages } from '@constants/mockDataMessage';
 import { useTheme } from '@context/ThemeContext';
+import { ProfilePicture } from '@components/profilePicture';
 import { GoBackHeader } from '@components/goBackHeader';
 import { EmptyMessage } from '@components/emptyMessage';
 import { colors } from '@styles/colors.js';
@@ -24,13 +25,7 @@ export default function MessagesList({ navigation, onGoToPrivateChat }) {
               <View style={styles.messageSection} key={index}>
                 <TouchableOpacity onPress={() => onGoToPrivateChat(message)}>
                   <View style={styles.userInfo}>
-                    <Image
-                      style={[styles.profilePicture, {
-                        borderWidth: theme.name === 'dark' ? 1 : 0,
-                        borderColor: theme.name === 'dark' ? colors.white : 'transparent'
-                      }]}
-                      source={message.user.imageUrl}
-                    />
+                    <ProfilePicture loadedUser={message.user}/>
                     <View style={{flex: 1}}>
                       <View style={styles.profileTimestamp}>
                         <Text style={[fontStyles.subtitle_1, { color: theme.primaryText }]}>{message.user.name}</Text>
@@ -77,11 +72,6 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     gap: 12
-  },
-  profilePicture: {
-    width: 52,
-    height: 52,
-    borderRadius: 50
   },
   profileTimestamp: {
     flexDirection: 'row',

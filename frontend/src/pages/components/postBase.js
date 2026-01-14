@@ -27,7 +27,7 @@ export function PostBase({ post, postStatus, navigation, scale=1, onOpenMenu, is
   const hasOwnerTag = post.isOwner !== null;
   const s = scale;
 
-  if (loading) return null;
+  if (loading || !user) return null;
 
   return (
     <>

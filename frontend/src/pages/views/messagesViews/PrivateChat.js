@@ -1,7 +1,8 @@
-import { StyleSheet, View, ScrollView, Text, TextInput, Image, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TextInput, TouchableOpacity, Platform } from 'react-native';
 import { ArrowLeft, Image as ImageIcon, Camera, SendHorizontal } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
+import { ProfilePicture } from '@components/profilePicture';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
@@ -19,9 +20,7 @@ export default function PrivateChat({ navigation, onBack, messageData }) {
   date.setHours(date.getHours() - 3);
 
   function handleSendMessage() {
-    if (!inputValue.trim())
-      return;
-
+    if (!inputValue.trim()) return;
     const newMessage = {
       content: inputValue,
       timestamp: date.toLocaleTimeString('pt-BR', {
@@ -44,13 +43,7 @@ export default function PrivateChat({ navigation, onBack, messageData }) {
           </TouchableOpacity>
           <View style={styles.userInfo}>
             <TouchableOpacity onPress={() => navigation.navigate('Profile', { user: messageData.user })}>
-              <Image
-                style={[styles.profilePicture, {
-                  borderWidth: theme.name === 'dark' ? 1 : 0,
-                  borderColor: theme.name === 'dark' ? colors.white : 'transparent'
-                }]}
-                source={messageData.user.imageUrl}
-              />
+              <ProfilePicture loadedUser={messageData.user}/>
             </TouchableOpacity>
             <View>
               <Text style={[styles.username, { color: theme.primaryText }]}>{messageData.user.name}</Text>
@@ -124,11 +117,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12
-  },
-  profilePicture: {
-    width: 52,
-    height: 52,
-    borderRadius: 50
   },
   username: {
     lineHeight: 20,

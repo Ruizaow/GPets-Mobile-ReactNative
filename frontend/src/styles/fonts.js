@@ -122,5 +122,10 @@ export const fontStyles = StyleSheet.create({
     fontFamily: 'Geologica-Medium',
     fontSize: 16,
     color: colors.darkerDark
+  },
+  rescueMessageSubtitle: {
+    fontFamily: 'Geologica-Regular',
+    fontSize: 10,
+    color: colors.beige
   }
 });

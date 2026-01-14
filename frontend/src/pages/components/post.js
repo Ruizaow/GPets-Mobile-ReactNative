@@ -54,8 +54,12 @@ export function Post({
     });
   }
   
-  function substituirDepois() {
-    console.log('Substituir depois')
+  function handleGoToPrivateChat() {
+    navigation.navigate('Messages', {
+      openPrivateChatAlt: true,
+      postOwnerId: post.userId,
+      postImageUri: post.imageUrl
+    });
   }
 
   return (
@@ -139,7 +143,7 @@ export function Post({
                         height={48}
                         onPress={isOwner
                           ? handleRescue
-                          : substituirDepois}
+                          : handleGoToPrivateChat}
                         isDisabled={isRescued}
                       />
                     </>
