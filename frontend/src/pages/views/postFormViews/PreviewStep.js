@@ -75,7 +75,7 @@ export default function PreviewStep({ postType, postData, onGoBack, onGoNext, on
 
           <Post
             post={post}
-            onOpenLocationModal={() => setShowModal(true)}
+            onOpenMapModal={() => setShowModal(true)}
             isOnPostForm={true}
           />
 
