@@ -193,7 +193,7 @@ export default function PostView({ navigation, route }) {
       {showLoginRequiredModal && (
         <Modal
           text={`Login necessário!`}
-          subtext={`Para acessar essa e outras funções do App, você precisará realizar o login.`}
+          subtext={`Para acessar essa e outras funções do GPets, você precisará entrar com sua conta.`}
           confirmButton={`Login`}
           onClose={() => setShowLoginRequiredModal(false)}
           onConfirm={() => {

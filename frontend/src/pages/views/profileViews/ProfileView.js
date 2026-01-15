@@ -230,7 +230,7 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
           <EmptyMessage
             title={isUserProfile ? 'Você ainda não publicou nada' : 'Sem publicações'}
             subtitle={isUserProfile
-              ? 'Publique algo para começar a ver conteúdos no seu feed.'
+              ? 'Publique algo para que outras pessoas possam ver seus conteúdos no feed.'
               : 'Este usuário ainda não publicou nada.'}
             icon={CopyPlus}
           />
@@ -246,7 +246,7 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
       {showLoginRequiredModal && (
         <Modal
           text={`Login necessário!`}
-          subtext={`Para acessar essa e outras funções do App, você precisará realizar o login.`}
+          subtext={`Para acessar essa e outras funções do GPets, você precisará entrar com sua conta.`}
           confirmButton={`Login`}
           onClose={() => setShowLoginRequiredModal(false)}
           onConfirm={() => {

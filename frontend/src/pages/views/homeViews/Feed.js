@@ -51,8 +51,8 @@ export default function Feed({
         </View>
     ) : (
       <EmptyMessage
-        title={'Você ainda não publicou nada'}
-        subtitle={'Publique algo para começar a ver conteúdos no seu feed.'}
+        title={'Não há publicações disponíveis'}
+        subtitle={'Publique algo e seja o primeiro a divulgar pets que precisam de ajuda no feed.'}
         icon={Image}
       />
     )}
