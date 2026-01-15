@@ -6,6 +6,7 @@ import { useTheme } from '@context/ThemeContext';
 import { useProfileTab } from '@context/ProfileTabContext';
 import { GoBackHeader } from '@components/goBackHeader';
 import { Loading } from '@components/loading';
+import { Modal } from '@components/modal';
 import { ProfilePicture } from '@components/profilePicture';
 import { ReducedPost } from '@components/reducedPost';
 import { Pagination } from '@components/pagination';
@@ -13,6 +14,7 @@ import { EmptyMessage } from '@components/emptyMessage';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { useRequireAuth } from '@hooks/useRequireAuth';
 import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
 
@@ -21,12 +23,15 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
 
-  const isUserProfile = loadedUser.id === userProfile.id
+  const isUserProfile = loadedUser?.id === userProfile.id
   const user = isUserProfile ? loadedUser : userProfile
 
   const scrollRef = useRef(null);
   const [currentPagePost, setCurrentPagePost] = useState(1);
   const [currentPageBookmark, setCurrentPageBookmark] = useState(1);
+  const [showLoginRequiredModal, setShowLoginRequiredModal] = useState(false);
+
+  const { requireAuth } = useRequireAuth(() => setShowLoginRequiredModal(true));
 
   const {
     totalPages: totalPagesPosts,
@@ -192,6 +197,7 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
                       navigation={navigation}
                       scale={0.52}
                       canBookmark={true}
+                      onOpenLoginModal={() => setShowLoginRequiredModal(true)}
                       currentPagePost={currentPagePost}
                       currentPageBookmark={currentPageBookmark}
                     />
@@ -236,6 +242,19 @@ export default function ProfileView({ userProfile, loadedUser, userPosts, userBo
           />
         )}        
       </ScrollView>
+
+      {showLoginRequiredModal && (
+        <Modal
+          text={`Login necessário!`}
+          subtext={`Para acessar essa e outras funções do App, você precisará realizar o login.`}
+          confirmButton={`Login`}
+          onClose={() => setShowLoginRequiredModal(false)}
+          onConfirm={() => {
+            setShowLoginRequiredModal(false);
+            navigation.navigate('Auth');
+          }}
+        />
+      )}
     </View>
   );
 };

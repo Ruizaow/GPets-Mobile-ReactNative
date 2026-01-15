@@ -3,9 +3,14 @@ import { sizes } from '@constants/postPropertiesSizes';
 import { useTheme } from '@context/ThemeContext';
 import { PostBase } from '@components/postBase';
 import { colors } from '@styles/colors.js';
+import { useRequireAuth } from '@hooks/useRequireAuth';
 
-export function ReducedPost({ post, navigation, scale=1, isPressable=true, canBookmark=false, currentPagePost, currentPageBookmark }) {
+export function ReducedPost({
+  post, navigation, scale=1, isPressable=true, canBookmark=false,
+  onOpenLoginModal, currentPagePost, currentPageBookmark
+}) {
   const { theme } = useTheme();
+  const { requireAuth } = useRequireAuth(onOpenLoginModal);
   const s = scale;
 
   return (
@@ -30,6 +35,7 @@ export function ReducedPost({ post, navigation, scale=1, isPressable=true, canBo
             post={post}
             postStatus={post.status}
             navigation={navigation}
+            requireAuth={requireAuth}
             scale={scale}
             canBookmark={canBookmark}
             isReduced={true}

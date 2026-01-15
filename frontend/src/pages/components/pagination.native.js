@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useTheme } from '@context/ThemeContext';
+import { useAuth } from '@context/AuthContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
@@ -9,6 +10,7 @@ const ITEM_WIDTH = 66;
 
 export function Pagination({ currentPage, totalPages, onChangePage }) {
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   const scrollRef = useRef(null);
   const [startPage, setStartPage] = useState(1);
@@ -62,7 +64,14 @@ export function Pagination({ currentPage, totalPages, onChangePage }) {
           {pages.map((page) => (
             <TouchableOpacity
               key={page}
-              style={[styles.pagItem, page === currentPage && styles.selected]}
+              style={[styles.pagItem,
+                page === currentPage &&
+                [styles.selected,
+                  isAuthenticated
+                    ? { backgroundColor: colors.blue }
+                    : { backgroundColor: colors.green }
+                ]
+              ]}
               onPress={() => onChangePage(page)}
             >
               <Text style={[fontStyles.pagination, {
@@ -101,7 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selected: {
-    backgroundColor: colors.blue,
-    borderRadius: 100,
+    borderRadius: 100
   },
 });

@@ -1,10 +1,12 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { House, CirclePlus, MapPin } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
+import { useAuth } from '@context/AuthContext';
 import { colors } from '@styles/colors.js';
 
 export function BottomNavbar({ onGoTo, currentView }) {
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   const navItems = {
     Feed: House,
@@ -14,7 +16,11 @@ export function BottomNavbar({ onGoTo, currentView }) {
 
   return (
     <View style={styles.bottomNavContainer}>
-      <View style={styles.bottomNavbar}>
+      <View style={[styles.bottomNavbar,
+        isAuthenticated
+          ? { backgroundColor: colors.blue }
+          : { backgroundColor: colors.green }
+      ]}>
         {Object.entries(navItems).map(([key, Item]) => {
           const isSelected = currentView === key;
           return (
@@ -51,7 +57,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.blue,
     paddingHorizontal: 24,
     borderRadius: 64,
     width: 252,

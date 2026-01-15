@@ -122,27 +122,15 @@ export const userService = {
     };
   },
 
-  getPosts: async (userId, loggedUserId) => {
+  getPosts: async (userId) => {
     const posts = await prisma.post.findMany({
       orderBy: { id: 'desc' },
-      where: { userId },
-      include: {
-        savedBy: loggedUserId
-          ? { where: { userId },
-              select: { id: true } }
-          : false
-      }
+      where: { userId }
     });
-
-    const formattedPosts = posts.map(post => ({
-      ...post,
-      isSaved: loggedUserId ? post.savedBy.length > 0 : false,
-      savedBy: undefined
-    }));
 
     return {
       message: `Aqui está a lista de posts criados pelo usuário ${userId}.`,
-      posts: formattedPosts
+      posts
     };
   },
 

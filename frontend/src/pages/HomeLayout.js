@@ -10,7 +10,7 @@ import { KebabMenu } from '@components/kebabMenu';
 import { Modal } from '@components/modal';
 import { deletePost } from '@services/deletePost';
 
-export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, postMarker, setPostMarker, children }) {
+export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, postMarker, children }) {
   const { theme } = useTheme();
   const { user, logout } = useAuth();
 
@@ -36,6 +36,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
   const [rescueModal, setRescueModal] = useState(null);
   const [showExitModal, setShowExitModal] = useState(false);
   const [showPostMarkerModal, setShowPostMarkerModal] = useState(false);
+  const [showLoginRequiredModal, setShowLoginRequiredModal] = useState(false);
 
   const scrollRef = useRef(null);
 
@@ -106,10 +107,17 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
           onOpenSidebar={openSidebar}
           isMenuDisabled={isMenuLocked}
           loadedUser={user}
+          onOpenLoginModal={() => setShowLoginRequiredModal(true)}
         />
         <ScrollView ref={scrollRef} style={styles.pageContent}>
           {children &&
-            React.cloneElement(children, { openKebabMenu, openRescueModal, setShowPostMarkerModal, scrollRef })
+            React.cloneElement(children, {
+              openKebabMenu,
+              openRescueModal,
+              setShowPostMarkerModal,
+              openLoginRequiredModal: () => setShowLoginRequiredModal(true),
+              scrollRef,
+            })
           }
         </ScrollView>
         <BottomNavbar
@@ -141,6 +149,7 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
             onCloseSidebar={closeSidebar}
             isBackArrowDisabled={isMenuLocked}
             loadedUser={user}
+            onOpenLoginModal={() => setShowLoginRequiredModal(true)}
           />
         </Animated.View>
       )}
@@ -152,7 +161,8 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
           data={kebabMenu.data}
           onClose={closeKebabMenu}
           onDelete={() => setDeletePostModal(kebabMenu.data.id)}
-          canDelete={kebabMenu.data.userId === user.id}
+          canDelete={kebabMenu.data.userId === user?.id}
+          onOpenLoginModal={() => setShowLoginRequiredModal(true)}
         />
       )}
 
@@ -203,6 +213,20 @@ export function HomeLayout({ navigation, onGoTo, currentView, onPostDeleted, pos
           confirmButton={`Sim, sair`}
           onClose={() => setShowExitModal(false)}
           onConfirm={handleLogout}
+        />
+      )}
+
+      {/* MODAL para USUÁRIOS VISITANTES */}
+      {showLoginRequiredModal && (
+        <Modal
+          text={`Login necessário!`}
+          subtext={`Para acessar essa e outras funções do App, você precisará realizar o login.`}
+          confirmButton={`Login`}
+          onClose={() => setShowLoginRequiredModal(false)}
+          onConfirm={() => {
+            setShowLoginRequiredModal(false);
+            navigation.navigate('Auth');
+          }}
         />
       )}
 

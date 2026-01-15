@@ -10,10 +10,10 @@ import { usePagination } from '@hooks/usePagination';
 import { handleChangePage } from '@handlers/handleChangePage';
 
 export default function Feed({
-  navigation, posts, loading, currentPage, setCurrentPage,
-  onGoToMap, openKebabMenu, openRescueModal, scrollRef
+  navigation, posts, loading, currentPage, setCurrentPage, onGoToMap,
+  openKebabMenu, openRescueModal, openLoginRequiredModal, scrollRef
 }) {
-  const { user } = useAuth();
+  const { user: loadedUser } = useAuth();
 
   const fontsLoaded = useFontsCustom();
   if (!fontsLoaded) return null;
@@ -24,7 +24,6 @@ export default function Feed({
   } = usePagination(posts, currentPage, 10);
 
   if (loading) return <Loading/>;
-  if (!user) return null;
 
   return (
     <>
@@ -34,10 +33,11 @@ export default function Feed({
             <Post
               key={index}
               post={post}
-              userId={user.id}
+              loadedUser={loadedUser}
               navigation={navigation}
               onOpenMenu={() => openKebabMenu('post', post)}
               onOpenRescueModal={openRescueModal}
+              onOpenLoginModal={openLoginRequiredModal}
               onGoToMap={onGoToMap}
             />
           ))}

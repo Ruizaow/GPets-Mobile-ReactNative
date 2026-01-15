@@ -2,6 +2,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useState, useEffect, useMemo } from 'react';
 import { useTheme } from '@context/ThemeContext';
+import { useAuth } from '@context/AuthContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
@@ -11,6 +12,8 @@ const ITEM_WIDTH = 40;
 
 export function Pagination({ currentPage, totalPages, onChangePage }) {
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
+
   const [startPage, setStartPage] = useState(2);
 
   useEffect(() => {
@@ -62,7 +65,11 @@ export function Pagination({ currentPage, totalPages, onChangePage }) {
         <TouchableOpacity
           style={[
             styles.pagItem,
-            currentPage === 1 && styles.selected
+            currentPage === 1 && [styles.selected,
+              isAuthenticated
+                ? { backgroundColor: colors.blue }
+                : { backgroundColor: colors.green }
+            ]
           ]}
           onPress={() => onChangePage(1)}
         >
@@ -82,7 +89,11 @@ export function Pagination({ currentPage, totalPages, onChangePage }) {
             key={page}
             style={[
               styles.pagItem,
-              page === currentPage && styles.selected
+              page === currentPage && [styles.selected,
+                isAuthenticated
+                  ? { backgroundColor: colors.blue }
+                  : { backgroundColor: colors.green }
+              ]
             ]}
             onPress={() => onChangePage(page)}
           >
@@ -137,7 +148,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selected: {
-    backgroundColor: colors.blue,
-    borderRadius: 100,
+    borderRadius: 100
   },
 });

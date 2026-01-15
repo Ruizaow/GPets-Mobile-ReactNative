@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHomeView } from '@context/HomeViewContext';
 import { usePosts } from '@context/PostsContext';
 import Feed from './homeViews/Feed';
@@ -7,7 +7,7 @@ import MapView from './homeViews/MapView';
 import { HomeLayout } from '@pages/HomeLayout';
 import { getPosts } from '@services/getPosts';
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
   const { currentView, setCurrentView } = useHomeView();
   const { posts, loading } = getPosts();
   const { removePost } = usePosts();
@@ -25,11 +25,19 @@ export default function Home({ navigation }) {
         : prev;
     });
   }
-
   function handleGoToMap(post) {
     setPostMarker(post);
     setCurrentView('MapView');
   }
+
+  useEffect(() => {
+    if (route?.params?.openFeed) {
+      setCurrentView('Feed');
+    }
+    if (route?.params?.openMapView) {
+      handleGoToMap(route.params.postMarker);
+    }
+  }, [route?.params]);
 
   const views = {
     Feed: <Feed

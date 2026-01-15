@@ -7,6 +7,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const isAuthenticated = Boolean(user);
+
   async function loadUser() {
     try {
       const token = await storage.getToken('token');
@@ -40,7 +42,7 @@ export function AuthProvider({ children }) {
 
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, setUser, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

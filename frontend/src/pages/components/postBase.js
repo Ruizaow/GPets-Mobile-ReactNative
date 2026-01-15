@@ -12,7 +12,10 @@ import { savePost, unsavePost } from '@services/bookmarkPost';
 import { handleToggleBookmark } from '@handlers/handleToggleBookmark';
 import { getStatusColor } from '@utils/getStatusColor';
 
-export function PostBase({ post, postStatus, navigation, scale=1, onOpenMenu, isOnPostForm=false, canBookmark=false, isReduced=false }) {
+export function PostBase({
+  post, postStatus, navigation, requireAuth, scale=1,
+  onOpenMenu, isOnPostForm=false, canBookmark=false, isReduced=false
+}) {
   const { theme } = useTheme();
   const { user, loading } = getUser(post.userId);
   const { updatePostSaved } = usePosts();
@@ -111,7 +114,9 @@ export function PostBase({ post, postStatus, navigation, scale=1, onOpenMenu, is
               }
               {(!isReduced || (isReduced && canBookmark)) && (
                 <TouchableOpacity onPress={() => 
-                  handleToggleBookmark(post, isSaved, setIsSaved, loadingSave, setLoadingSave, savePost, unsavePost, updatePostSaved)
+                  requireAuth(() => {
+                    handleToggleBookmark(post, isSaved, setIsSaved, loadingSave, setLoadingSave, savePost, unsavePost, updatePostSaved)
+                  })
                 }>
                   <Star
                     size={sizes.star * s}

@@ -5,23 +5,24 @@ import { useTheme } from '@context/ThemeContext';
 import { useAuth } from '@context/AuthContext';
 import { usePosts } from '@context/PostsContext';
 import { GoBackHeader } from '@components/goBackHeader';
-import { ProfilePicture } from '@components/profilePicture';
 import { KebabMenu } from '@components/kebabMenu';
 import { Modal } from '@components/modal';
 import { Post } from '@components/post';
+import { ProfilePicture } from '@components/profilePicture';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 import { formattedTimestamp } from '@utils/timestampFormatting'
 import { useFontsCustom } from '@hooks/useFontsCustom';
+import { useRequireAuth } from '@hooks/useRequireAuth';
 import { getComments } from '@services/getComments';
 import { createComment } from '@services/createComment';
 import { deletePost } from '@services/deletePost';
 import { deleteComment } from '@services/deleteComment';
 
-export default function PostView({ route, navigation }) {
+export default function PostView({ navigation, route }) {
   const { post } = route.params;
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { removePost } = usePosts();
 
   const fontsLoaded = useFontsCustom();
@@ -33,6 +34,9 @@ export default function PostView({ route, navigation }) {
   const [kebabMenu, setKebabMenu] = useState(null);
   const [deletePostModal, setDeletePostModal] = useState(null);
   const [deleteCommentModal, setDeleteCommentModal] = useState(null);
+  const [showLoginRequiredModal, setShowLoginRequiredModal] = useState(false);
+  
+  const { requireAuth } = useRequireAuth(() => setShowLoginRequiredModal(true));
 
   async function handleCreateComment() {
     if (!inputValue.trim()) return;
@@ -86,9 +90,14 @@ export default function PostView({ route, navigation }) {
         <View style={styles.postWrapper}>
           <Post
             post={post}
-            userId={user.id}
+            loadedUser={user}
             navigation={navigation}
             onOpenMenu={() => openKebabMenu('post', post)}
+            onOpenLoginModal={() => setShowLoginRequiredModal(true)}
+            onGoToMap={() => navigation.navigate('Home', {
+              openMapView: true,
+              postMarker: post
+            })}
             footer={
               <View style={styles.commentInputWrapper}>
                 <View style={styles.commentInputSection}>
@@ -99,9 +108,17 @@ export default function PostView({ route, navigation }) {
                     onChangeText={setInputValue}
                     placeholder={'Escreva seu comentário'}
                   />
-                  <TouchableOpacity style={styles.sendIcon} onPress={handleCreateComment}>
-                    <View style={styles.sendBackground}>
-                      <SendHorizontal size={24} color={colors.beige}/>
+                  <TouchableOpacity style={styles.sendIcon} onPress={() =>
+                    requireAuth(() => {
+                      handleCreateComment()
+                    })
+                  }>
+                    <View style={[styles.sendBackground,
+                      isAuthenticated
+                        ? { backgroundColor: colors.blue }
+                        : { backgroundColor: colors.green }
+                    ]}>
+                      <SendHorizontal size={24} color={theme.iconBackground}/>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -151,9 +168,10 @@ export default function PostView({ route, navigation }) {
           onDelete={() => handleOpenModal(kebabMenu.type, kebabMenu.data.id)}
           canDelete={
             kebabMenu.type === 'post'
-              ? kebabMenu.data.userId === user.id
-              : kebabMenu.data.user?.id === user.id
+              ? kebabMenu.data.userId === user?.id
+              : kebabMenu.data.user?.id === user?.id
           }
+          onOpenLoginModal={() => setShowLoginRequiredModal(true)}
         />
       )}
       {Boolean(deletePostModal) && (
@@ -170,6 +188,18 @@ export default function PostView({ route, navigation }) {
           confirmButton={`Sim, excluir`}
           onClose={() => setDeleteCommentModal(null)}
           onConfirm={() => handleDeleteComment(deleteCommentModal)}
+        />
+      )}
+      {showLoginRequiredModal && (
+        <Modal
+          text={`Login necessário!`}
+          subtext={`Para acessar essa e outras funções do App, você precisará realizar o login.`}
+          confirmButton={`Login`}
+          onClose={() => setShowLoginRequiredModal(false)}
+          onConfirm={() => {
+            setShowLoginRequiredModal(false);
+            navigation.navigate('Auth');
+          }}
         />
       )}
     </View>
@@ -215,7 +245,6 @@ const styles = StyleSheet.create({
     zIndex: 2
   },
   sendBackground: {
-    backgroundColor: colors.blue,
     justifyContent: 'center',
     alignItems: 'center',
     width: 48,
@@ -233,14 +262,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 16,
     gap: 10
-  },
-  messageCircleBackground: {
-    backgroundColor: colors.blue,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 44,
-    height: 44,
-    borderRadius: '50%'
   },
   commentData: {
     flexDirection: 'row',

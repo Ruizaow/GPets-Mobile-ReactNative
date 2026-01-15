@@ -4,9 +4,11 @@ import { useTheme } from '@context/ThemeContext';
 import { ProfilePicture } from '@components/profilePicture';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { useRequireAuth } from '@hooks/useRequireAuth';
 
-export function TopNavbar({ navigation, onOpenSidebar, isMenuDisabled, loadedUser }) {
+export function TopNavbar({ navigation, onOpenSidebar, isMenuDisabled, loadedUser, onOpenLoginModal }) {
   const { theme } = useTheme();
+  const { requireAuth } = useRequireAuth(onOpenLoginModal);
 
   return (
     <View style={[styles.topNavContainer, { backgroundColor: theme.navBackground }]}>
@@ -18,10 +20,18 @@ export function TopNavbar({ navigation, onOpenSidebar, isMenuDisabled, loadedUse
           <Search size={24} color={theme.navBackground}/>
           <Text style={[fontStyles.subtitle_1, { color: theme.navBackground }]}>Buscar</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+        <TouchableOpacity onPress={() =>
+          requireAuth(() => {
+            navigation.navigate('Notifications')
+          })
+        }>
           <Bell size={24} color={theme.primaryText}/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile', { user: loadedUser })}>
+        <TouchableOpacity onPress={() => 
+          requireAuth(() => {
+            navigation.navigate('Profile', { user: loadedUser })
+          })
+        }>
           <ProfilePicture loadedUser={loadedUser}/>
         </TouchableOpacity>
       </View>

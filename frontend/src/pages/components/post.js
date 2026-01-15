@@ -2,21 +2,25 @@ import { StyleSheet, Pressable, View, Text, Animated } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { usePosts } from '@context/PostsContext';
+import { useAuth } from '@context/AuthContext';
 import { PostBase } from '@components/postBase';
 import { Button } from '@components/button';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { useRequireAuth } from '@hooks/useRequireAuth';
 import { updatePost } from '@services/updatePost';
 import { getStatusColor } from '@utils/getStatusColor';
 
 const POST_BASE_HEIGHT = 374;
 
 export function Post({
-  post, userId, navigation, onOpenMenu, onOpenRescueModal,
+  post, loadedUser, navigation, onOpenMenu, onOpenRescueModal, onOpenLoginModal,
   onOpenMapModal, onGoToMap, isOnPostForm=false, footer=null
 }) {
   const { theme } = useTheme();
   const { updatePostStatus } = usePosts();
+  const { isAuthenticated } = useAuth();
+  const { requireAuth } = useRequireAuth(onOpenLoginModal);
 
   const opacity = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -26,7 +30,7 @@ export function Post({
   }, []);
 
   const [postStatus, setPostStatus] = useState(post.status);
-  const isOwner = post.userId === userId;
+  const isOwner = Boolean(loadedUser?.id && post.userId === loadedUser.id);
   const isRescued = postStatus === 'Resgatado';
 
   function handleRescue() {
@@ -55,10 +59,12 @@ export function Post({
   }
   
   function handleGoToPrivateChat() {
-    navigation.navigate('Messages', {
-      openPrivateChatAlt: true,
-      postOwnerId: post.userId,
-      postImageUri: post.imageUrl
+    requireAuth(() => {
+      navigation.navigate('Messages', {
+        openPrivateChatAlt: true,
+        postOwnerId: post.userId,
+        postImageUri: post.imageUrl
+      });
     });
   }
 
@@ -84,6 +90,7 @@ export function Post({
               post={post}
               postStatus={postStatus}
               navigation={navigation}
+              requireAuth={requireAuth}
               onOpenMenu={onOpenMenu}
               isOnPostForm={isOnPostForm}
             />
@@ -108,7 +115,7 @@ export function Post({
                     styles.description,
                     { color: theme.primaryText },
                     footer
-                      ? {marginBottom: theme.name === 'dark' ? 0 : 20}
+                      ? {marginBottom: theme.name === 'dark' ? 20 : 20}
                       : {marginBottom: 20}
                   ]}
                 >
@@ -128,22 +135,41 @@ export function Post({
                     <>
                       <Button
                         text='Ir para mapa'
-                        textColor={theme.stateButtonText}
-                        bgColor={theme.stateButton}
-                        borderColor={theme.postPetButtonBorder}
+                        textColor={isAuthenticated
+                          ? theme.stateButtonText
+                          : theme.stateButtonText_
+                        }
+                        bgColor={isAuthenticated
+                          ? theme.stateButton
+                          : theme.stateButton_
+                        }
+                        borderColor={isAuthenticated
+                          ? theme.postPetButtonBorder
+                          : theme.postPetButtonBorder_
+                        }
                         width={149}
                         height={48}
                         onPress={() => onGoToMap?.(post)}
                       />
                       <Button
                         text='Resgatado'
-                        textColor={colors.white}
-                        bgColor={!isRescued ? colors.blue : colors.disabled}
+                        textColor={isAuthenticated
+                          ? colors.white
+                          : theme.post
+                        }
+                        bgColor={!isRescued
+                          ? isAuthenticated
+                            ? colors.blue
+                            : colors.green
+                          : colors.disabled
+                        }
                         width={149}
                         height={48}
-                        onPress={isOwner
-                          ? handleRescue
-                          : handleGoToPrivateChat}
+                        onPress={() =>
+                          requireAuth(() => {
+                            isOwner ? handleRescue() : handleGoToPrivateChat()
+                          })
+                        }
                         isDisabled={isRescued}
                       />
                     </>

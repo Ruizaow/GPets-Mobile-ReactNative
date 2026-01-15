@@ -31,7 +31,7 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onGo
     if (!data) return;
 
     await login(data.token, data.user);
-    navigation.navigate('Home');
+    navigation.navigate('Home', { openFeed: true })
   }
 
   return (
@@ -153,6 +153,7 @@ export default function Login({ navigation, animatedOffset, keyboardHeight, onGo
                 textColor={theme.primaryText}
                 bgColor={'transparent'}
                 borderColor={theme.primaryText}
+                onPress={() => navigation.navigate('Home', { openFeed: true })}
               />
             </View>
           </View>
@@ -213,7 +214,6 @@ const styles = StyleSheet.create({
   submitArea: {
     width: '100%',
     gap: 12
-    
   },
   button: {
     flexDirection: 'row'

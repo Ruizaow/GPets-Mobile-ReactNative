@@ -92,9 +92,8 @@ export const deleteUser = async (req, res) => {
 export const getUserPosts = async (req, res) => {
   try {
     const userId = parseInt(req.params.id);
-    const loggedUserId = req.user?.id ?? null;
 
-    const postsData = await userService.getPosts(userId, loggedUserId);
+    const postsData = await userService.getPosts(userId);
 
     res.status(200).json({
       message: postsData.message,

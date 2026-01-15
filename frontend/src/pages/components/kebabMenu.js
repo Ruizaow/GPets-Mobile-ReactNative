@@ -1,12 +1,14 @@
 import { StyleSheet, TouchableOpacity, View, Text, Animated, Easing } from 'react-native';
 import { Trash, Star, TriangleAlert, Share2, Image } from 'lucide-react-native';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from '@context/ThemeContext';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { useRequireAuth } from '@hooks/useRequireAuth';
 
-export function KebabMenu({ type, onClose, onDelete, onChangeImage, canDelete }) {
+export function KebabMenu({ type, onClose, onDelete, onChangeImage, canDelete, onOpenLoginModal }) {
   const { theme } = useTheme();
+  const { requireAuth } = useRequireAuth(onOpenLoginModal);
 
   const translateY = useRef(new Animated.Value(320)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
@@ -58,6 +60,7 @@ export function KebabMenu({ type, onClose, onDelete, onChangeImage, canDelete })
     }
   };
 
+  const disabledItems = ['bookmark', 'report', 'share'];
   const menuHeightByType = {
     post: 320,
     comment: 192,
@@ -99,24 +102,36 @@ export function KebabMenu({ type, onClose, onDelete, onChangeImage, canDelete })
             const item = allMenuItems[key];
             if (!item) return null;
 
+            const isDisabled = disabledItems.includes(key);
+
             return (
-              <TouchableOpacity key={key} style={styles.menuItem}
-                onPress={() => {
-                  if (onDelete && key === 'delete') {
-                    onDelete();
-                  }
-                  if (onChangeImage && key === 'image') {
-                    onChangeImage();
-                  }
-                  handleClose();
-                }}
+              <TouchableOpacity key={key} style={styles.menuItem} disabled={isDisabled}
+                onPress={() =>
+                  requireAuth(() => {
+                    if (!isDisabled) {
+                      if (onDelete && key === 'delete') {
+                        onDelete();
+                      }
+                      if (onChangeImage && key === 'image') {
+                        onChangeImage();
+                      }
+                    }
+                  })
+                }
               >
                 <View style={styles.menuItemContent}>
-                  {item.icon}
+                  {key === 'delete'
+                    ? <Trash size={24} color={colors.red} />
+                    : React.cloneElement(item.icon, {
+                        color: isDisabled ? colors.disabled : theme.primaryText
+                      })
+                  }
                   <Text style={[
                     fontStyles.title_4,
                     { color: key === 'delete'
                       ? colors.red
+                      : isDisabled
+                      ? colors.disabled
                       : theme.primaryText
                     }
                   ]}>

@@ -1,14 +1,16 @@
 import { StyleSheet, TouchableOpacity, View, Text, Animated } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { useTheme } from '@context/ThemeContext';
+import { useAuth } from '@context/AuthContext';
 import { Map } from '@components/map';
 import { Button } from '@components/button';
 import { ReducedPost } from '@components/reducedPost';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
 
-export function Modal({ navigation, text, confirmButton, onClose, onConfirm, post, hasMap=false }) {
+export function Modal({ navigation, text, subtext, confirmButton, onClose, onConfirm, post, hasMap=false }) {
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   const overlayOpacity = useRef(new Animated.Value(0)).current;
 
@@ -41,7 +43,14 @@ export function Modal({ navigation, text, confirmButton, onClose, onConfirm, pos
 
       <View style={styles.modalContainer}>
         <View style={[styles.content, { backgroundColor: theme.post }]}>
-          <Text style={[styles.text, { color: theme.primaryText }]}>{text}</Text>
+          <Text style={[styles.text, { color: theme.primaryText }]}>
+            {text}
+          </Text>
+          {subtext &&
+            <Text style={[styles.subtext, { color: theme.primaryText }]}>
+              {subtext}
+            </Text>
+          }
           
           {hasMap ? (
             <View style={[styles.mapView, { borderColor: theme.primaryText }]}>
@@ -77,9 +86,15 @@ export function Modal({ navigation, text, confirmButton, onClose, onConfirm, pos
               <>
                 <Button
                   text='Cancelar'
-                  textColor={colors.blue}
+                  textColor={isAuthenticated
+                    ? colors.blue
+                    : colors.green
+                  }
                   bgColor={'transparent'}
-                  borderColor={colors.blue}
+                  borderColor={isAuthenticated
+                    ? colors.blue
+                    : colors.green
+                  }
                   width={149}
                   height={46}
                   onPress={handleClose}
@@ -97,7 +112,13 @@ export function Modal({ navigation, text, confirmButton, onClose, onConfirm, pos
                   <Button
                     text={confirmButton}
                     textColor={colors.white}
-                    bgColor={confirmButton !== 'Sim, alterar' ? colors.red : colors.blue}
+                    bgColor={
+                      confirmButton === 'Sim, alterar' || confirmButton === 'Login'
+                        ? isAuthenticated
+                          ? colors.blue
+                          : colors.green
+                        : colors.red
+                    }
                     width={149}
                     height={46}
                     onPress={() => {
@@ -140,6 +161,11 @@ const styles = StyleSheet.create({
   text: {
     ...fontStyles.title_3,
     textAlign: 'center'
+  },
+  subtext: {
+    ...fontStyles.subtitle_2,
+    textAlign: 'center',
+    marginTop: -8
   },
   reducedPost: {
     borderWidth: 1,

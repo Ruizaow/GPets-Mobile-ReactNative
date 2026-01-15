@@ -1,14 +1,18 @@
-import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
-import { House, CirclePlus, MapPin, MessagesSquare, Star, Settings, Contrast, DoorOpen, ChevronRight } from 'lucide-react-native';
+import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { House, CirclePlus, MapPin, MessagesSquare, Star, Settings, Contrast, ChevronRight, DoorOpen, LogIn } from 'lucide-react-native';
 import { useTheme } from '@context/ThemeContext';
+import { useAuth } from '@context/AuthContext';
 import { BackArrow } from '@components/backArrow';
 import { ProfilePicture } from '@components/profilePicture';
 import { Switch } from '@components/switch';
 import { colors } from '@styles/colors.js';
 import { fontStyles } from '@styles/fonts';
+import { useRequireAuth } from '@hooks/useRequireAuth';
 
-export function Sidebar({ navigation, onGoTo, onOpenExitModal, onCloseSidebar, isBackArrowDisabled, loadedUser }) {
+export function Sidebar({ navigation, onGoTo, onOpenExitModal, onCloseSidebar, isBackArrowDisabled, loadedUser, onOpenLoginModal }) {
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
+  const { requireAuth } = useRequireAuth(onOpenLoginModal);
 
   function handleSelectItem(menuItem) {
     if (menuItem === 'Contrast') {
@@ -19,9 +23,11 @@ export function Sidebar({ navigation, onGoTo, onOpenExitModal, onCloseSidebar, i
     if (homeViews.includes(menuItem)) {
       onGoTo(menuItem);
     } else {
-      menuItem !== 'Bookmarks'
-        ? navigation.navigate(menuItem)
-        : navigation.navigate(menuItem, { user: loadedUser });
+      requireAuth(() => {
+        menuItem !== 'Bookmarks'
+          ? navigation.navigate(menuItem)
+          : navigation.navigate(menuItem, { user: loadedUser });
+      })
     }
   };
 
@@ -64,8 +70,16 @@ export function Sidebar({ navigation, onGoTo, onOpenExitModal, onCloseSidebar, i
         </View>
 
         <TouchableOpacity
-          style={[styles.profileCard, { borderColor: theme.border }]}
-          onPress={() => navigation.navigate('Profile', { user: loadedUser })}
+          style={[styles.profileCard,
+            isAuthenticated
+             ? { borderColor: theme.border }
+             : { borderColor: theme.border_ }
+          ]}
+          onPress={() =>
+            requireAuth(() => {
+              navigation.navigate('Profile', { user: loadedUser })
+            })
+          }
         >
           <ProfilePicture loadedUser={loadedUser}/>
           <View>
@@ -99,10 +113,17 @@ export function Sidebar({ navigation, onGoTo, onOpenExitModal, onCloseSidebar, i
         </View>
       </View>
 
-      <TouchableOpacity style={styles.exitButton} onPress={onOpenExitModal}>
-        <DoorOpen size={24} color={colors.red}/>
-        <Text style={[fontStyles.subtitle_1, { color: colors.red }]}>Sair da conta</Text>
-      </TouchableOpacity>
+      {isAuthenticated ? (
+        <TouchableOpacity style={styles.exitButton} onPress={onOpenExitModal}>
+          <DoorOpen size={24} color={colors.red}/>
+          <Text style={[fontStyles.subtitle_1, { color: colors.red }]}>Sair da conta</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={styles.exitButton} onPress={() => navigation.navigate('Auth')}>
+          <LogIn size={24} color={colors.red}/>
+          <Text style={[fontStyles.subtitle_1, { color: colors.red }]}>Fazer login</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

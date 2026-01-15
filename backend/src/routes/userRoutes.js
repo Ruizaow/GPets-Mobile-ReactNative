@@ -6,7 +6,7 @@ const userRouter = Router();
 
 userRouter.get('/', getUsers);
 
-userRouter.get('/:id/posts', authenticateToken, getUserPosts);
+userRouter.get('/:id/posts', getUserPosts);
 userRouter.get('/:id/bookmarks', authenticateToken, getUserBookmarks);
 
 userRouter.get('/:id', getUser);

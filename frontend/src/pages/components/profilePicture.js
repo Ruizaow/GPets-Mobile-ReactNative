@@ -6,14 +6,11 @@ import { getIconSize } from '@utils/profilePicture';
 
 export function ProfilePicture({ loadedUser, size=52 }) {
   const { theme } = useTheme();
-  
   const iconSize = getIconSize(size);
-
-  if (!loadedUser) return null;
-
+  
   return (
     <View>
-      {loadedUser.imageUrl ? (
+      {loadedUser?.imageUrl ? (
         loadedUser.role === 'ORGANIZATION' ? (
           <Image
             source={{ uri: loadedUser.imageUrl }}

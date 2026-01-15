@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTheme } from '@context/ThemeContext';
 import { useAuth } from '@context/AuthContext';
 import { getUserPosts } from '@services/getUserPosts';
 import { getUserBookmarks } from '@services/getUserBookmarks';
@@ -7,7 +6,6 @@ import ProfileView from './profileViews/ProfileView';
 import EditProfile from './profileViews/EditProfile';
 
 export default function Profile({ navigation, route }) {
-  const { theme } = useTheme();
   const { user } = route.params;
   const { user: loadedUser,
           setUser,
